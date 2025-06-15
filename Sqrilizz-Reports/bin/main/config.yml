@@ -1,0 +1,115 @@
+# SqrilizzReports Configuration
+
+# Language settings
+language: ru
+
+# Auto-ban settings
+auto-ban-threshold: 8
+
+# Messages
+messages:
+  ru:
+    prefix: "§8[§cSqrilizzReports§8] §r"
+    player-only: "§cЭта команда может быть использована только игроком"
+    no-permission: "§cУ вас нет прав для использования этой команды"
+    report-usage: "§cИспользование: /report <игрок> <причина>\n§7Пример: /report MomentoMoriify Взрывает Магазины в Энде -69 110 11"
+    player-not-found: "§cИгрок [PLAYER] не найден"
+    cannot-report-self: "§cВы не можете пожаловаться на себя!"
+    report-success: "§aВы пожаловались на [PLAYER] по причине: [REASON]"
+    admin-report-notification: "§c[REPORTER] пожаловался на [TARGET] по причине: [REASON]"
+    no-reports: "§cНет активных жалоб"
+    reports-list-header: "§6=== Список жалоб ==="
+    reports-list-entry: "§7- [PLAYER]: [COUNT] жалоб"
+    no-reports-for-player: "§cНет жалоб на игрока [PLAYER]"
+    reports-cleared: "§aЖалобы на игрока [PLAYER] были очищены"
+    all-reports-cleared: "§aВсе жалобы были очищены"
+    player-reports-header: "§6=== Жалобы на [PLAYER] ==="
+    report-details: "§7- От: [REPORTER]\n§7  Причина: [REASON]\n§7  Время: [TIME]"
+    clear-usage: "§cИспользование: /reports clear <игрок>"
+    check-usage: "§cИспользование: /reports check <игрок>"
+    admin-usage: "§cИспользование: /reports [clear|check|false|clearall] <игрок>"
+    time-days: "дней назад"
+    time-hours: "часов назад"
+    time-minutes: "минут назад"
+    time-seconds: "секунд назад"
+    auto-ban-message: "§cВы были автоматически забанены из-за большого количества жалоб."
+    cooldown-message: "§7У вас §cкулдаун! §7Попробуйте §cснова §7через §c[COOLDOWN] §7секунд"
+    false-report-punishment: "§cИгрок [PLAYER] был забанен на 5 дней за ложную жалобу"
+    report-sent: "§aЖалоба на игрока [PLAYER] успешно отправлена"
+    report-received: "§cНа вас поступила жалоба от [PLAYER]"
+    report-cooldown: "§cВы можете отправить жалобу только раз в [TIME] секунд"
+    report-self: "§cВы не можете отправить жалобу на самого себя"
+    report-offline: "§cИгрок [PLAYER] не находится на сервере"
+    report-not-found: "§cИгрок [PLAYER] не найден"
+    telegram-token-set: "§aТокен Telegram бота успешно установлен"
+    telegram-chat-set: "§aID чата Telegram успешно установлен"
+    telegram-disabled: "§cTelegram бот отключен"
+    telegram-usage: "§cИспользование: /report-telegram <token|chat> <значение>"
+    telegram-report-title: "🚨 *Новая жалоба*"
+    telegram-report-from: "От: %s"
+    telegram-report-target: "На: %s"
+    telegram-report-reason: "Причина: %s"
+    discord-report-title: "🚨 Новая жалоба"
+    discord-report-from: "От: %s"
+    discord-report-target: "На: %s"
+    discord-report-reason: "Причина: %s"
+  en:
+    prefix: "§8[§cSqrilizzReports§8] §r"
+    player-only: "§cThis command can only be used by a player"
+    no-permission: "§cYou don't have permission to use this command"
+    report-usage: "§cUsage: /report <player> <reason>\n§7Example: /report MomentoMoriify Exploding Shops in End -69 110 11"
+    player-not-found: "§cPlayer [PLAYER] not found"
+    cannot-report-self: "§cYou cannot report yourself!"
+    report-success: "§aYou have reported [PLAYER] for: [REASON]"
+    admin-report-notification: "§c[REPORTER] reported [TARGET] for: [REASON]"
+    no-reports: "§cNo active reports"
+    reports-list-header: "§6=== Reports List ==="
+    reports-list-entry: "§7- [PLAYER]: [COUNT] reports"
+    no-reports-for-player: "§cNo reports for player [PLAYER]"
+    reports-cleared: "§aReports for player [PLAYER] have been cleared"
+    all-reports-cleared: "§aAll reports have been cleared"
+    player-reports-header: "§6=== Reports for [PLAYER] ==="
+    report-details: "§7- From: [REPORTER]\n§7  Reason: [REASON]\n§7  Time: [TIME]"
+    clear-usage: "§cUsage: /reports clear <player>"
+    check-usage: "§cUsage: /reports check <player>"
+    admin-usage: "§cUsage: /reports [clear|check|false|clearall] <player>"
+    time-days: "days ago"
+    time-hours: "hours ago"
+    time-minutes: "minutes ago"
+    time-seconds: "seconds ago"
+    auto-ban-message: "§cYou have been automatically banned due to excessive reports."
+    cooldown-message: "§7You have a §ccooldown! §7Try §cagain §7in §c[COOLDOWN] §7seconds"
+    false-report-punishment: "§cPlayer [PLAYER] has been banned for 5 days for false reporting"
+    report-sent: "§aReport for player [PLAYER] has been sent successfully"
+    report-received: "§cYou have received a report from [PLAYER]"
+    report-cooldown: "§cYou can only send a report once every [TIME] seconds"
+    report-self: "§cYou cannot report yourself"
+    report-offline: "§cPlayer [PLAYER] is not online"
+    report-not-found: "§cPlayer [PLAYER] not found"
+    telegram-token-set: "§aTelegram bot token has been set successfully"
+    telegram-chat-set: "§aTelegram chat ID has been set successfully"
+    telegram-disabled: "§cTelegram bot is disabled"
+    telegram-usage: "§cUsage: /report-telegram <token|chat> <value>"
+    telegram-report-title: "🚨 *New Report*"
+    telegram-report-from: "From: %s"
+    telegram-report-target: "Target: %s"
+    telegram-report-reason: "Reason: %s"
+    discord-report-title: "🚨 New Report"
+    discord-report-from: "From: %s"
+    discord-report-target: "Target: %s"
+    discord-report-reason: "Reason: %s"
+
+cooldown: 230 #время в секундах
+
+permission: "reports.admin" #право на получение жалоб
+block-report-permission: "reports.bypass" #игрок с этим правом не может быть пожалован
+config-reload-permission: "reports.reload" #право на перезагрузку config.yml
+language-permission: "reports.language" #право на изменение языка
+
+# Telegram settings
+telegram:
+  bot-token: "" # Токен вашего Telegram бота
+  chat-id: "" # ID чата, куда будут отправляться уведомления
+
+# Discord Webhook settings
+webhook-url: "" # URL Discord Webhook для уведомлений

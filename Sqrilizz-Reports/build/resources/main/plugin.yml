@@ -1,0 +1,42 @@
+name: Sqrilizz-Reports
+version: '1.1'
+main: dev.sqrilizz.SQRILIZZREPORTS.Main
+api-version: '1.20'
+authors: [Sqrilizz]
+description: A simple reports plugin
+
+commands:
+  report:
+    description: Report a player
+    usage: /report <player> <reason>
+    permission: reports.report
+  reports:
+    description: View reports
+    usage: /reports
+    permission: reports.admin
+  report-language:
+    description: Change server language
+    usage: /report-language <en|ru>
+    permission: reports.language
+  report-telegram:
+    description: Configure Telegram bot
+    usage: /report-telegram <token|chat> <value>
+    permission: reports.telegram
+  report-webhook:
+    description: Configure Discord Webhook
+    usage: /report-webhook <set|remove> <url>
+    permission: reports.admin
+
+permissions:
+  reports.report:
+    description: Allows using /report command
+    default: true
+  reports.admin:
+    description: Allows viewing and managing reports
+    default: op
+  reports.language:
+    description: Allows changing server language
+    default: op
+  reports.telegram:
+    description: Allows configuring Telegram bot
+    default: op
