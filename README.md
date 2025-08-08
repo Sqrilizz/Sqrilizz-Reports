@@ -51,8 +51,8 @@ language: "ru" # ru или en
 
 ## Требования
 
-- Java 8 или выше
-- Minecraft 1.8-1.20
+- Java 21 или выше
+- Minecraft 1.16-1.21
 - Spigot/Paper сервер
 
 ## Лицензия
