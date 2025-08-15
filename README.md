@@ -48,26 +48,10 @@ discord:
 # Настройки языка
 language: "ru" # ru или en
 ```
-
-## Требования
-
-- Java 21 или выше
-- Minecraft 1.16-1.21
-- Spigot/Paper сервер
-
-## Лицензия
-
-MIT License
-
----
-
 # Sqrilizz-Reports
 
 A Minecraft plugin that allows sending player reports through Telegram and Discord.
 
-## Description
-
-Sqrilizz-Reports is a Minecraft plugin that enables players to report rule violators through Telegram and Discord. The plugin supports multiple languages (Russian and English) and provides a convenient interface for administrators.
 
 ### Key Features
 
@@ -76,13 +60,6 @@ Sqrilizz-Reports is a Minecraft plugin that enables players to report rule viola
 - Multilingual support (Russian/English)
 - Discord webhook management system
 - Detailed logging
-
-## Installation
-
-1. Download the latest version from the Releases section
-2. Place the .jar file in your server's `plugins` folder
-3. Restart the server
-4. Configure settings in `config.yml`
 
 ## Commands
 
@@ -111,13 +88,3 @@ discord:
 # Language settings
 language: "ru" # ru or en
 ```
-
-## Requirements
-
-- Java 8 or higher
-- Minecraft 1.8-1.20
-- Spigot/Paper server
-
-## License
-
-MIT License 
