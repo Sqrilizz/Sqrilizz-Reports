@@ -1,97 +1,118 @@
 package dev.sqrilizz.SQRILIZZREPORTS;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class DiscordWebhookManager {
-    private static String webhookUrl;
+    private static String webhookUrl = "";
+    private static boolean enabled = false;
+    private static final Gson gson = new Gson();
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
+        .withZone(ZoneId.systemDefault());
 
     public static void initialize() {
-        FileConfiguration config = Main.getInstance().getConfig();
-        webhookUrl = config.getString("webhook-url", "");
-        Main.getInstance().getLogger().info("DiscordWebhookManager initialized with URL: " + (webhookUrl.isEmpty() ? "not set" : webhookUrl));
+        webhookUrl = Main.getInstance().getConfig().getString("discord.webhook_url", "");
+        enabled = !webhookUrl.isEmpty();
+        
+        if (enabled) {
+            Main.getInstance().getLogger().info("Discord webhook initialized successfully");
+        } else {
+            Main.getInstance().getLogger().info("Discord webhook not configured");
+        }
     }
 
-    public static void setWebhookUrl(String url) {
-        Main.getInstance().getLogger().info("Setting Discord webhook URL: " + url);
-        webhookUrl = url;
-        Main.getInstance().getConfig().set("webhook-url", url);
-        Main.getInstance().saveConfig();
-    }
-
-    public static void removeWebhookUrl() {
-        Main.getInstance().getLogger().info("Removing Discord webhook URL");
-        webhookUrl = "";
-        Main.getInstance().getConfig().set("webhook-url", "");
-        Main.getInstance().saveConfig();
+    public static boolean isEnabled() {
+        return enabled && !webhookUrl.isEmpty();
     }
 
     public static String getWebhookUrl() {
         return webhookUrl;
     }
 
-    public static void sendReport(String reporter, String target, String reason) {
-        if (webhookUrl == null || webhookUrl.isEmpty()) {
-            Main.getInstance().getLogger().info("Discord webhook URL is not set. Skipping Discord notification.");
-            return;
-        }
+    public static void setWebhookUrl(String url) {
+        webhookUrl = url;
+        enabled = !url.isEmpty();
+        Main.getInstance().getConfig().set("discord.webhook_url", url);
+        Main.getInstance().saveConfig();
+    }
 
-        String content = String.format("%s\n%s\n%s\n%s",
-                LanguageManager.getMessage("discord-report-title"),
-                String.format(LanguageManager.getMessage("discord-report-from"), reporter),
-                String.format(LanguageManager.getMessage("discord-report-target"), target),
-                String.format(LanguageManager.getMessage("discord-report-reason"), reason));
+    public static void sendReport(ReportManager.Report report) {
+        if (!isEnabled()) return;
 
-        Main.getInstance().getLogger().info("Attempting to send Discord webhook message: " + content);
-
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+        Main.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             try {
-                URL url = new URL(webhookUrl);
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setDoOutput(true);
+                JsonObject embed = new JsonObject();
+                embed.addProperty("title", "🚨 Новая жалоба");
+                embed.addProperty("color", 0xFF0000); // Красный цвет
+                embed.addProperty("timestamp", Instant.now().toString());
 
-                // Правильный формат JSON для Discord webhook
-                String json = String.format("{\"content\": \"%s\"}", 
-                    content.replace("\"", "\\\"")
-                          .replace("\n", "\\n")
-                          .replace("\r", "\\r"));
+                // Добавляем поля
+                JsonObject reporterField = new JsonObject();
+                reporterField.addProperty("name", "От кого");
+                reporterField.addProperty("value", report.reporter);
+                reporterField.addProperty("inline", true);
 
-                Main.getInstance().getLogger().info("Sending JSON to Discord: " + json);
+                JsonObject targetField = new JsonObject();
+                targetField.addProperty("name", "На кого");
+                targetField.addProperty("value", report.target);
+                targetField.addProperty("inline", true);
 
-                try (OutputStream os = connection.getOutputStream()) {
-                    byte[] input = json.getBytes(StandardCharsets.UTF_8);
-                    os.write(input, 0, input.length);
+                JsonObject reasonField = new JsonObject();
+                reasonField.addProperty("name", "Причина");
+                reasonField.addProperty("value", report.reason);
+                reasonField.addProperty("inline", false);
+
+                JsonObject timeField = new JsonObject();
+                timeField.addProperty("name", "Время");
+                timeField.addProperty("value", report.getFormattedTime());
+                timeField.addProperty("inline", true);
+
+                JsonObject reporterLocField = new JsonObject();
+                reporterLocField.addProperty("name", "Координаты жалобщика");
+                reporterLocField.addProperty("value", report.reporterLocation);
+                reporterLocField.addProperty("inline", true);
+
+                JsonObject targetLocField = new JsonObject();
+                targetLocField.addProperty("name", "Координаты цели");
+                targetLocField.addProperty("value", report.targetLocation);
+                targetLocField.addProperty("inline", true);
+
+                // Создаем массив полей
+                JsonObject[] fields = {reporterField, targetField, reasonField, timeField, reporterLocField, targetLocField};
+                embed.add("fields", gson.toJsonTree(fields));
+
+                // Создаем основной объект webhook
+                JsonObject webhook = new JsonObject();
+                webhook.add("embeds", gson.toJsonTree(new JsonObject[]{embed}));
+
+                // Отправляем webhook
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(webhookUrl))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(webhook.toString()))
+                    .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                
+                if (response.statusCode() == 204) {
+                    Main.getInstance().getLogger().info("Discord webhook sent successfully");
+                } else {
+                    Main.getInstance().getLogger().warning("Discord webhook failed with status: " + response.statusCode());
                 }
 
-                int responseCode = connection.getResponseCode();
-                Main.getInstance().getLogger().info("Discord webhook response code: " + responseCode);
-
-                // Читаем ответ от сервера
-                try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                    StringBuilder response = new StringBuilder();
-                    String responseLine;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
-                    }
-                    Main.getInstance().getLogger().info("Discord webhook response: " + response.toString());
-                }
-
-                if (responseCode != 204) {
-                    Main.getInstance().getLogger().warning("Discord webhook returned unexpected response code: " + responseCode);
-                }
-            } catch (Exception e) {
-                Main.getInstance().getLogger().warning("Failed to send report to Discord webhook: " + e.getMessage());
-                e.printStackTrace();
+            } catch (IOException | InterruptedException e) {
+                Main.getInstance().getLogger().severe("Failed to send Discord webhook: " + e.getMessage());
             }
         });
     }

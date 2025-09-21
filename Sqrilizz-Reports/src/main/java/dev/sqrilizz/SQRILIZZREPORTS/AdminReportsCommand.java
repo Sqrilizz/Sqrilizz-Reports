@@ -19,8 +19,8 @@ public class AdminReportsCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission("sqrilizzreports.admin")) {
-            player.sendMessage(LanguageManager.getMessage("no-permission"));
+        if (!VersionUtils.hasPermission(player, "reports.admin")) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("no-permission"));
             return true;
         }
 
@@ -29,128 +29,123 @@ public class AdminReportsCommand implements CommandExecutor {
             return true;
         }
 
-        switch (args[0].toLowerCase()) {
-            case "clear":
-                if (args.length < 2) {
-                    player.sendMessage(LanguageManager.getMessage("clear-usage"));
-                    return true;
-                }
-                clearReports(player, args[1]);
-                break;
-            case "check":
-                if (args.length < 2) {
-                    player.sendMessage(LanguageManager.getMessage("check-usage"));
-                    return true;
-                }
-                checkPlayerReports(player, args[1]);
-                break;
-            case "false":
-                if (args.length < 2) {
-                    player.sendMessage("§cИспользование: /griefreports false <игрок>");
-                    return true;
-                }
-                punishFalseReport(player, args[1]);
-                break;
-            case "clearall":
-                clearAllReports(player);
-                break;
-            default:
-                player.sendMessage(LanguageManager.getMessage("admin-usage"));
-                break;
+        if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
+            clearReports(player, args[1]);
+            return true;
         }
 
+        if (args.length == 2 && args[0].equalsIgnoreCase("check")) {
+            checkPlayerReports(player, args[1]);
+            return true;
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("false")) {
+            punishFalseReport(player, args[1]);
+            return true;
+        }
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("clearall")) {
+            clearAllReports(player);
+            return true;
+        }
+
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-usage"));
         return true;
     }
 
     private void showReportsList(Player player) {
         Map<String, List<ReportManager.Report>> reports = ReportManager.getReports();
+        
         if (reports.isEmpty()) {
-            player.sendMessage(LanguageManager.getMessage("no-reports"));
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("no-reports"));
             return;
         }
 
-        player.sendMessage(LanguageManager.getMessage("reports-list-header"));
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("reports-list-header"));
+        
         for (Map.Entry<String, List<ReportManager.Report>> entry : reports.entrySet()) {
-            String targetName = entry.getKey();
-            int reportCount = entry.getValue().size();
-            player.sendMessage(LanguageManager.getMessage("reports-list-entry")
-                    .replace("[PLAYER]", targetName)
-                    .replace("[COUNT]", String.valueOf(reportCount)));
+            String targetName = NameUtils.cleanPlayerName(entry.getKey());
+            int count = entry.getValue().size();
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("reports-list-entry")
+                .replace("[PLAYER]", targetName)
+                .replace("[COUNT]", String.valueOf(count)));
         }
     }
 
     private void clearReports(Player player, String targetName) {
-        if (ReportManager.getReportCount(targetName) == 0) {
-            player.sendMessage(LanguageManager.getMessage("no-reports-for-player")
-                    .replace("[PLAYER]", targetName));
+        String cleanTargetName = NameUtils.cleanPlayerName(targetName);
+        
+        if (ReportManager.getReportCount(cleanTargetName) == 0) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("no-reports-for-player")
+                .replace("[PLAYER]", cleanTargetName));
             return;
         }
 
-        ReportManager.clearReports(targetName);
-        player.sendMessage(LanguageManager.getMessage("reports-cleared")
-                .replace("[PLAYER]", targetName));
+        ReportManager.clearReports(cleanTargetName);
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("reports-cleared")
+            .replace("[PLAYER]", cleanTargetName));
     }
 
     private void checkPlayerReports(Player player, String targetName) {
-        List<ReportManager.Report> reports = ReportManager.getReports(targetName);
-        if (reports.isEmpty()) {
-            player.sendMessage(LanguageManager.getMessage("no-reports-for-player")
-                    .replace("[PLAYER]", targetName));
+        String cleanTargetName = NameUtils.cleanPlayerName(targetName);
+        List<ReportManager.Report> targetReports = ReportManager.getPlayerReports(cleanTargetName);
+        
+        if (targetReports.isEmpty()) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("no-reports-for-player")
+                .replace("[PLAYER]", cleanTargetName));
             return;
         }
 
-        player.sendMessage(LanguageManager.getMessage("player-reports-header")
-                .replace("[PLAYER]", targetName));
-
-        for (ReportManager.Report report : reports) {
-            player.sendMessage(LanguageManager.getMessage("report-details")
-                    .replace("[REPORTER]", report.reporter)
-                    .replace("[REASON]", report.reason)
-                    .replace("[TIME]", report.getTimeAgo()));
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("player-reports-header")
+            .replace("[PLAYER]", cleanTargetName));
+        
+        for (ReportManager.Report report : targetReports) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("report-details")
+                .replace("[REPORTER]", NameUtils.cleanPlayerName(report.reporter))
+                .replace("[REASON]", report.reason)
+                .replace("[TIME]", report.getFormattedTime()));
+            
+            // Показываем координаты
+            VersionUtils.sendMessage(player, "§7  Координаты жалобщика: §f" + report.reporterLocation);
+            VersionUtils.sendMessage(player, "§7  Координаты цели: §f" + report.targetLocation);
+            VersionUtils.sendMessage(player, "§7  Время назад: §f" + report.getTimeAgo());
         }
     }
 
     private void punishFalseReport(Player player, String reporterName) {
-        // Получаем последний репорт от этого игрока
-        List<ReportManager.Report> allReports = ReportManager.getReports().values().stream()
-                .flatMap(List::stream)
-                .filter(report -> report.reporter.equalsIgnoreCase(reporterName))
-                .toList();
-
-        if (allReports.isEmpty()) {
-            player.sendMessage("§cНе найдено жалоб от игрока " + reporterName);
-            return;
-        }
-
-        // Баним игрока на 5 дней
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempban " + reporterName + " 5d Ложная жалоба");
+        String cleanReporterName = NameUtils.cleanPlayerName(reporterName);
         
-        // Очищаем все жалобы от этого игрока
-        for (Map.Entry<String, List<ReportManager.Report>> entry : ReportManager.getReports().entrySet()) {
-            entry.getValue().removeIf(report -> report.reporter.equalsIgnoreCase(reporterName));
-        }
-        ReportManager.saveReports();
-
-        // Уведомляем всех админов
-        String message = LanguageManager.getMessage("false-report-punishment")
-                .replace("[PLAYER]", reporterName);
-        for (Player admin : Bukkit.getOnlinePlayers()) {
-            if (admin.hasPermission("sqrilizzreports.admin")) {
-                admin.sendMessage(message);
+        // Отмечаем ложную жалобу в AntiAbuseManager
+        AntiAbuseManager.markFalseReport(cleanReporterName);
+        
+        // Находим все отчеты от этого игрока
+        Map<String, List<ReportManager.Report>> allReports = ReportManager.getReports();
+        boolean found = false;
+        
+        for (Map.Entry<String, List<ReportManager.Report>> entry : allReports.entrySet()) {
+            List<ReportManager.Report> reports = entry.getValue();
+            reports.removeIf(report -> report.reporter.equals(cleanReporterName));
+            if (!reports.isEmpty()) {
+                found = true;
             }
+        }
+        
+        if (found) {
+            // Сохраняем изменения
+            ReportManager.saveReports();
+            
+            // Баним игрока за ложную жалобу
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempban " + cleanReporterName + " 5d Ложная жалоба");
+            
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("false-report-punishment")
+                .replace("[PLAYER]", cleanReporterName));
+        } else {
+            VersionUtils.sendMessage(player, "§cИгрок " + cleanReporterName + " не найден в отчетах");
         }
     }
 
     private void clearAllReports(Player player) {
         ReportManager.clearAllReports();
-        player.sendMessage(LanguageManager.getMessage("all-reports-cleared"));
-        
-        // Уведомляем всех админов
-        String message = LanguageManager.getMessage("all-reports-cleared");
-        for (Player admin : Bukkit.getOnlinePlayers()) {
-            if (admin.hasPermission("sqrilizzreports.admin")) {
-                admin.sendMessage(message);
-            }
-        }
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("all-reports-cleared"));
     }
 } 

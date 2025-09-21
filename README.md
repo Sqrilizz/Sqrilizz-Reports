@@ -1,90 +1,236 @@
-# Sqrilizz-Reports
+# 🚨 Sqrilizz-Reports
 
-Плагин для Minecraft серверов, позволяющий отправлять жалобы на игроков через Telegram и Discord.
+[![Version](https://img.shields.io/badge/version-7.2-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21+-blue.svg)](https://www.minecraft.net/)
+[![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
+[![Discord](https://img.shields.io/discord/123456789?color=7289da&logo=discord&logoColor=white)](https://discord.gg/yourdiscord)
 
-## Описание
+> **The most advanced and beautiful reports plugin for Minecraft servers**
 
-Sqrilizz-Reports - это плагин для Minecraft, который позволяет игрокам отправлять жалобы на нарушителей через Telegram и Discord. Плагин поддерживает мультиязычность (русский и английский) и предоставляет удобный интерфейс для администраторов.
+A comprehensive, feature-rich reports system with modern design, multi-platform integration, and advanced anti-abuse protection.
 
-### Основные функции
+---
 
-- Отправка жалоб через команду `/report`
-- Поддержка Telegram и Discord уведомлений
-- Мультиязычность (русский/английский)
-- Система управления вебхуками Discord
-- Подробное логирование
+## 🌍 Language Versions
 
-## Установка
+Choose your preferred language:
 
-1. Скачайте последнюю версию плагина из раздела Releases
-2. Поместите файл .jar в папку `plugins` вашего сервера
-3. Перезапустите сервер
-4. Настройте конфигурацию в файле `config.yml`
+| Language | File | Description |
+|----------|------|-------------|
+| 🇺🇸 **English** | **[README.md](#)** | **Default version** |
+| 🇷🇺 **Русский** | **[README-RU.md](README-RU.md)** | Russian version |
+| 🇸🇦 **العربية** | **[README-AR.md](README-AR.md)** | Arabic version |
 
-## Команды
+## 📚 Documentation
 
-- `/report <игрок> <причина>` - Отправить жалобу на игрока
-- `/report reload` - Перезагрузить конфигурацию
-- `/report language <ru/en>` - Изменить язык плагина
-- `/report webhook <url>` - Установить Discord вебхук
-- `/report webhook remove` - Удалить Discord вебхук
+| Component | Documentation |
+|-----------|---------------|
+| 🤖 **Discord Bot** | [Discord Bot Guide](docs/DISCORD_BOT.md) |
+| 📱 **Telegram** | [Telegram Integration](docs/TELEGRAM.md) |
+| 🛠️ **API** | [Developer API](docs/API.md) |
+| 🎨 **Design** | [Design System](docs/DESIGN.md) |
+| 🛡️ **Anti-Abuse** | [Anti-Abuse System](docs/ANTI_ABUSE.md) |
+| ⚙️ **Configuration** | [Configuration Guide](docs/CONFIGURATION.md) |
+| 🔧 **Installation** | [Installation Guide](docs/INSTALLATION.md) |
 
-## Конфигурация
+---
 
-Основные настройки находятся в файле `config.yml`:
+## ✨ Key Features
 
-```yaml
-# Настройки Telegram
-telegram:
-  enabled: true
-  bot-token: "YOUR_BOT_TOKEN"
-  chat-id: "YOUR_CHAT_ID"
+### 🎨 **Beautiful Design**
+- **Hex color support** for Minecraft 1.16+
+- **Legacy fallback** for older versions
+- **Emoji integration** for modern UX
+- **Customizable color palette**
 
-# Настройки Discord
-discord:
-  enabled: true
-  webhook-url: "YOUR_WEBHOOK_URL"
+### 🌍 **Multi-Language Support**
+- **3 Languages**: English, Russian, Arabic
+- **RTL support** for Arabic
+- **Easy language switching**
+- **Localized messages**
 
-# Настройки языка
-language: "ru" # ru или en
+### 🤖 **Advanced Integrations**
+- **Discord Bot** with slash commands
+- **Telegram notifications**
+- **Webhook support** for external systems
+- **Public API** for developers
+
+### 🛡️ **Anti-Abuse System**
+- **Rate limiting** (per-player & hourly)
+- **False report detection**
+- **Automatic punishments**
+- **Smart cooldowns**
+
+### 🙈 **Privacy Features**
+- **Anonymous reports** option
+- **Data protection**
+- **Configurable visibility**
+
+---
+
+## 🚀 Quick Start
+
+### 1️⃣ Installation
+```bash
+# Download the latest release
+wget https://github.com/Sqrilizz/Sqrilizz-Reports/releases/latest/download/Sqrilizz-Reports-7.2.jar
+
+# Place in plugins folder
+mv Sqrilizz-Reports-7.2.jar /path/to/server/plugins/
+
+# Restart server
+systemctl restart minecraft
 ```
-# Sqrilizz-Reports
 
-A Minecraft plugin that allows sending player reports through Telegram and Discord.
-
-
-### Key Features
-
-- Report submission via `/report` command
-- Telegram and Discord notifications
-- Multilingual support (Russian/English)
-- Discord webhook management system
-- Detailed logging
-
-## Commands
-
-- `/report <player> <reason>` - Submit a report against a player
-- `/report reload` - Reload configuration
-- `/report language <ru/en>` - Change plugin language
-- `/report webhook <url>` - Set Discord webhook
-- `/report webhook remove` - Remove Discord webhook
-
-## Configuration
-
-Main settings are located in `config.yml`:
-
+### 2️⃣ Basic Configuration
 ```yaml
-# Telegram settings
-telegram:
-  enabled: true
-  bot-token: "YOUR_BOT_TOKEN"
-  chat-id: "YOUR_CHAT_ID"
-
-# Discord settings
-discord:
-  enabled: true
-  webhook-url: "YOUR_WEBHOOK_URL"
-
-# Language settings
-language: "ru" # ru or en
+# config.yml - Essential settings
+language: en                    # en, ru, ar
+anonymous-reports: false        # Enable anonymous reporting
+design:
+  use-hex-colors: true         # Modern colors for 1.16+
 ```
+
+### 3️⃣ First Report
+```bash
+/report Griefer123 Destroying builds at spawn
+```
+
+---
+
+## 📋 Commands Overview
+
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/report <player> <reason>` | 📝 Report a player | `reports.report` |
+| `/reports` | 📊 View all reports | `reports.admin` |
+| `/reports check <player>` | 🔍 Check specific player | `reports.admin` |
+| `/report-language <lang>` | 🌍 Change language | `reports.language` |
+| `/report-discord <config>` | 🤖 Setup Discord bot | `reports.admin` |
+| `/report-stats` | 📈 View statistics | `reports.admin` |
+
+<details>
+<summary>📚 View all commands</summary>
+
+### Player Commands
+- `/report <player> <reason>` - Report a player for violations
+
+### Admin Commands
+- `/reports` - View all active reports
+- `/reports check <player>` - Check reports for specific player
+- `/reports clear <player>` - Clear reports for a player
+- `/reports clearall` - Clear all reports
+- `/reports false <player>` - Mark player's reports as false
+
+### Configuration Commands
+- `/report-language <en|ru|ar>` - Change server language
+- `/report-telegram <token|chat> <value>` - Configure Telegram
+- `/report-discord <token|guild|channel> <value>` - Configure Discord
+- `/report-webhook <set|remove> [url]` - Configure webhooks
+- `/report-reload` - Reload configuration
+- `/report-stats` - View plugin statistics
+
+</details>
+
+---
+
+## 🎯 Platform Support
+
+### ✅ **Minecraft Versions**
+![Minecraft 1.8](https://img.shields.io/badge/1.8-✅-green.svg)
+![Minecraft 1.12](https://img.shields.io/badge/1.12-✅-green.svg)
+![Minecraft 1.16](https://img.shields.io/badge/1.16-✅-green.svg)
+![Minecraft 1.19](https://img.shields.io/badge/1.19-✅-green.svg)
+![Minecraft 1.20](https://img.shields.io/badge/1.20-✅-green.svg)
+
+### ✅ **Server Software**
+![Paper](https://img.shields.io/badge/Paper-✅-green.svg)
+![Spigot](https://img.shields.io/badge/Spigot-✅-green.svg)
+![Folia](https://img.shields.io/badge/Folia-✅-green.svg)
+
+### ✅ **Integrations**
+![Discord](https://img.shields.io/badge/Discord_Bot-✅-7289da.svg)
+![Telegram](https://img.shields.io/badge/Telegram-✅-0088cc.svg)
+![Webhooks](https://img.shields.io/badge/Webhooks-✅-orange.svg)
+
+---
+
+## 🛠️ For Developers
+
+### 📦 **Public API**
+```java
+// Create a report programmatically
+ReportAPI.createReport(player, target, "Automated detection");
+
+// Listen for report events
+ReportAPI.onReportCreate(event -> {
+    // Handle new report
+});
+
+// Get reports for a player
+List<Report> reports = ReportAPI.getReports(player);
+```
+
+### 🔗 **Webhook Integration**
+```json
+{
+  "type": "report",
+  "reporter": "AdminUser",
+  "target": "Cheater123",
+  "reason": "Flying hacks detected",
+  "timestamp": 1695307200000,
+  "is_system_report": true
+}
+```
+
+---
+
+## 📊 Statistics
+
+![GitHub stars](https://img.shields.io/github/stars/Sqrilizz/Sqrilizz-Reports?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Sqrilizz/Sqrilizz-Reports?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Sqrilizz/Sqrilizz-Reports)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Sqrilizz/Sqrilizz-Reports)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+### 🐛 **Bug Reports**
+Found a bug? [Create an issue](https://github.com/Sqrilizz/Sqrilizz-Reports/issues/new?template=bug_report.md)
+
+### 💡 **Feature Requests**
+Have an idea? [Suggest a feature](https://github.com/Sqrilizz/Sqrilizz-Reports/issues/new?template=feature_request.md)
+
+### 🌍 **Translations**
+Help us translate! Check our [Translation Guide](TRANSLATIONS.md)
+
+---
+
+## 📞 Support
+
+[![Discord](https://img.shields.io/badge/Discord-Join_Server-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/yourdiscord)
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-black.svg?logo=github)](https://github.com/Sqrilizz/Sqrilizz-Reports/issues)
+[![Documentation](https://img.shields.io/badge/Docs-Wiki-blue.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/wiki)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**Made with ❤️ by [Sqrilizz](https://modrinth.com/user/Sqrilizz)**
+
+[![GitHub](https://img.shields.io/badge/GitHub-Sqrilizz-black.svg?logo=github)](https://github.com/Sqrilizz)
+[![Modrinth](https://img.shields.io/badge/Modrinth-Sqrilizz-00AF5C.svg?logo=modrinth)](https://modrinth.com/user/Sqrilizz)
+[![Website](https://img.shields.io/badge/Website-sqrilizz.xyz-blue.svg)](https://sqrilizz.xyz)
+
+</div>

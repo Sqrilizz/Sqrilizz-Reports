@@ -18,61 +18,71 @@ public class ReportCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            player.sendMessage(LanguageManager.getMessage("report-usage"));
-            return true;
-        }
-
-        if (CooldownManager.hasCooldown(player.getName())) {
-            player.sendMessage(LanguageManager.getMessage("cooldown-message")
-                    .replace("[COOLDOWN]", String.valueOf(CooldownManager.getRemainingTime(player.getName()))));
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("report-usage"));
             return true;
         }
 
         String targetName = args[0];
-        StringBuilder reasonBuilder = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
-            reasonBuilder.append(args[i]).append(" ");
-        }
-        String reason = reasonBuilder.toString().trim();
+        String reason = String.join(" ", args).substring(targetName.length()).trim();
 
-        // Проверяем сначала онлайн игроков
-        Player target = Bukkit.getPlayer(targetName);
-        if (target == null) {
-            // Если игрок не онлайн, проверяем оффлайн игроков
-            OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(targetName);
-            if (!offlineTarget.hasPlayedBefore()) {
-                player.sendMessage(LanguageManager.getMessage("player-not-found")
-                        .replace("[PLAYER]", targetName));
-                return true;
-            }
-            targetName = offlineTarget.getName(); // Используем правильное имя игрока
-        } else {
-            targetName = target.getName();
-        }
-
-        if (targetName.equalsIgnoreCase(player.getName())) {
-            player.sendMessage(LanguageManager.getMessage("cannot-report-self"));
+        if (reason.isEmpty()) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("report-usage"));
             return true;
         }
 
-        ReportManager.addReport(player.getName(), targetName, reason);
-        player.sendMessage(LanguageManager.getMessage("report-success")
-                .replace("[PLAYER]", targetName)
-                .replace("[REASON]", reason));
-
-        // Notify admins
-        for (Player admin : Bukkit.getOnlinePlayers()) {
-            if (admin.hasPermission("sqrilizzreports.admin")) {
-                admin.sendMessage(LanguageManager.getMessage("admin-report-notification")
-                        .replace("[REPORTER]", player.getName())
-                        .replace("[TARGET]", targetName)
-                        .replace("[REASON]", reason));
-            }
+        // Проверяем кулдаун
+        if (CooldownManager.hasCooldown(VersionUtils.getPlayerUUID(player))) {
+            long remainingTime = CooldownManager.getRemainingTime(VersionUtils.getPlayerUUID(player));
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("cooldown-message")
+                .replace("[COOLDOWN]", String.valueOf(remainingTime)));
+            return true;
         }
 
-        // Set cooldown
-        CooldownManager.setCooldown(player.getName());
+        // Проверяем систему защиты от злоупотреблений
+        if (!AntiAbuseManager.canReport(player, targetName)) {
+            return true;
+        }
 
+        // Проверяем, не пытается ли игрок пожаловаться на себя
+        if (targetName.equalsIgnoreCase(player.getName())) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("cannot-report-self"));
+            return true;
+        }
+
+        // Ищем цель
+        Player targetPlayer = Bukkit.getPlayer(targetName);
+        if (targetPlayer == null) {
+            // Проверяем оффлайн игроков
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
+            if (!offlinePlayer.hasPlayedBefore()) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("player-not-found")
+                    .replace("[PLAYER]", targetName));
+                return true;
+            }
+            // Для оффлайн игроков создаем временный Player объект или используем другой подход
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("report-offline")
+                .replace("[PLAYER]", targetName));
+            return true;
+        }
+
+        // Отправляем жалобу
+        ReportManager.addReport(player, targetPlayer, reason);
+        
+        // Регистрируем жалобу в системе защиты от злоупотреблений
+        AntiAbuseManager.recordReport(player, VersionUtils.getPlayerCleanName(targetPlayer));
+        
+        // Устанавливаем кулдаун
+        CooldownManager.setCooldown(VersionUtils.getPlayerUUID(player));
+        
+        // Уведомляем игрока об успешной отправке
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("report-success")
+            .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(targetPlayer))
+            .replace("[REASON]", reason));
+        
+        // Уведомляем цель о получении жалобы
+        VersionUtils.sendMessage(targetPlayer, LanguageManager.getMessage("report-received")
+            .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(player)));
+        
         return true;
     }
 } 

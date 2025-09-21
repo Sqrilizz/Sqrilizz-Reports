@@ -15,31 +15,39 @@ public class TelegramCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission("sqrilizzreports.telegram")) {
-            player.sendMessage(LanguageManager.getMessage("no-permission"));
+        if (!VersionUtils.hasPermission(player, "reports.telegram")) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("no-permission"));
             return true;
         }
 
         if (args.length != 2) {
-            player.sendMessage(LanguageManager.getMessage("telegram-usage"));
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("telegram-usage"));
             return true;
         }
 
         String type = args[0].toLowerCase();
         String value = args[1];
 
-        switch (type) {
-            case "token":
-                TelegramManager.setBotToken(value);
-                player.sendMessage(LanguageManager.getMessage("telegram-token-set"));
-                break;
-            case "chat":
-                TelegramManager.setChatId(value);
-                player.sendMessage(LanguageManager.getMessage("telegram-chat-set"));
-                break;
-            default:
-                player.sendMessage(LanguageManager.getMessage("telegram-usage"));
-                break;
+        if (type.equals("token")) {
+            // Сохраняем токен в конфигурацию
+            Main.getInstance().getConfig().set("telegram.token", value);
+            Main.getInstance().saveConfig();
+            
+            // Перезагружаем TelegramManager
+            TelegramManager.initialize();
+            
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("telegram-token-set"));
+        } else if (type.equals("chat")) {
+            // Сохраняем chat ID в конфигурацию
+            Main.getInstance().getConfig().set("telegram.chat_id", value);
+            Main.getInstance().saveConfig();
+            
+            // Перезагружаем TelegramManager
+            TelegramManager.initialize();
+            
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("telegram-chat-set"));
+        } else {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("telegram-usage"));
         }
 
         return true;

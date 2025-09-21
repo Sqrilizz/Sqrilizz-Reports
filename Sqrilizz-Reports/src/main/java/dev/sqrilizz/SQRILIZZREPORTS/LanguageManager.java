@@ -1,41 +1,48 @@
 package dev.sqrilizz.SQRILIZZREPORTS;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.io.File;
 
 public class LanguageManager {
-    private static FileConfiguration config;
-    private static String currentLanguage;
-
+    private static String currentLanguage = "en";
+    
     public static void initialize() {
-        File configFile = new File(Main.getInstance().getDataFolder(), "config.yml");
-        if (!configFile.exists()) {
-            Main.getInstance().saveDefaultConfig();
-        }
-        config = YamlConfiguration.loadConfiguration(configFile);
-        currentLanguage = config.getString("language", "ru");
+        FileConfiguration config = Main.getInstance().getConfig();
+        currentLanguage = config.getString("language", "en");
+        Main.getInstance().getLogger().info("Language set to: " + currentLanguage);
     }
-
+    
     public static String getMessage(String key) {
-        String path = "messages." + currentLanguage + "." + key;
-        String message = config.getString(path);
+        FileConfiguration config = Main.getInstance().getConfig();
+        String message = config.getString("messages." + currentLanguage + "." + key);
+        
         if (message == null) {
-            return "Missing message: " + key;
+            // Fallback to English if message not found
+            message = config.getString("messages.en." + key, "Message not found: " + key);
         }
+        
+        // Apply color formatting through ColorManager
+        return ColorManager.colorize(message);
+    }
+    
+    public static String getRawMessage(String key) {
+        FileConfiguration config = Main.getInstance().getConfig();
+        String message = config.getString("messages." + currentLanguage + "." + key);
+        
+        if (message == null) {
+            // Fallback to English if message not found
+            message = config.getString("messages.en." + key, "Message not found: " + key);
+        }
+        
         return message;
     }
-
+    
     public static void setLanguage(String language) {
-        if (config.contains("messages." + language)) {
-            currentLanguage = language;
-            config.set("language", language);
-            Main.getInstance().saveConfig();
-        }
+        currentLanguage = language;
+        Main.getInstance().getConfig().set("language", language);
+        Main.getInstance().saveConfig();
     }
-
+    
     public static String getCurrentLanguage() {
         return currentLanguage;
     }
-} 
+}

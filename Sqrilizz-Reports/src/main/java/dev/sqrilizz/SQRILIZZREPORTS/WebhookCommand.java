@@ -15,37 +15,32 @@ public class WebhookCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission("reports.admin")) {
-            player.sendMessage(LanguageManager.getMessage("no-permission"));
+        if (!VersionUtils.hasPermission(player, "reports.admin")) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("no-permission"));
             return true;
         }
 
-        if (args.length < 1) {
-            player.sendMessage("§cИспользование: /report-webhook <set|remove> [url]");
+        if (args.length == 0) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("webhook-usage"));
             return true;
         }
 
-        switch (args[0].toLowerCase()) {
-            case "set":
-                if (args.length < 2) {
-                    player.sendMessage("§cИспользование: /report-webhook set <url>");
-                    return true;
-                }
-                String webhookUrl = args[1];
-                if (!webhookUrl.startsWith("https://discord.com/api/webhooks/")) {
-                    player.sendMessage("§cНеверный формат вебхука! URL должен начинаться с https://discord.com/api/webhooks/");
-                    return true;
-                }
-                DiscordWebhookManager.setWebhookUrl(webhookUrl);
-                player.sendMessage("§aВебхук успешно установлен!");
-                break;
-            case "remove":
-                DiscordWebhookManager.removeWebhookUrl();
-                player.sendMessage("§aВебхук успешно удален!");
-                break;
-            default:
-                player.sendMessage("§cИспользование: /report-webhook <set|remove> [url]");
-                break;
+        String action = args[0].toLowerCase();
+
+        if (action.equals("set")) {
+            if (args.length < 2) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("webhook-usage"));
+                return true;
+            }
+
+            String url = args[1];
+            DiscordWebhookManager.setWebhookUrl(url);
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("webhook-set"));
+        } else if (action.equals("remove")) {
+            DiscordWebhookManager.setWebhookUrl("");
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("webhook-removed"));
+        } else {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("webhook-usage"));
         }
 
         return true;

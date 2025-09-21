@@ -9,88 +9,74 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 public class TelegramManager {
-    private static String botToken;
-    private static String chatId;
     private static TelegramBot bot;
-    private static boolean isEnabled = false;
+    private static boolean enabled = false;
 
     public static void initialize() {
-        botToken = Main.getInstance().getConfig().getString("telegram.bot-token", "");
-        chatId = Main.getInstance().getConfig().getString("telegram.chat-id", "");
-        
-        Main.getInstance().getLogger().info("Initializing Telegram bot...");
-        Main.getInstance().getLogger().info("Bot token: " + (botToken.isEmpty() ? "not set" : "set"));
-        Main.getInstance().getLogger().info("Chat ID: " + (chatId.isEmpty() ? "not set" : chatId));
-        
-        if (!botToken.isEmpty() && !chatId.isEmpty()) {
-            Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-                try {
+        try {
+            if (Main.getInstance().getConfig().getBoolean("telegram.enabled", false)) {
+                String token = Main.getInstance().getConfig().getString("telegram.token", "");
+                String chatId = Main.getInstance().getConfig().getString("telegram.chat_id", "");
+                
+                if (!token.isEmpty() && !chatId.isEmpty()) {
+                    bot = new TelegramBot(token);
                     TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-                    bot = new TelegramBot();
                     botsApi.registerBot(bot);
-                    isEnabled = true;
-                    Main.getInstance().getLogger().info("Telegram bot has been initialized successfully!");
-                } catch (TelegramApiException e) {
-                    Main.getInstance().getLogger().warning("Failed to initialize Telegram bot: " + e.getMessage());
-                    e.printStackTrace();
-                    isEnabled = false;
+                    enabled = true;
+                    Main.getInstance().getLogger().info("Telegram bot initialized successfully");
+                } else {
+                    Main.getInstance().getLogger().warning("Telegram bot not configured properly");
                 }
-            });
-        } else {
-            Main.getInstance().getLogger().warning("Telegram bot is not configured. Please set bot token and chat ID.");
-            isEnabled = false;
+            }
+        } catch (Exception e) {
+            Main.getInstance().getLogger().severe("Failed to initialize Telegram bot: " + e.getMessage());
         }
     }
 
-    public static void sendReport(String reporter, String target, String reason) {
-        if (!isEnabled) {
-            Main.getInstance().getLogger().warning("Cannot send report: Telegram bot is not enabled");
-            return;
-        }
+    public static boolean isEnabled() {
+        return enabled && bot != null;
+    }
 
-        String message = String.format("%s\n%s\n%s\n%s",
-            LanguageManager.getMessage("telegram-report-title"),
-            String.format(LanguageManager.getMessage("telegram-report-from"), reporter),
-            String.format(LanguageManager.getMessage("telegram-report-target"), target),
-            String.format(LanguageManager.getMessage("telegram-report-reason"), reason));
+    public static void sendReport(ReportManager.Report report) {
+        if (!isEnabled()) return;
 
-        Main.getInstance().getLogger().info("Sending Telegram message: " + message);
+        String message = String.format(
+            "🚨 *Новая жалоба*\n\n" +
+            "*От:* %s\n" +
+            "*На:* %s\n" +
+            "*Причина:* %s\n" +
+            "*Время:* %s\n" +
+            "*Координаты жалобщика:* %s\n" +
+            "*Координаты цели:* %s",
+            report.reporter,
+            report.target,
+            report.reason,
+            report.getFormattedTime(),
+            report.reporterLocation,
+            report.targetLocation
+        );
 
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+        Main.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             try {
                 SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(chatId);
+                sendMessage.setChatId(Main.getInstance().getConfig().getString("telegram.chat_id"));
                 sendMessage.setText(message);
                 sendMessage.enableMarkdown(true);
                 bot.execute(sendMessage);
-                Main.getInstance().getLogger().info("Telegram message sent successfully!");
             } catch (TelegramApiException e) {
-                Main.getInstance().getLogger().warning("Failed to send report to Telegram: " + e.getMessage());
-                e.printStackTrace();
+                Main.getInstance().getLogger().severe("Failed to send Telegram message: " + e.getMessage());
             }
         });
     }
 
-    public static void setBotToken(String token) {
-        Main.getInstance().getLogger().info("Setting new bot token...");
-        botToken = token;
-        Main.getInstance().getConfig().set("telegram.bot-token", token);
-        Main.getInstance().saveConfig();
-        initialize();
-    }
-
-    public static void setChatId(String id) {
-        Main.getInstance().getLogger().info("Setting new chat ID: " + id);
-        chatId = id;
-        Main.getInstance().getConfig().set("telegram.chat-id", id);
-        Main.getInstance().saveConfig();
-    }
-
-    public static boolean isEnabled() {
-        return isEnabled;
-    }
-
     private static class TelegramBot extends TelegramLongPollingBot {
+        private final String botToken;
+
+        public TelegramBot(String token) {
+            super(token);
+            this.botToken = token;
+        }
+
         @Override
         public String getBotUsername() {
             return "SqrilizzReportsBot";
@@ -103,7 +89,20 @@ public class TelegramManager {
 
         @Override
         public void onUpdateReceived(Update update) {
-            // We don't need to handle incoming messages for now
+            // Обработка входящих сообщений (если нужно)
+            if (update.hasMessage() && update.getMessage().hasText()) {
+                String text = update.getMessage().getText();
+                if (text.equals("/start")) {
+                    try {
+                        SendMessage response = new SendMessage();
+                        response.setChatId(update.getMessage().getChatId().toString());
+                        response.setText("Привет! Я бот для уведомлений о жалобах на сервере.");
+                        execute(response);
+                    } catch (TelegramApiException e) {
+                        Main.getInstance().getLogger().warning("Failed to send Telegram response: " + e.getMessage());
+                    }
+                }
+            }
         }
     }
 } 
