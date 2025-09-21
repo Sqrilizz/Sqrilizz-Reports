@@ -5,7 +5,6 @@
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
-[![Discord](https://img.shields.io/discord/123456789?color=7289da&logo=discord&logoColor=white)](https://discord.gg/yourdiscord)
 
 > **The most advanced and beautiful reports plugin for Minecraft servers**
 
