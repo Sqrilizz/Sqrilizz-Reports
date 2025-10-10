@@ -151,7 +151,7 @@ design:
 ![Minecraft 1.16](https://img.shields.io/badge/1.16-✅-green.svg)
 ![Minecraft 1.19](https://img.shields.io/badge/1.19-✅-green.svg)
 ![Minecraft 1.20](https://img.shields.io/badge/1.20-✅-green.svg)
-
+![Minecraft 1.21](https://img.shields.io/badge/1.21-✅-green.svg)
 ### ✅ **Server Software**
 ![Paper](https://img.shields.io/badge/Paper-✅-green.svg)
 ![Spigot](https://img.shields.io/badge/Spigot-✅-green.svg)
