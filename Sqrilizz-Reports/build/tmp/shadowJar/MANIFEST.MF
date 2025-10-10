@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Multi-Release: true
+Implementation-Title: SQRILIZZ-REPORTS
+Implementation-Version: 7.5
+
