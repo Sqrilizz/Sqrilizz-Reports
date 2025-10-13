@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'dev.sqrilizz'
+version = '1.0'
+description = 'Sqrilizz-Reports Lite - Simple and efficient report system'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    // Bukkit API for maximum compatibility (1.8.9+)
+    compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
+    
+    // SQLite driver
+    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    
+    // Only include SQLite driver
+    dependencies {
+        include(dependency('org.xerial:sqlite-jdbc'))
+    }
+    
+    // Relocate to avoid conflicts
+    relocate 'org.sqlite', 'dev.sqrilizz.reports.libs.sqlite'
+    
+    mergeServiceFiles()
+    
+    // Minimize JAR size
+    minimize()
+}
+
+build {
+    dependsOn shadowJar
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    filteringCharset = 'UTF-8'
+    
+    filesMatching('plugin.yml') {
+        expand([
+            'version': project.version,
+            'description': project.description
+        ])
+    }
+}

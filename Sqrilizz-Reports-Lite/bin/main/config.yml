@@ -1,0 +1,23 @@
+# Sqrilizz-Reports Lite v8.0 Configuration
+# Simple, fast, reliable report system
+
+# Telegram Notifications
+telegram:
+  enabled: false
+  bot-token: "YOUR_BOT_TOKEN_HERE"
+  chat-id: "YOUR_CHAT_ID_HERE"
+
+# Webhook Notifications
+webhook:
+  enabled: false
+  url: "https://your-webhook-url.com/reports"
+
+# Database Settings (SQLite only for simplicity)
+database:
+  # Database file will be created as plugins/Sqrilizz-Reports-Lite/reports.db
+  # No configuration needed - it just works!
+
+# Cache Settings
+cache:
+  # How long to keep reports in memory (minutes)
+  expire-time: 10

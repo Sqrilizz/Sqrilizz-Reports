@@ -1,0 +1,32 @@
+name: Sqrilizz-Reports-Lite
+version: 8.0
+main: dev.sqrilizz.reports.Main
+api-version: 1.13
+author: Sqrilizz
+description: Simple and efficient report system for Minecraft servers
+website: https://github.com/Sqrilizz/Sqrilizz-Reports
+
+# Folia support
+folia-supported: true
+
+commands:
+  report:
+    description: Report a player
+    usage: /report <player> <reason>
+    permission: reports.use
+    
+  reports:
+    description: Manage reports
+    usage: /reports <view|resolve|delete|reload> [args]
+    permission: reports.admin
+
+permissions:
+  reports.use:
+    description: Allows creating reports
+    default: true
+    
+  reports.admin:
+    description: Allows managing reports
+    default: op
+    children:
+      - reports.use

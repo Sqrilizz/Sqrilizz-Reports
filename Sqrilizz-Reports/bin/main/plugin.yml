@@ -1,0 +1,70 @@
+name: Sqrilizz-Reports
+version: '7.5'
+main: dev.sqrilizz.SQRILIZZREPORTS.Main
+api-version: '1.8'
+authors: [Sqrilizz]
+description: A simple reports plugin with multi-version support
+website: https://www.sqrilizz.xyz
+load: POSTWORLD
+folia-supported: true
+
+# Supported platforms
+platforms:
+  - paper
+  - spigot
+  - folia
+
+commands:
+  report:
+    description: Report a player
+    usage: /report <player> <reason>
+    permission: reports.report
+  reports:
+    description: View reports
+    usage: /reports
+    permission: reports.admin
+  report-language:
+    description: Change server language
+    usage: /report-language <en|ru|ar>
+    permission: reports.language
+  report-telegram:
+    description: Configure Telegram bot
+    usage: /report-telegram <token|chat> <value>
+    permission: reports.telegram
+  report-webhook:
+    description: Configure Discord Webhook
+    usage: /report-webhook <set|remove> <url>
+    permission: reports.admin
+  report-stats:
+    description: View plugin statistics
+    usage: /report-stats
+    permission: reports.admin
+  report-reload:
+    description: Reload plugin configuration
+    usage: /report-reload
+    permission: reports.reload
+  report-discord:
+    description: Configure Discord Bot
+    usage: /report-discord <token|guild|channel|enable|disable|moderation|status> <value>
+    permission: reports.admin
+  report-health:
+    description: Monitor system health and performance
+    usage: /report-health [detailed|cache|reset]
+    permission: reports.admin
+
+permissions:
+  reports.report:
+    description: Allows using /report command
+    default: true
+  reports.admin:
+    description: Allows viewing and managing reports
+    default: op
+  reports.language:
+    description: Allows changing server language
+    default: op
+  reports.telegram:
+    description: Allows configuring Telegram bot
+    default: op
+  reports.reload:
+    description: Allows reloading plugin configuration
+    default: op
