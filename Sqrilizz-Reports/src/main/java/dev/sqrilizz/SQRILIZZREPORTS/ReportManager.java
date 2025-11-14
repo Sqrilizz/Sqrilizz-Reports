@@ -9,7 +9,6 @@ import dev.sqrilizz.SQRILIZZREPORTS.api.ReportCreateEventBukkit;
 import dev.sqrilizz.SQRILIZZREPORTS.api.ReportReplyEvent;
 import dev.sqrilizz.SQRILIZZREPORTS.api.ReportResolveEvent;
 import dev.sqrilizz.SQRILIZZREPORTS.utils.NotificationUtils;
-import dev.sqrilizz.SQRILIZZREPORTS.monitoring.PerformanceMonitor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -107,7 +106,6 @@ public class ReportManager {
         notifyAdmins(report);
 
         // Записываем метрику создания репорта
-        PerformanceMonitor.recordReportCreated();
         
         // Асинхронная отправка уведомлений для максимальной производительности
         NotificationUtils.sendReportNotificationsAsync(report, reporter, target, reason, reporterName, targetName, isAnonymous);
@@ -277,7 +275,6 @@ public class ReportManager {
         saveReports();
         CacheManager.invalidate(r.target);
         // Записываем метрику разрешения репорта
-        PerformanceMonitor.recordReportResolved();
         
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportResolveEvent(r, resolver));
@@ -302,7 +299,6 @@ public class ReportManager {
         saveReports();
         CacheManager.invalidate(r.target);
         // Записываем метрику добавления ответа
-        PerformanceMonitor.recordReplyAdded();
         
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportReplyEvent(reply));
@@ -330,7 +326,6 @@ public class ReportManager {
         saveReports();
         CacheManager.invalidate(r.target);
         // Записываем метрику удаления репорта
-        PerformanceMonitor.recordReportDeleted();
         
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportDeleteEvent(r, deleter));

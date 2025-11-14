@@ -6,8 +6,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import dev.sqrilizz.SQRILIZZREPORTS.api.AuthManager;
 import dev.sqrilizz.SQRILIZZREPORTS.api.RESTServer;
 import dev.sqrilizz.SQRILIZZREPORTS.lifecycle.ShutdownManager;
-import dev.sqrilizz.SQRILIZZREPORTS.monitoring.PerformanceMonitor;
-import dev.sqrilizz.SQRILIZZREPORTS.commands.HealthCommand;
 
 public class Main extends JavaPlugin {
     private static Main instance;
@@ -47,33 +45,23 @@ public class Main extends JavaPlugin {
             ReportManager.initialize();
             getLogger().info("ReportManager initialized");
             
-            getLogger().info("Initializing TelegramManager...");
+            getLogger().info("Initializing optimized TelegramManager...");
             try {
                 TelegramManager.initialize();
-                getLogger().info("TelegramManager initialized");
-            } catch (NoClassDefFoundError e) {
-                getLogger().warning("TelegramManager could not be initialized - Telegram Bot dependencies not found. Telegram features will be disabled.");
-                getLogger().warning("To enable Telegram features, make sure the plugin JAR includes all dependencies.");
+                getLogger().info("Optimized TelegramManager initialized");
             } catch (Exception e) {
                 getLogger().warning("TelegramManager initialization failed: " + e.getMessage());
                 getLogger().warning("Telegram features will be disabled.");
             }
             
+            // Initialize MySQL optional support
+            getLogger().info("Setting up optional MySQL support...");
+            MySQLOptionalManager.setupMySQLInstructions();
+            getLogger().info("MySQL support status: " + MySQLOptionalManager.getMySQLDriverInfo());
+            
             getLogger().info("Initializing DiscordWebhookManager...");
             DiscordWebhookManager.initialize();
             getLogger().info("DiscordWebhookManager initialized");
-            
-            getLogger().info("Initializing DiscordBot...");
-            try {
-                DiscordBot.initialize();
-                getLogger().info("DiscordBot initialized");
-            } catch (NoClassDefFoundError e) {
-                getLogger().warning("DiscordBot could not be initialized - JDA dependencies not found. Discord Bot features will be disabled.");
-                getLogger().warning("To enable Discord Bot features, make sure the plugin JAR includes all dependencies.");
-            } catch (Exception e) {
-                getLogger().warning("DiscordBot initialization failed: " + e.getMessage());
-                getLogger().warning("Discord Bot features will be disabled.");
-            }
 
             getLogger().info("Initializing AntiAbuseManager...");
             AntiAbuseManager.initialize();
@@ -104,10 +92,7 @@ public class Main extends JavaPlugin {
             getCommand("report-telegram").setExecutor(new TelegramCommand());
             getCommand("report-language").setExecutor(new LanguageCommand());
             getCommand("report-webhook").setExecutor(new WebhookCommand());
-            getCommand("report-stats").setExecutor(new StatsCommand());
             getCommand("report-reload").setExecutor(new ReloadCommand());
-            getCommand("report-discord").setExecutor(new DiscordBotCommand());
-            getCommand("report-health").setExecutor(new HealthCommand());
             
             // Register tab completers
             getLogger().info("Registering tab completers...");
@@ -117,10 +102,7 @@ public class Main extends JavaPlugin {
             getCommand("report-language").setTabCompleter(tabCompleter);
             getCommand("report-telegram").setTabCompleter(tabCompleter);
             getCommand("report-webhook").setTabCompleter(tabCompleter);
-            getCommand("report-stats").setTabCompleter(tabCompleter);
             getCommand("report-reload").setTabCompleter(tabCompleter);
-            getCommand("report-discord").setTabCompleter(tabCompleter);
-            getCommand("report-health").setTabCompleter(tabCompleter);
             getLogger().info("Commands and tab completers registered");
             
             // Log name cleaning stats
@@ -143,8 +125,8 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         ShutdownManager.performGracefulShutdown();
-        getLogger().info("Shutting down Discord Bot...");
-        DiscordBot.shutdown();
+        getLogger().info("Shutting down optimized Telegram Manager...");
+        TelegramManager.shutdown();
         getLogger().info("Shutting down REST Server...");
         RESTServer.shutdown();
         getLogger().info("SQRILIZZREPORTS has been disabled gracefully.");
