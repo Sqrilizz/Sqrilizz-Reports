@@ -32,7 +32,6 @@ public class ReloadCommand implements CommandExecutor {
             LanguageManager.initialize();
             TelegramManager.initialize();
             DiscordWebhookManager.initialize();
-            DiscordBot.initialize();
             AntiAbuseManager.initialize();
 
             // Re-init Auth and REST

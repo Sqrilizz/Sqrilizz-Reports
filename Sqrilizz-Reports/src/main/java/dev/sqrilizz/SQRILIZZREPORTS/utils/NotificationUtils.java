@@ -27,8 +27,7 @@ public class NotificationUtils {
             try {
                 sendTelegramNotification(report);
                 sendDiscordWebhookNotification(report);
-                sendDiscordBotNotification(report, reporterName, targetName, reason, isAnonymous);
-                sendCustomWebhook(reporter, target, reason);
+                    sendCustomWebhook(reporter, target, reason);
             } catch (Exception e) {
                 ErrorManager.logError("NOTIFICATION_ASYNC", e);
             }
@@ -73,20 +72,6 @@ public class NotificationUtils {
         }
     }
     
-    private static void sendDiscordBotNotification(ReportManager.Report report, String reporterName, 
-                                                 String targetName, String reason, boolean isAnonymous) {
-        if (DiscordBot.isEnabled()) {
-            DiscordBot.sendReportNotification(
-                reporterName, 
-                targetName, 
-                reason, 
-                report.timestamp, 
-                report.reporterLocation, 
-                report.targetLocation, 
-                isAnonymous
-            );
-        }
-    }
     
     private static void sendCustomWebhook(Player reporter, Player target, String reason) {
         ReportEvent event = new ReportEvent(reporter, target, reason, System.currentTimeMillis());

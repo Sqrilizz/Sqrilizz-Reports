@@ -4,7 +4,6 @@ import dev.sqrilizz.SQRILIZZREPORTS.Main;
 import dev.sqrilizz.SQRILIZZREPORTS.api.CacheManager;
 import dev.sqrilizz.SQRILIZZREPORTS.api.RESTServer;
 import dev.sqrilizz.SQRILIZZREPORTS.db.DatabaseManager;
-import dev.sqrilizz.SQRILIZZREPORTS.monitoring.PerformanceMonitor;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -63,6 +62,7 @@ public class ShutdownManager {
                 allShutdowns.get(30, TimeUnit.SECONDS);
                 
                 long duration = System.currentTimeMillis() - startTime;
+                String report = "Performance monitoring disabled";
                 Main.getInstance().getLogger().info("✅ Graceful shutdown completed in " + duration + "ms");
                 
             } catch (Exception e) {
@@ -131,11 +131,11 @@ public class ShutdownManager {
     private static CompletableFuture<Void> shutdownTelegramBot() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("📱 Shutting down Telegram bot...");
-                // TelegramManager.shutdown(); // Если есть такой метод
-                Main.getInstance().getLogger().info("✅ Telegram bot shutdown complete");
+                Main.getInstance().getLogger().info("📱 Shutting down optimized Telegram manager...");
+                dev.sqrilizz.SQRILIZZREPORTS.TelegramManager.shutdown();
+                Main.getInstance().getLogger().info("✅ Telegram manager shutdown complete");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ Telegram bot shutdown failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("❌ Telegram manager shutdown failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -144,7 +144,7 @@ public class ShutdownManager {
         return CompletableFuture.runAsync(() -> {
             try {
                 Main.getInstance().getLogger().info("📊 Saving final performance report...");
-                String report = PerformanceMonitor.getHealthReport();
+                String report = "Performance monitoring disabled";
                 Main.getInstance().getLogger().info("Final Performance Report:\n" + report);
                 Main.getInstance().getLogger().info("✅ Performance report saved");
             } catch (Exception e) {

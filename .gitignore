@@ -1,38 +1,34 @@
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+# Gradle
+.gradle/
+build/
 
-# IntelliJ IDEA
+# IDEs
 .idea/
-*.iws
 *.iml
 *.ipr
-
-# Eclipse
+*.iws
 .classpath
 .project
 .settings/
+vscode/
 
-# VS Code
-.vscode/
+# Build output
+bin/
+out/
 
-# Compiled files
-*.class
-*.jar
-*.war
-*.ear
+# Dependency cache
+/libs/
 
-# Logs
+# Log files
+logs/
 *.log
 
-# OS specific
+# OS generated files
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Other
+*.jar
+*.zip
+*.bak
+build.gradle.backup

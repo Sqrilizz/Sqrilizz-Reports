@@ -1,15 +1,15 @@
 # 🚨 Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-7.5-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Version](https://img.shields.io/badge/version-7.6-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21+-blue.svg)](https://www.minecraft.net/)
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 [![Discord](https://img.shields.io/discord/123456789?color=7289da&logo=discord&logoColor=white)](https://discord.gg/yourdiscord)
 
-> **A reliable and feature-rich reports plugin for Minecraft servers**
+> **A lightweight, high-performance reports plugin for Minecraft servers**
 
-A well-designed reports system with modern features, multi-platform integration, and effective anti-abuse protection for server administrators.
+An optimized and well-designed reports system with modern features, multi-platform integration, and effective anti-abuse protection for server administrators.
 
 ---
 
@@ -54,9 +54,8 @@ Choose your preferred language:
 - **Localized messages**
 
 ### 🤖 **Advanced Integrations**
-- **Discord Bot** with slash commands
 - **Telegram notifications**
-- **Webhook support** for external systems
+- **Discord Webhook support** for external systems
 - **Public API** for developers
 - **Built-in REST API** (token, IP whitelist, HMAC)
 
@@ -71,21 +70,21 @@ Choose your preferred language:
 - **Data protection**
 
 ### 💾 **Database & Performance**
-- **SQLite / MySQL** with HikariCP pool
+- **SQLite by default**, with optional MySQL support.
+- **Optimized for low overhead** and minimal server impact.
 - **Hot DB swapping** via `/report-reload` (migrates in-memory data)
 - **Caffeine cache** (30s) for fast reads
 - **Rate limiting** on REST endpoints
-- **Configurable visibility**
 
 
 ## 🚀 Quick Start
 
 ### 1️⃣ Installation
 ```bash
-# Download the latest JAR from [Releases](https://github.com/sqrilizz/Sqrilizz-Reports/releases) (Sqrilizz-Reports-7.5.jar)
+# Download the latest JAR from [Releases](https://github.com/sqrilizz/Sqrilizz-Reports/releases) (Sqrilizz-Reports-7.6.jar)
 
 # Place in plugins folder
-mv Sqrilizz-Reports-7.5.jar /path/to/server/plugins/
+mv Sqrilizz-Reports-7.6.jar /path/to/server/plugins/
 
 # Restart server
 systemctl restart minecraft
@@ -109,20 +108,17 @@ design:
 
 ## 📋 Commands Overview
 
-| Command | Description | Permission |
 |---------|-------------|------------|
 | `/report <player> <reason>` | 📝 Report a player | `reports.report` |
 | `/reports` | 📊 View all reports | `reports.admin` |
 | `/reports check <player>` | 🔍 Check specific player | `reports.admin` |
 | `/report-language <lang>` | 🌍 Change language | `reports.language` |
-| `/report-discord <config>` | 🤖 Setup Discord bot | `reports.admin` |
-| `/report-stats` | 📈 View statistics | `reports.admin` |
 
 <details>
 <summary>📚 View all commands</summary>
 
 ### Player Commands
-- `/report <player> <reason>` - Report a player for violations
+{{ ... }}
 
 ### Admin Commands
 - `/reports` - View all active reports
@@ -134,10 +130,8 @@ design:
 ### Configuration Commands
 - `/report-language <en|ru|ar>` - Change server language
 - `/report-telegram <token|chat> <value>` - Configure Telegram
-- `/report-discord <token|guild|channel> <value>` - Configure Discord
 - `/report-webhook <set|remove> [url]` - Configure webhooks
 - `/report-reload` - Reload configuration
-- `/report-stats` - View plugin statistics
 
 </details>
 
@@ -158,7 +152,6 @@ design:
 ![Folia](https://img.shields.io/badge/Folia-✅-green.svg)
 
 ### ✅ **Integrations**
-![Discord](https://img.shields.io/badge/Discord_Bot-✅-7289da.svg)
 ![Telegram](https://img.shields.io/badge/Telegram-✅-0088cc.svg)
 ![Webhooks](https://img.shields.io/badge/Webhooks-✅-orange.svg)
 

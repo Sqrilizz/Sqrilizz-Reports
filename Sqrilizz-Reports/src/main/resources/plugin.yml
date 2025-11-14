@@ -1,5 +1,5 @@
 name: Sqrilizz-Reports
-version: '7.5'
+version: '7.6'
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
 api-version: '1.8'
 authors: [Sqrilizz]
@@ -35,22 +35,10 @@ commands:
     description: Configure Discord Webhook
     usage: /report-webhook <set|remove> <url>
     permission: reports.admin
-  report-stats:
-    description: View plugin statistics
-    usage: /report-stats
-    permission: reports.admin
   report-reload:
     description: Reload plugin configuration
     usage: /report-reload
     permission: reports.reload
-  report-discord:
-    description: Configure Discord Bot
-    usage: /report-discord <token|guild|channel|enable|disable|moderation|status> <value>
-    permission: reports.admin
-  report-health:
-    description: Monitor system health and performance
-    usage: /report-health [detailed|cache|reset]
-    permission: reports.admin
 
 permissions:
   reports.report:

@@ -1,5 +1,5 @@
-# **🚨 Sqrilizz-Reports**
-A professional reports management system for Minecraft servers with advanced features, multi-platform integration, and comprehensive anti-abuse protection.
+# **🚀 Sqrilizz-Reports (Optimized & Lightweight)**
+A professional, high-performance reports management system for Minecraft servers, now optimized for a smaller footprint and faster operation.
 
 [![Follow on Telegram](https://img.shields.io/badge/Telegram-Follow_for_Updates-0088cc.svg?logo=telegram)](https://t.me/Matve1mok1)
 [![Documentation](https://img.shields.io/badge/Docs-GitHub-black.svg?logo=github)](https://github.com/Sqrilizz/Sqrilizz-Reports)
@@ -15,10 +15,10 @@ Sqrilizz-Reports provides server administrators with a complete player reporting
 
 - **Player Reporting System** - Players can report rule violations with `/report <player> <reason>`
 - **Admin Management Tools** - Review, resolve, and manage reports through intuitive commands
-- **Multi-Platform Notifications** - Discord bot, Telegram integration, and webhook support
+- **Multi-Platform Notifications** - Discord webhooks, Telegram integration, and generic webhook support
 - **Anti-Abuse Protection** - Rate limiting and false report detection to prevent system abuse
 - **REST API** - External integration capabilities for web panels and other tools
-- **Performance Monitoring** - Built-in health checks and system diagnostics
+- **Lightweight & Optimized** - Significantly reduced file size for better server performance.
 - **Multi-Language Support** - English, Russian, and Arabic translations
 
 ---
@@ -66,19 +66,7 @@ Sqrilizz-Reports provides server administrators with a complete player reporting
 /reports clear <player>         — Clear reports for a player
 /reports clearall               — Clear all reports
 /reports false <player>         — Mark player's reports as false
-/report-stats                   — View detailed plugin statistics
 /report-reload                  — Reload plugin configuration
-```
-
-### 🤖 **Discord Bot Commands**
-```
-/report-discord token <token>   — Set Discord bot token
-/report-discord guild <id>      — Set Discord server ID
-/report-discord channel <id>    — Set notification channel
-/report-discord enable          — Enable Discord bot
-/report-discord moderation true — Enable moderation commands
-/report-resolve <id>            — Resolve a report by ID
-/report-reply <id> <message>    — Add a moderator reply
 ```
 
 ### 📱 **Telegram Integration**
@@ -153,7 +141,9 @@ rest-api:
 ### 💾 **Database (config excerpt)**
 ```yaml
 database:
-  type: sqlite   # or mysql
+  type: sqlite   # Default, works out-of-the-box
+  # To use MySQL, set type to 'mysql' and provide connection details.
+  # MySQL is now optional. To enable it, download the MySQL JDBC driver and place it in the /plugins/Sqrilizz-Reports/lib/ folder.
   mysql:
     host: "localhost"
     port: 3306
@@ -164,16 +154,6 @@ database:
     params: "useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=UTC"
 ```
 
-### 🤖 **Discord Bot Setup**
-```yaml
-discord-bot:
-  enabled: true
-  token: "YOUR_BOT_TOKEN"
-  guild-id: "YOUR_GUILD_ID"
-  channel-id: "YOUR_CHANNEL_ID"
-  moderation:
-    enabled: true
-```
 
 ---
 
@@ -197,7 +177,7 @@ discord-bot:
 <dependency>
     <groupId>dev.sqrilizz</groupId>
     <artifactId>sqrilizz-reports</artifactId>
-    <version>7.5</version>
+    <version>7.6</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -226,11 +206,6 @@ List<Report> reports = ReportAPI.getReports(player);
 - Admin-only access control
 - Rich message formatting
 
-### 🤖 **Discord Bot** *(NEW!)*
-- Full Discord bot with slash commands
-- Beautiful embed notifications
-- Role-based moderation system
-- Real-time report alerts
 
 ### 🔗 **Webhooks**
 - JSON webhook support for external systems
@@ -282,7 +257,9 @@ List<Report> reports = ReportAPI.getReports(player);
 ✅ **Easy Setup**: Works out of the box with sensible defaults  
 ✅ **Scalable**: Handles small servers to large networks efficiently  
 ✅ **Reliable**: Tested across multiple Minecraft versions and server types  
+✅ **High Performance**: Optimized for minimal server impact.
 ✅ **Extensible**: REST API and webhook support for custom integrations  
 ✅ **Well Maintained**: Regular updates and active community support  
 
 **A professional reporting system that grows with your server.**
+
