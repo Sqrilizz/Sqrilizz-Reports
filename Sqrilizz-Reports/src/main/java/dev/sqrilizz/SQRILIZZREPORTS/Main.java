@@ -105,6 +105,11 @@ public class Main extends JavaPlugin {
             getCommand("report-reload").setTabCompleter(tabCompleter);
             getLogger().info("Commands and tab completers registered");
             
+            // Register event listeners
+            getLogger().info("Registering event listeners...");
+            getServer().getPluginManager().registerEvents(new ReportsGUIListener(), this);
+            getLogger().info("Event listeners registered");
+            
             // Log name cleaning stats
             getLogger().info("Name cleaning configuration: " + NameUtils.getCleaningStats());
             

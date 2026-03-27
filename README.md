@@ -1,21 +1,18 @@
 # 🚨 Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-7.6-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21+-blue.svg)](https://www.minecraft.net/)
+[![Version](https://img.shields.io/badge/version-7.8-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21.11-blue.svg)](https://www.minecraft.net/)
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
-[![Discord](https://img.shields.io/discord/123456789?color=7289da&logo=discord&logoColor=white)](https://discord.gg/yourdiscord)
 
-> **A lightweight, high-performance reports plugin for Minecraft servers**
+> **A lightweight, high-performance reports plugin for Minecraft servers with interactive GUI**
 
-An optimized and well-designed reports system with modern features, multi-platform integration, and effective anti-abuse protection for server administrators.
+Modern report management system with intuitive GUI interface, multi-language support, and powerful admin tools for efficient server moderation.
 
 ---
 
 ## 🌍 Language Versions
-
-Choose your preferred language:
 
 | Language | File | Description |
 |----------|------|-------------|
@@ -23,205 +20,191 @@ Choose your preferred language:
 | 🇷🇺 **Русский** | **[README-RU.md](README-RU.md)** | Russian version |
 | 🇸🇦 **العربية** | **[README-AR.md](README-AR.md)** | Arabic version |
 
-## 📚 Documentation
-
-| Component | Documentation |
-|-----------|---------------|
-| 🤖 **Discord Bot** | [Discord Bot Guide](docs/DISCORD_BOT.md) |
-| 📱 **Telegram** | [Telegram Integration](docs/TELEGRAM.md) |
-| 🛠️ **API** | [Developer API](docs/API.md) |
-| 🌐 **REST API** | [REST API Reference](docs/REST_API.md) |
-| 🎨 **Design** | [Design System](docs/DESIGN.md) |
-| 🛡️ **Anti-Abuse** | [Anti-Abuse System](docs/ANTI_ABUSE.md) |
-| ⚙️ **Configuration** | [Configuration Guide](docs/CONFIGURATION.md) |
-| 💾 **Database** | [Database & Swapping](docs/DATABASE.md) |
-| 🔧 **Installation** | [Installation Guide](docs/INSTALLATION.md) |
-
 ---
 
 ## ✨ Key Features
 
-### 🎨 **Beautiful Design**
-- **Hex color support** for Minecraft 1.16+
-- **Legacy fallback** for older versions
-- **Emoji integration** for modern UX
-- **Customizable color palette**
+### 🎮 **Interactive GUI Menu** (v7.6+)
+- **Visual report management** - Browse reports with player heads
+- **One-click actions** - Teleport, punish, resolve instantly
+- **Punishment presets** - Warn, kick, mute (1h/1d), ban (1d/7d/perm)
+- **Smart navigation** - Pagination, back buttons, smooth transitions
+- **Multi-language** - All menus support EN/RU/AR
 
-### 🌍 **Multi-Language Support**
+### 🎨 **Modern Design**
+- **Hex colors** for Minecraft 1.16+ with legacy fallback
+- **Emoji integration** for better UX
+- **Customizable themes** with 7 color palettes
+- **Clean interface** with intuitive controls
+
+### 🌍 **Multi-Language**
 - **3 Languages**: English, Russian, Arabic
 - **RTL support** for Arabic
-- **Easy language switching**
-- **Localized messages**
-
-### 🤖 **Advanced Integrations**
-- **Telegram notifications**
-- **Discord Webhook support** for external systems
-- **Public API** for developers
-- **Built-in REST API** (token, IP whitelist, HMAC)
+- **Separate language files** for easy customization
+- **Hot reload** with `/report-reload`
 
 ### 🛡️ **Anti-Abuse System**
 - **Rate limiting** (per-player & hourly)
 - **False report detection**
-- **Automatic punishments**
+- **Auto-punishment** for abuse
 - **Smart cooldowns**
 
-### 🙈 **Privacy Features**
-- **Anonymous reports** option
-- **Data protection**
+### 🔗 **Integrations**
+- **Telegram** notifications
+- **Discord** webhooks
+- **REST API** for external tools
+- **Developer API** for plugins
 
-### 💾 **Database & Performance**
-- **SQLite by default**, with optional MySQL support.
-- **Optimized for low overhead** and minimal server impact.
-- **Hot DB swapping** via `/report-reload` (migrates in-memory data)
-- **Caffeine cache** (30s) for fast reads
-- **Rate limiting** on REST endpoints
-
+---
 
 ## 🚀 Quick Start
 
-### 1️⃣ Installation
+### Installation
+1. Download latest version from [Modrinth](https://modrinth.com/plugin/sqrilizz-report)
+2. Place JAR in `plugins/` folder
+3. Restart server
+4. Configure `config.yml` (optional)
+5. Done! Use `/reports` to open GUI
+
+### First Steps
 ```bash
-# Download the latest JAR from [Releases](https://github.com/sqrilizz/Sqrilizz-Reports/releases) (Sqrilizz-Reports-7.6.jar)
+# Report a player
+/report PlayerName Reason for report
 
-# Place in plugins folder
-mv Sqrilizz-Reports-7.6.jar /path/to/server/plugins/
+# Open reports GUI (admin)
+/reports
 
-# Restart server
-systemctl restart minecraft
-```
-
-{{ ... }}
-```yaml
-# config.yml - Essential settings
-language: en                    # en, ru, ar
-anonymous-reports: false        # Enable anonymous reporting
-design:
-  use-hex-colors: true         # Modern colors for 1.16+
-```
-
-### 3️⃣ First Report
-```bash
-/report Griefer123 Destroying builds at spawn
+# Check specific player
+/reports check PlayerName
 ```
 
 ---
 
-## 📋 Commands Overview
+## 📋 Commands
 
-|---------|-------------|------------|
-| `/report <player> <reason>` | 📝 Report a player | `reports.report` |
-| `/reports` | 📊 View all reports | `reports.admin` |
-| `/reports check <player>` | 🔍 Check specific player | `reports.admin` |
-| `/report-language <lang>` | 🌍 Change language | `reports.language` |
+### For Players
+- `/report <player> <reason>` - Report a player
 
-<details>
-<summary>📚 View all commands</summary>
-
-### Player Commands
-{{ ... }}
-
-### Admin Commands
-- `/reports` - View all active reports
-- `/reports check <player>` - Check reports for specific player
-- `/reports clear <player>` - Clear reports for a player
+### For Admins
+- `/reports` - Open interactive GUI menu
+- `/reports list` - View reports in chat
+- `/reports check <player>` - Check player's reports
+- `/reports clear <player>` - Clear player's reports
 - `/reports clearall` - Clear all reports
-- `/reports false <player>` - Mark player's reports as false
-
-### Configuration Commands
-- `/report-language <en|ru|ar>` - Change server language
-- `/report-telegram <token|chat> <value>` - Configure Telegram
-- `/report-webhook <set|remove> [url]` - Configure webhooks
 - `/report-reload` - Reload configuration
 
-</details>
+### Configuration
+- `/report-language <en|ru|ar>` - Change language
+- `/report-telegram <token|chat> <value>` - Setup Telegram
+- `/report-webhook <set|remove> [url]` - Setup webhooks
 
 ---
 
-## 🎯 Platform Support
+## 🎮 GUI Features
 
-### ✅ **Minecraft Versions**
-![Minecraft 1.8](https://img.shields.io/badge/1.8-✅-green.svg)
-![Minecraft 1.12](https://img.shields.io/badge/1.12-✅-green.svg)
-![Minecraft 1.16](https://img.shields.io/badge/1.16-✅-green.svg)
-![Minecraft 1.19](https://img.shields.io/badge/1.19-✅-green.svg)
-![Minecraft 1.20](https://img.shields.io/badge/1.20-✅-green.svg)
+### Main Menu (`/reports`)
+- View all reported players with heads
+- See report count for each player
+- Left-click to view player's reports
+- Right-click to clear all reports
 
-### ✅ **Server Software**
-![Paper](https://img.shields.io/badge/Paper-✅-green.svg)
-![Spigot](https://img.shields.io/badge/Spigot-✅-green.svg)
-![Folia](https://img.shields.io/badge/Folia-✅-green.svg)
+### Player Reports Menu
+- List all reports for specific player
+- Teleport to reported player
+- Open actions for each report
+- Clear all reports button
 
-### ✅ **Integrations**
-![Telegram](https://img.shields.io/badge/Telegram-✅-0088cc.svg)
-![Webhooks](https://img.shields.io/badge/Webhooks-✅-orange.svg)
+### Report Actions Menu
+- Teleport to reporter location
+- Teleport to target location
+- Open punishment menu
+- Resolve report (deletes it)
+- Delete report without action
+
+### Punishment Menu
+- **Warning** - Give warning
+- **Kick** - Kick from server
+- **Mute 1h/1d** - Temporary mute
+- **Ban 1d/7d** - Temporary ban
+- **Permanent ban** - Permanent ban
+- After punishment: choose to close report or keep it
 
 ---
 
-## 🛠️ For Developers
+## ⚙️ Configuration
 
-### 📦 **Public API**
-```java
-// Create a report programmatically
-ReportAPI.createReport(player, target, "Automated detection");
+### Basic Settings
+```yaml
+language: en                    # en, ru, ar
+anonymous-reports: false        # Hide reporter name
+cooldown: 60                    # Seconds between reports
 
-// Listen for report events
-ReportAPI.onReportCreate(event -> {
-    // Handle new report
-});
-
-// Get reports for a player
-List<Report> reports = ReportAPI.getReports(player);
+report-limits:
+  per-player: 3                 # Max reports per player
+  per-hour: 10                  # Max reports per hour
 ```
 
-### 🔗 **Webhook Integration**
-```json
-{
-  "type": "report",
-  "reporter": "AdminUser",
-  "target": "Cheater123",
-  "reason": "Flying hacks detected",
-  "timestamp": 1695307200000,
-  "is_system_report": true
-}
+### Design
+```yaml
+design:
+  use-hex-colors: true          # Modern colors (1.16+)
+  colors:
+    primary: "#FF6B6B"
+    secondary: "#4ECDC4"
+    success: "#45B7D1"
+```
+
+### Database
+```yaml
+database:
+  type: sqlite                  # sqlite or mysql
+  # MySQL optional - requires driver in lib/ folder
 ```
 
 ---
 
-## 📊 Statistics
+## 🔑 Permissions
 
-![GitHub stars](https://img.shields.io/github/stars/Sqrilizz/Sqrilizz-Reports?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Sqrilizz/Sqrilizz-Reports?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Sqrilizz/Sqrilizz-Reports)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Sqrilizz/Sqrilizz-Reports)
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-### 🐛 **Bug Reports**
-Found a bug? [Create an issue](https://github.com/Sqrilizz/Sqrilizz-Reports/issues/new?template=bug_report.md)
-
-### 💡 **Feature Requests**
-Have an idea? [Suggest a feature](https://github.com/Sqrilizz/Sqrilizz-Reports/issues/new?template=feature_request.md)
-
-### 🌍 **Translations**
-Help us translate! Check our [Translation Guide](TRANSLATIONS.md)
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `reports.report` | Use `/report` | Everyone |
+| `reports.admin` | Admin commands & GUI | OP |
+| `reports.language` | Change language | OP |
+| `reports.telegram` | Configure Telegram | OP |
+| `reports.reload` | Reload config | OP |
 
 ---
 
-## 📞 Support
+## 🌐 Platform Support
 
-[![Discord](https://img.shields.io/badge/Discord-Join_Server-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/yourdiscord)
-[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-black.svg?logo=github)](https://github.com/Sqrilizz/Sqrilizz-Reports/issues)
-[![Documentation](https://img.shields.io/badge/Docs-Wiki-blue.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/wiki)
+**Minecraft**: 1.8.9 - 1.21.11 (all versions)  
+**Server**: Paper (recommended), Spigot, Folia  
+**Java**: 21+ required
+
+---
+
+## 📚 Documentation
+
+- 🎮 [GUI Guide](GUI_GUIDE.md) - Complete GUI usage guide
+- 📱 [Telegram Setup](docs/TELEGRAM.md) - Bot integration
+- 🔗 [REST API](docs/REST_API.md) - API reference
+- 🛡️ [Anti-Abuse](docs/ANTI_ABUSE.md) - Protection system
+- ⚙️ [Configuration](docs/CONFIGURATION.md) - Full config guide
+- 💾 [Database](docs/DATABASE.md) - Database setup
+
+---
+
+## 🆘 Support
+
+**Found a bug?** [Report it](https://github.com/Sqrilizz/Sqrilizz-Reports/issues)  
+**Need help?** Check [documentation](https://github.com/Sqrilizz/Sqrilizz-Reports/wiki)  
+**Have an idea?** [Suggest a feature](https://github.com/Sqrilizz/Sqrilizz-Reports/issues/new)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file
 
 ---
 

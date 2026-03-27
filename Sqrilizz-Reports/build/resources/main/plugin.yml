@@ -1,7 +1,7 @@
 name: Sqrilizz-Reports
-version: '7.6'
+version: '7.8'
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
-api-version: '1.8'
+api-version: '1.13'
 authors: [Sqrilizz]
 description: A simple reports plugin with multi-version support
 website: https://www.sqrilizz.xyz

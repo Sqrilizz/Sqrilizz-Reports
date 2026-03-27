@@ -265,24 +265,17 @@ public class ReportManager {
     public static boolean resolveReport(long id, String resolver) {
         Report r = findById(id);
         if (r == null) return false;
-        r.status = "resolved";
-        boolean ok = false;
-        try {
-            ok = DatabaseManager.resolveReport(id, resolver);
-        } catch (Exception e) {
-            ErrorManager.logError("DB_RESOLVE", e);
-        }
-        saveReports();
-        CacheManager.invalidate(r.target);
-        // Записываем метрику разрешения репорта
         
-        // Fire events
+        // Fire events before deletion
         Bukkit.getPluginManager().callEvent(new ReportResolveEvent(r, resolver));
         ReportAPI.notifyResolved(r);
+        
         // Оптимизированный webhook
         NotificationUtils.sendEventWebhook("report_resolved", 
             NotificationUtils.createEventPayload("report_resolved", id, resolver));
-        return ok;
+        
+        // Delete the report instead of marking as resolved
+        return deleteReport(id, resolver);
     }
 
     public static boolean addReply(long id, String author, String message) {

@@ -1,59 +1,51 @@
-# SqrilizzReports Configuration
-# Multi-version support: 1.8.9 - 1.21.8
+# ═══════════════════════════════════════════════════════════════
+#  Sqrilizz-Reports Configuration
+#  Version: 7.6.1
+#  Multi-version support: 1.8.9 - 1.21.11
+# ═══════════════════════════════════════════════════════════════
 
-# Language settings
-# Available languages: en (English), ru (Russian), ar (Arabic)
+# ═══════════════════════════════════════════════════════════════
+# LANGUAGE SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Available: en (English), ru (Russian), ar (Arabic)
 language: en
 
-# Cooldown between reports (in seconds)
+# ═══════════════════════════════════════════════════════════════
+# REPORT SETTINGS
+# ═══════════════════════════════════════════════════════════════
 cooldown: 230
-
-# Auto-ban threshold (number of reports before auto-ban)
 auto-ban-threshold: 8
-
-# Anonymous reports settings
 anonymous-reports: false
 
-# Anti-abuse system settings
+# ═══════════════════════════════════════════════════════════════
+# ANTI-ABUSE SYSTEM
+# ═══════════════════════════════════════════════════════════════
 report-limits:
-  per-player: 3  # How many times one player can be reported
-  per-hour: 10   # How many reports can be sent in total per hour
-  false-report-threshold: 3  # How many false reports before priority reduction
-  
-# Anti-abuse actions
+  per-player: 3
+  per-hour: 10
+  false-report-threshold: 3
+
 anti-abuse:
   enabled: true
-  warning-threshold: 5  # Reports per hour before warning
-  temp-mute-threshold: 8  # Reports per hour before temporary mute
-  temp-mute-duration: 300  # Temporary mute duration in seconds (5 minutes)
+  warning-threshold: 5
+  temp-mute-threshold: 8
+  temp-mute-duration: 300
 
-# Name cleaning settings
+# ═══════════════════════════════════════════════════════════════
+# NAME CLEANING
+# ═══════════════════════════════════════════════════════════════
 name-cleaning:
-  # Enable automatic cleaning of player names from color codes and prefixes
   enabled: true
-  # Remove Minecraft color codes (§a, §b, §c, etc.)
   remove-color-codes: true
-  # Remove hex colors (§x§f§f§2§5§7§5§2§5§7)
   remove-hex-colors: true
-  # Remove formatting codes (§l, §m, §n, §o, §k)
   remove-formatting: true
-  # Remove reset codes (§r)
   remove-reset-codes: true
-  # Maximum name length after cleaning
   max-name-length: 16
-  # Log when names are cleaned (for debugging)
   log-cleaning: false
 
-# Version compatibility settings
-version-compatibility:
-  # Enable UUID support (recommended for 1.7+)
-  use-uuids: true
-  # Enable display name support (recommended for 1.13+)
-  use-display-names: true
-  # Enable modern scheduler (recommended for 1.16+)
-  use-modern-scheduler: true
-
-# Permission settings
+# ═══════════════════════════════════════════════════════════════
+# PERMISSIONS
+# ═══════════════════════════════════════════════════════════════
 permissions:
   admin: "reports.admin"
   bypass: "reports.bypass"
@@ -61,264 +53,85 @@ permissions:
   language: "reports.language"
   telegram: "reports.telegram"
 
-# Telegram settings
+# ═══════════════════════════════════════════════════════════════
+# TELEGRAM INTEGRATION
+# ═══════════════════════════════════════════════════════════════
 telegram:
   enabled: false
-  token: "" # Your Telegram bot token
-  chat_id: "" # Chat ID for notifications
+  token: ""
+  chat_id: ""
   moderation:
-    enabled: false # Enable moderation commands through Telegram
-    admin_ids: # List of Telegram user IDs who can moderate
-      - ""
+    enabled: false
+    admin_ids: []
     commands:
-      ban: true # Allow /ban command
-      kick: true # Allow /kick command
-      mute: true # Allow /mute command
-      warn: true # Allow /warn command
+      ban: true
+      kick: true
+      mute: true
+      warn: true
 
-# Discord Webhook settings
+# ═══════════════════════════════════════════════════════════════
+# DISCORD INTEGRATION
+# ═══════════════════════════════════════════════════════════════
 discord:
   enabled: false
-  webhook_url: "" # Discord webhook URL for notifications
+  webhook_url: ""
 
-# Discord Bot settings (built-in bot)
 discord-bot:
   enabled: false
-  token: "" # Discord bot token
-  guild-id: "" # Discord server ID
-  channel-id: "" # Channel ID for reports
-  mod-roles: # List of moderator role IDs
-    - ""
-  status: "Watching reports 👀" # Bot status message
+  token: ""
+  guild-id: ""
+  channel-id: ""
+  mod-roles: []
+  status: "Watching reports 👀"
   moderation:
-    enabled: false # Enable moderation commands through Discord
+    enabled: false
     commands:
-      ban: true # Allow /ban command
-      kick: true # Allow /kick command
-      mute: true # Allow /mute command
-      warn: true # Allow /warn command
+      ban: true
+      kick: true
+      mute: true
+      warn: true
 
-# Design settings (Hex colors for modern Minecraft versions)
+# ═══════════════════════════════════════════════════════════════
+# DESIGN & COLORS
+# ═══════════════════════════════════════════════════════════════
 design:
-  use-hex-colors: true # Use hex colors for 1.16+ (falls back to legacy for older versions)
+  use-hex-colors: true
   colors:
-    primary: "#FF6B6B" # Main accent color (red)
-    secondary: "#4ECDC4" # Secondary color (teal)
-    success: "#45B7D1" # Success messages (blue)
-    warning: "#FFA726" # Warning messages (orange)
-    error: "#EF5350" # Error messages (red)
-    info: "#66BB6A" # Info messages (green)
-    accent: "#AB47BC" # Accent color (purple)
+    primary: "#FF6B6B"
+    secondary: "#4ECDC4"
+    success: "#45B7D1"
+    warning: "#FFA726"
+    error: "#EF5350"
+    info: "#66BB6A"
+    accent: "#AB47BC"
 
-# Messages (with beautiful hex design)
-messages:
-  ru:
-    prefix: "&8[{primary}&lSqrilizz{accent}Reports&8] {reset}"
-    player-only: "{error}✖ Эта команда может быть использована только игроком"
-    no-permission: "{error}⚠ У вас нет прав для использования этой команды"
-    report-usage: "{warning}📋 {bold}Использование:{reset} {secondary}/report <игрок> <причина>\n{info}💡 {bold}Пример:{reset} {accent}/report MomentoMoriify Взрывает Магазины в Энде -69 110 11"
-    player-not-found: "{error}❌ Игрок {accent}[PLAYER]{error} не найден"
-    cannot-report-self: "{error}🚫 Вы не можете пожаловаться на себя!"
-    report-success: "{success}✅ Вы пожаловались на {accent}[PLAYER]{success} по причине: {secondary}[REASON]"
-    admin-report-notification: "{primary}🚨 {bold}НОВАЯ ЖАЛОБА{reset}\n{accent}👤 Жалобщик: {secondary}[REPORTER]\n{accent}🎯 Цель: {warning}[TARGET]\n{accent}📝 Причина: {info}[REASON]\n{accent}⏰ Время: {secondary}[TIME]\n{accent}📍 Координаты жалобщика: {info}[REPORTER_LOC]\n{accent}📍 Координаты цели: {info}[TARGET_LOC]"
-    no-reports: "{info}📋 Нет активных жалоб"
-    reports-list-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 СПИСОК ЖАЛОБ{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    reports-list-entry: "{secondary}• {accent}[PLAYER]{secondary}: {warning}[COUNT] {secondary}жалоб"
-    no-reports-for-player: "{info}📋 Нет жалоб на игрока {accent}[PLAYER]"
-    reports-cleared: "{success}✅ Жалобы на игрока {accent}[PLAYER]{success} были очищены"
-    all-reports-cleared: "{success}🗑️ Все жалобы были очищены"
-    player-reports-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📋 ЖАЛОБЫ НА [PLAYER]{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    report-details: "{secondary}📝 От: {accent}[REPORTER]\n{secondary}💬 Причина: {info}[REASON]\n{secondary}⏰ Время: {warning}[TIME]"
-    clear-usage: "{error}❌ Использование: {secondary}/reports clear <игрок>"
-    check-usage: "{error}❌ Использование: {secondary}/reports check <игрок>"
-    admin-usage: "{error}❌ Использование: {secondary}/reports [clear|check|false|clearall] <игрок>"
-    time-days: "{info}дней назад"
-    time-hours: "{info}часов назад"
-    time-minutes: "{info}минут назад"
-    time-seconds: "{info}секунд назад"
-    auto-ban-message: "{error}🔨 Вы были автоматически забанены из-за большого количества жалоб."
-    cooldown-message: "{warning}⏱️ У вас кулдаун! Попробуйте снова через {accent}[COOLDOWN]{warning} секунд"
-    false-report-punishment: "{success}⚖️ Игрок {accent}[PLAYER]{success} был забанен на 5 дней за ложную жалобу"
-    report-sent: "{success}📤 Жалоба на игрока {accent}[PLAYER]{success} успешно отправлена"
-    report-received: "{warning}📥 На вас поступила жалоба от {accent}[PLAYER]"
-    report-cooldown: "{warning}⏱️ Вы можете отправить жалобу только раз в {accent}[TIME]{warning} секунд"
-    report-self: "{error}🚫 Вы не можете отправить жалобу на самого себя"
-    report-offline: "{warning}💤 Игрок {accent}[PLAYER]{warning} не находится на сервере"
-    report-not-found: "{error}❓ Игрок {accent}[PLAYER]{error} не найден"
-    telegram-token-set: "{success}📱 Токен Telegram бота успешно установлен"
-    telegram-chat-set: "{success}💬 ID чата Telegram успешно установлен"
-    telegram-disabled: "{warning}📱 Telegram бот отключен"
-    telegram-usage: "{error}❌ Использование: {secondary}/report-telegram <token|chat> <значение>"
-    telegram-report-title: "🚨 *Новая жалоба*"
-    telegram-report-from: "👤 От: %s"
-    telegram-report-target: "🎯 На: %s"
-    telegram-report-reason: "📝 Причина: %s"
-    discord-report-title: "🚨 Новая жалоба"
-    discord-report-from: "👤 От: %s"
-    discord-report-target: "🎯 На: %s"
-    discord-report-reason: "📝 Причина: %s"
-    webhook-set: "{success}🔗 Discord вебхук успешно установлен"
-    webhook-removed: "{success}🗑️ Discord вебхук успешно удален"
-    webhook-usage: "{error}❌ Использование: {secondary}/report-webhook <set|remove> [url]"
-    config-reloaded: "{success}🔄 Конфигурация успешно перезагружена!"
-    stats-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 СТАТИСТИКА SQRILIZZ-REPORTS{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    stats-footer: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    # Anonymous reports messages
-    anonymous-report-notification: "{primary}🕵️ {bold}АНОНИМНАЯ ЖАЛОБА{reset}\n{accent}📝 Причина: {info}[REASON]\n{accent}⏰ Время: {secondary}[TIME]\n{accent}📍 Координаты цели: {info}[TARGET_LOC]"
-    # Anti-abuse messages
-    report-limit-reached: "{error}🚫 Вы достигли лимита жалоб на этого игрока ({warning}[LIMIT]{error} из {accent}[MAX]{error})"
-    hourly-limit-reached: "{error}⏱️ Вы достигли лимита жалоб в час ({warning}[LIMIT]{error} из {accent}[MAX]{error})"
-    abuse-warning: "{warning}⚠️ {bold}Внимание!{reset} {warning}Вы отправляете слишком много жалоб. Будьте осторожны с ложными жалобами."
-    abuse-temp-mute: "{error}🔇 Вы временно лишены возможности отправлять жалобы на {accent}[DURATION]{error} секунд за злоупотребление системой."
-    low-priority-reporter: "{warning}📉 Ваши жалобы имеют пониженный приоритет из-за частых ложных жалоб."
-  en:
-    prefix: "&8[{primary}&lSqrilizz{accent}Reports&8] {reset}"
-    player-only: "{error}✖ This command can only be used by a player"
-    no-permission: "{error}⚠ You don't have permission to use this command"
-    report-usage: "{warning}📋 {bold}Usage:{reset} {secondary}/report <player> <reason>\n{info}💡 {bold}Example:{reset} {accent}/report MomentoMoriify Exploding Shops in End -69 110 11"
-    player-not-found: "{error}❌ Player {accent}[PLAYER]{error} not found"
-    cannot-report-self: "{error}🚫 You cannot report yourself!"
-    report-success: "{success}✅ You have reported {accent}[PLAYER]{success} for: {secondary}[REASON]"
-    admin-report-notification: "{primary}🚨 {bold}NEW REPORT{reset}\n{accent}👤 Reporter: {secondary}[REPORTER]\n{accent}🎯 Target: {warning}[TARGET]\n{accent}📝 Reason: {info}[REASON]\n{accent}⏰ Time: {secondary}[TIME]\n{accent}📍 Reporter location: {info}[REPORTER_LOC]\n{accent}📍 Target location: {info}[TARGET_LOC]"
-    no-reports: "{info}📋 No active reports"
-    reports-list-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 REPORTS LIST{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    reports-list-entry: "{secondary}• {accent}[PLAYER]{secondary}: {warning}[COUNT] {secondary}reports"
-    no-reports-for-player: "{info}📋 No reports for player {accent}[PLAYER]"
-    reports-cleared: "{success}✅ Reports for player {accent}[PLAYER]{success} have been cleared"
-    all-reports-cleared: "{success}🗑️ All reports have been cleared"
-    player-reports-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📋 REPORTS FOR [PLAYER]{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    report-details: "{secondary}📝 From: {accent}[REPORTER]\n{secondary}💬 Reason: {info}[REASON]\n{secondary}⏰ Time: {warning}[TIME]"
-    clear-usage: "{error}❌ Usage: {secondary}/reports clear <player>"
-    check-usage: "{error}❌ Usage: {secondary}/reports check <player>"
-    admin-usage: "{error}❌ Usage: {secondary}/reports [clear|check|false|clearall] <player>"
-    time-days: "{info}days ago"
-    time-hours: "{info}hours ago"
-    time-minutes: "{info}minutes ago"
-    time-seconds: "{info}seconds ago"
-    auto-ban-message: "{error}🔨 You have been automatically banned due to excessive reports."
-    cooldown-message: "{warning}⏱️ You have a cooldown! Try again in {accent}[COOLDOWN]{warning} seconds"
-    false-report-punishment: "{success}⚖️ Player {accent}[PLAYER]{success} has been banned for 5 days for false reporting"
-    report-sent: "{success}📤 Report for player {accent}[PLAYER]{success} has been sent successfully"
-    report-received: "{warning}📥 You have received a report from {accent}[PLAYER]"
-    report-cooldown: "{warning}⏱️ You can only send a report once every {accent}[TIME]{warning} seconds"
-    report-self: "{error}🚫 You cannot report yourself"
-    report-offline: "{warning}💤 Player {accent}[PLAYER]{warning} is not online"
-    report-not-found: "{error}❓ Player {accent}[PLAYER]{error} not found"
-    telegram-token-set: "{success}📱 Telegram bot token has been set successfully"
-    telegram-chat-set: "{success}💬 Telegram chat ID has been set successfully"
-    telegram-disabled: "{warning}📱 Telegram bot is disabled"
-    telegram-usage: "{error}❌ Usage: {secondary}/report-telegram <token|chat> <value>"
-    telegram-report-title: "🚨 *New Report*"
-    telegram-report-from: "👤 From: %s"
-    telegram-report-target: "🎯 Target: %s"
-    telegram-report-reason: "📝 Reason: %s"
-    discord-report-title: "🚨 New Report"
-    discord-report-from: "👤 From: %s"
-    discord-report-target: "🎯 Target: %s"
-    discord-report-reason: "📝 Reason: %s"
-    webhook-set: "{success}🔗 Discord webhook has been set successfully"
-    webhook-removed: "{success}🗑️ Discord webhook has been removed successfully"
-    webhook-usage: "{error}❌ Usage: {secondary}/report-webhook <set|remove> [url]"
-    config-reloaded: "{success}🔄 Configuration has been reloaded successfully!"
-    stats-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 SQRILIZZ-REPORTS STATISTICS{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    stats-footer: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    # Anonymous reports messages
-    anonymous-report-notification: "{primary}🕵️ {bold}ANONYMOUS REPORT{reset}\n{accent}📝 Reason: {info}[REASON]\n{accent}⏰ Time: {secondary}[TIME]\n{accent}📍 Target location: {info}[TARGET_LOC]"
-    # Anti-abuse messages
-    report-limit-reached: "{error}🚫 You have reached the report limit for this player ({warning}[LIMIT]{error} of {accent}[MAX]{error})"
-    hourly-limit-reached: "{error}⏱️ You have reached the hourly report limit ({warning}[LIMIT]{error} of {accent}[MAX]{error})"
-    abuse-warning: "{warning}⚠️ {bold}Warning!{reset} {warning}You are sending too many reports. Be careful with false reports."
-    abuse-temp-mute: "{error}🔇 You are temporarily muted from sending reports for {accent}[DURATION]{error} seconds due to system abuse."
-    low-priority-reporter: "{warning}📉 Your reports have low priority due to frequent false reports."
-  ar:
-    prefix: "&8[{primary}&lSqrilizz{accent}Reports&8] {reset}"
-    player-only: "{error}✖ هذا الأمر يمكن استخدامه من قبل اللاعبين فقط"
-    no-permission: "{error}⚠ ليس لديك صلاحية لاستخدام هذا الأمر"
-    report-usage: "{warning}📋 {bold}الاستخدام:{reset} {secondary}/report <اللاعب> <السبب>\n{info}💡 {bold}مثال:{reset} {accent}/report MomentoMoriify تفجير المتاجر في النهاية -69 110 11"
-    player-not-found: "{error}❌ اللاعب {accent}[PLAYER]{error} غير موجود"
-    cannot-report-self: "{error}🚫 لا يمكنك الإبلاغ عن نفسك!"
-    report-success: "{success}✅ لقد أبلغت عن {accent}[PLAYER]{success} للسبب: {secondary}[REASON]"
-    admin-report-notification: "{primary}🚨 {bold}بلاغ جديد{reset}\n{accent}👤 المُبلِغ: {secondary}[REPORTER]\n{accent}🎯 الهدف: {warning}[TARGET]\n{accent}📝 السبب: {info}[REASON]\n{accent}⏰ الوقت: {secondary}[TIME]\n{accent}📍 موقع المُبلِغ: {info}[REPORTER_LOC]\n{accent}📍 موقع الهدف: {info}[TARGET_LOC]"
-    no-reports: "{info}📋 لا توجد بلاغات نشطة"
-    reports-list-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 قائمة البلاغات{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    reports-list-entry: "{secondary}• {accent}[PLAYER]{secondary}: {warning}[COUNT] {secondary}بلاغات"
-    no-reports-for-player: "{info}📋 لا توجد بلاغات للاعب {accent}[PLAYER]"
-    reports-cleared: "{success}✅ تم مسح البلاغات للاعب {accent}[PLAYER]"
-    all-reports-cleared: "{success}🗑️ تم مسح جميع البلاغات"
-    player-reports-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📋 البلاغات ضد [PLAYER]{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    report-details: "{secondary}📝 من: {accent}[REPORTER]\n{secondary}💬 السبب: {info}[REASON]\n{secondary}⏰ الوقت: {warning}[TIME]"
-    clear-usage: "{error}❌ الاستخدام: {secondary}/reports clear <اللاعب>"
-    check-usage: "{error}❌ الاستخدام: {secondary}/reports check <اللاعب>"
-    admin-usage: "{error}❌ الاستخدام: {secondary}/reports [clear|check|false|clearall] <اللاعب>"
-    time-days: "{info}أيام مضت"
-    time-hours: "{info}ساعات مضت"
-    time-minutes: "{info}دقائق مضت"
-    time-seconds: "{info}ثواني مضت"
-    auto-ban-message: "{error}🔨 تم حظرك تلقائياً بسبب كثرة البلاغات ضدك."
-    cooldown-message: "{warning}⏱️ لديك فترة انتظار! حاول مرة أخرى خلال {accent}[COOLDOWN]{warning} ثانية"
-    false-report-punishment: "{success}⚖️ تم حظر اللاعب {accent}[PLAYER]{success} لمدة 5 أيام بسبب البلاغ الكاذب"
-    report-sent: "{success}📤 تم إرسال البلاغ ضد اللاعب {accent}[PLAYER]{success} بنجاح"
-    report-received: "{warning}📥 تلقيت بلاغاً من {accent}[PLAYER]"
-    report-cooldown: "{warning}⏱️ يمكنك إرسال بلاغ واحد فقط كل {accent}[TIME]{warning} ثانية"
-    report-self: "{error}🚫 لا يمكنك إرسال بلاغ ضد نفسك"
-    report-offline: "{warning}💤 اللاعب {accent}[PLAYER]{warning} غير متصل"
-    report-not-found: "{error}❓ اللاعب {accent}[PLAYER]{error} غير موجود"
-    telegram-token-set: "{success}📱 تم تعيين رمز بوت تيليجرام بنجاح"
-    telegram-chat-set: "{success}💬 تم تعيين معرف محادثة تيليجرام بنجاح"
-    telegram-disabled: "{warning}📱 بوت تيليجرام معطل"
-    telegram-usage: "{error}❌ الاستخدام: {secondary}/report-telegram <token|chat> <القيمة>"
-    telegram-report-title: "🚨 *بلاغ جديد*"
-    telegram-report-from: "👤 من: %s"
-    telegram-report-target: "🎯 ضد: %s"
-    telegram-report-reason: "📝 السبب: %s"
-    discord-report-title: "🚨 بلاغ جديد"
-    discord-report-from: "👤 من: %s"
-    discord-report-target: "🎯 ضد: %s"
-    discord-report-reason: "📝 السبب: %s"
-    webhook-set: "{success}🔗 تم تعيين ويب هوك ديسكورد بنجاح"
-    webhook-removed: "{success}🗑️ تم إزالة ويب هوك ديسكورد بنجاح"
-    webhook-usage: "{error}❌ الاستخدام: {secondary}/report-webhook <set|remove> [url]"
-    config-reloaded: "{success}🔄 تم إعادة تحميل الإعدادات بنجاح!"
-    stats-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 إحصائيات SQRILIZZ-REPORTS{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    stats-footer: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
-    # Anonymous reports messages
-    anonymous-report-notification: "{primary}🕵️ {bold}بلاغ مجهول الهوية{reset}\n{accent}📝 السبب: {info}[REASON]\n{accent}⏰ الوقت: {secondary}[TIME]\n{accent}📍 موقع الهدف: {info}[TARGET_LOC]"
-    # Anti-abuse messages
-    report-limit-reached: "{error}🚫 لقد وصلت إلى حد البلاغات لهذا اللاعب ({warning}[LIMIT]{error} من {accent}[MAX]{error})"
-    hourly-limit-reached: "{error}⏱️ لقد وصلت إلى حد البلاغات في الساعة ({warning}[LIMIT]{error} من {accent}[MAX]{error})"
-    abuse-warning: "{warning}⚠️ {bold}تحذير!{reset} {warning}أنت ترسل الكثير من البلاغات. كن حذراً من البلاغات الكاذبة."
-    abuse-temp-mute: "{error}🔇 تم كتم إرسال البلاغات مؤقتاً لمدة {accent}[DURATION]{error} ثانية بسبب إساءة استخدام النظام."
-    low-priority-reporter: "{warning}📉 بلاغاتك لها أولوية منخفضة بسبب كثرة البلاغات الكاذبة."
-
-# REST API settings
+# ═══════════════════════════════════════════════════════════════
+# REST API
+# ═══════════════════════════════════════════════════════════════
 rest-api:
   enabled: false
   port: 8971
-  # Bearer token for authorization
   token: ""
-  # Optional IP whitelist
   ip-whitelist:
     enabled: false
     list: []
-  # Optional HMAC signature for incoming webhooks (header: X-Signature)
   webhook:
     secret: ""
-  # Rate limiting (requests per second per IP)
   rate-limit:
     rps: 10
 
-# Performance settings
+# ═══════════════════════════════════════════════════════════════
+# PERFORMANCE & CACHE
+# ═══════════════════════════════════════════════════════════════
 performance:
-  # Cache settings for reports (Caffeine cache)
   cache:
-    # Cache expiration time in seconds
     expire-after-write: 30
-    # Maximum number of cached entries
     maximum-size: 10000
-    # Enable cache statistics for monitoring
     record-stats: false
 
-# Database settings (supports sqlite or mysql)
+# ═══════════════════════════════════════════════════════════════
+# DATABASE
+# ═══════════════════════════════════════════════════════════════
 database:
   type: sqlite
   mysql:

@@ -25,6 +25,17 @@ public class AdminReportsCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
+            // Open GUI by default
+            ReportsGUI.openReportsListGUI(player);
+            return true;
+        }
+        
+        if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
+            ReportsGUI.openReportsListGUI(player);
+            return true;
+        }
+        
+        if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             showReportsList(player);
             return true;
         }
