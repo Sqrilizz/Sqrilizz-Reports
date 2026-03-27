@@ -37,12 +37,10 @@ public class ReportsGUIListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         String title = event.getView().getTitle();
         
-        Main.getInstance().getLogger().info("Inventory clicked: " + title);
         
         // Strip color codes from title for checking
         String strippedTitle = title.replaceAll("§[0-9a-fk-or]", "");
         
-        Main.getInstance().getLogger().info("Stripped title: " + strippedTitle);
         
         // Check if it's our GUI by checking for key words in any language
         boolean isOurGUI = false;
@@ -64,7 +62,6 @@ public class ReportsGUIListener implements Listener {
             isOurGUI = true;
         }
         
-        Main.getInstance().getLogger().info("Is our GUI: " + isOurGUI);
         
         if (!isOurGUI) {
             return;
