@@ -196,6 +196,13 @@ public class ReportManager {
             }
             
             reportsConfig.save(reportsFile);
+            
+            // Sync with database - replace all reports
+            try {
+                DatabaseManager.replaceAllReports(new HashMap<>(reports));
+            } catch (Exception e) {
+                Main.getInstance().getLogger().warning("Failed to sync reports to database: " + e.getMessage());
+            }
         } catch (IOException e) {
             Main.getInstance().getLogger().severe("Could not save reports: " + e.getMessage());
         }
