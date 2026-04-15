@@ -35,6 +35,23 @@ public class NotificationUtils {
     }
     
     /**
+     * Асинхронная отправка уведомлений о багрепортах
+     */
+    public static void sendBugReportNotificationsAsync(ReportManager.Report report, Player reporter, 
+                                                      String category, String description, String reporterName) {
+        // Используем CompletableFuture для асинхронной обработки
+        CompletableFuture.runAsync(() -> {
+            try {
+                sendTelegramNotification(report);
+                sendDiscordWebhookNotification(report);
+                sendCustomBugReportWebhook(reporter, category, description);
+            } catch (Exception e) {
+                ErrorManager.logError("BUG_NOTIFICATION_ASYNC", e);
+            }
+        });
+    }
+    
+    /**
      * Оптимизированная отправка webhook для различных событий
      */
     public static void sendEventWebhook(String eventType, Map<String, Object> data) {
@@ -75,6 +92,12 @@ public class NotificationUtils {
     
     private static void sendCustomWebhook(Player reporter, Player target, String reason) {
         ReportEvent event = new ReportEvent(reporter, target, reason, System.currentTimeMillis());
+        WebhookManager.sendReportWebhook(event);
+    }
+    
+    private static void sendCustomBugReportWebhook(Player reporter, String category, String description) {
+        String fullReason = "[" + category.toUpperCase() + "] " + description;
+        ReportEvent event = new ReportEvent(reporter, null, fullReason, System.currentTimeMillis());
         WebhookManager.sendReportWebhook(event);
     }
 }

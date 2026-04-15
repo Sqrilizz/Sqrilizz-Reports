@@ -3,12 +3,16 @@ prefix: "&8[{primary}&lSqrilizz{accent}Reports&8] {reset}"
 player-only: "{error}✖ Эта команда может быть использована только игроком"
 no-permission: "{error}⚠ У вас нет прав для использования этой команды"
 report-usage: "{warning}📋 {bold}Использование:{reset} {secondary}/report <игрок> <причина>\n{info}💡 {bold}Пример:{reset} {accent}/report Player Читы"
+bugreport-usage: "{warning}📋 {bold}Использование:{reset} {secondary}/bugreport <категория> <описание>\n{info}💡 {bold}Пример:{reset} {accent}/bugreport duplication Дюп предметов в сундуке"
+bugreport-invalid-category: "{error}❌ Неверная категория: {accent}[CATEGORY]{error}. Используйте одну из категорий ниже:"
 player-not-found: "{error}❌ Игрок {accent}[PLAYER]{error} не найден"
 report-offline: "{warning}⚠️ Игрок {accent}[PLAYER]{warning} не в сети. Жалоба не может быть отправлена."
 cannot-report-self: "{error}🚫 Вы не можете пожаловаться на себя!"
 report-success: "{success}✅ Вы пожаловались на {accent}[PLAYER]{success} по причине: {secondary}[REASON]"
+bugreport-success: "{success}✅ Сообщение о баге отправлено! {accent}Категория:{reset} {secondary}[CATEGORY]{reset} | {accent}Описание:{reset} {info}[DESCRIPTION]"
 report-received: "{warning}⚠️ На вас пожаловался игрок {accent}[PLAYER]{warning}. Пожалуйста, соблюдайте правила сервера!"
 admin-report-notification: "{primary}🚨 {bold}НОВАЯ ЖАЛОБА{reset}\n{accent}👤 Жалобщик: {secondary}[REPORTER]\n{accent}🎯 Цель: {warning}[TARGET]\n{accent}📝 Причина: {info}[REASON]\n{accent}⏰ Время: {secondary}[TIME]\n{accent}📍 Координаты жалобщика: {info}[REPORTER_LOC]\n{accent}📍 Координаты цели: {info}[TARGET_LOC]"
+admin-bugreport-notification: "{primary}🐛 {bold}НОВОЕ СООБЩЕНИЕ О БАГЕ{reset}\n{accent}👤 Отправитель: {secondary}[REPORTER]\n{accent}📂 Категория: {warning}[CATEGORY]\n{accent}📝 Описание: {info}[REASON]\n{accent}⏰ Время: {secondary}[TIME]\n{accent}📍 Координаты отправителя: {info}[REPORTER_LOC]"
 no-reports: "{info}📋 Нет активных жалоб"
 reports-list-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 СПИСОК ЖАЛОБ{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
 reports-list-entry: "{secondary}• {accent}[PLAYER]{secondary}: {warning}[COUNT] {secondary}жалоб"
@@ -109,3 +113,21 @@ report-deleted: "&cРепорт #[ID] удалён!"
 report-closed: "&aРепорт #[ID] закрыт!"
 
 
+
+
+# Категории багрепортов
+bugreport-categories-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}🐛 КАТЕГОРИИ БАГОВ{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+bugreport-category-item: "{secondary}• {accent}[CATEGORY]{secondary}: {info}[DESCRIPTION]"
+
+# Названия категорий
+bugreport-category-duplication: "Дюп предметов"
+bugreport-category-crash: "Краш сервера"
+bugreport-category-exploit: "Эксплойт/Глитч"
+bugreport-category-performance: "Производительность/Лаги"
+bugreport-category-gameplay: "Игровая механика"
+bugreport-category-world: "Генерация мира"
+bugreport-category-inventory: "Инвентарь/Предметы"
+bugreport-category-commands: "Команды"
+bugreport-category-permissions: "Права доступа"
+bugreport-category-economy: "Экономика"
+bugreport-category-other: "Прочее"

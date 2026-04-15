@@ -24,6 +24,8 @@ public class ReportsTabCompleter implements TabCompleter {
         switch (command.getName().toLowerCase()) {
             case "report":
                 return handleReportCommand(sender, args);
+            case "bugreport":
+                return handleBugReportCommand(sender, args);
             case "reports":
                 return handleReportsCommand(sender, args);
             case "report-language":
@@ -68,6 +70,76 @@ public class ReportsTabCompleter implements TabCompleter {
             for (String reason : reasons) {
                 if (reason.toLowerCase().startsWith(input)) {
                     completions.add(reason);
+                }
+            }
+        }
+        
+        return completions;
+    }
+    
+    /**
+     * Автодополнение для команды /bugreport
+     */
+    private List<String> handleBugReportCommand(CommandSender sender, String[] args) {
+        List<String> completions = new ArrayList<>();
+        
+        if (args.length == 1) {
+            // Первый аргумент - категория бага
+            String input = args[0].toLowerCase();
+            List<String> categories = Arrays.asList(
+                "duplication", "dupe",
+                "crash", "server-crash",
+                "exploit", "glitch",
+                "performance", "lag",
+                "gameplay", "mechanic",
+                "world", "generation",
+                "inventory", "items",
+                "commands", "cmd",
+                "permissions", "perms",
+                "economy", "money",
+                "other", "misc"
+            );
+            
+            for (String category : categories) {
+                if (category.startsWith(input)) {
+                    completions.add(category);
+                }
+            }
+        } else if (args.length == 2) {
+            // Второй аргумент - примеры описаний в зависимости от категории
+            String category = args[0].toLowerCase();
+            String input = args[1].toLowerCase();
+            List<String> examples = new ArrayList<>();
+            
+            switch (category) {
+                case "duplication":
+                case "dupe":
+                    examples = Arrays.asList("Items duplicating in chest", "Дюп предметов в сундуке", "مضاعفة العناصر");
+                    break;
+                case "crash":
+                case "server-crash":
+                    examples = Arrays.asList("Server crashes when...", "Сервер крашится когда...", "تعطل السيرفر عند...");
+                    break;
+                case "exploit":
+                case "glitch":
+                    examples = Arrays.asList("Can bypass protection", "Можно обойти защиту", "يمكن تجاوز الحماية");
+                    break;
+                case "performance":
+                case "lag":
+                    examples = Arrays.asList("Severe lag in...", "Сильные лаги в...", "تأخير شديد في...");
+                    break;
+                case "gameplay":
+                case "mechanic":
+                    examples = Arrays.asList("Mechanic not working", "Механика не работает", "الآلية لا تعمل");
+                    break;
+                default:
+                    examples = Arrays.asList("Description here", "Описание здесь", "الوصف هنا");
+                    break;
+            }
+            
+            for (String example : examples) {
+                if (example.toLowerCase().startsWith(input)) {
+                    completions.add(example);
                 }
             }
         }

@@ -88,6 +88,7 @@ public class Main extends JavaPlugin {
             // Register commands
             getLogger().info("Registering commands...");
             getCommand("report").setExecutor(new ReportCommand());
+            getCommand("bugreport").setExecutor(new BugReportCommand());
             getCommand("reports").setExecutor(new AdminReportsCommand());
             getCommand("report-telegram").setExecutor(new TelegramCommand());
             getCommand("report-language").setExecutor(new LanguageCommand());
@@ -98,6 +99,7 @@ public class Main extends JavaPlugin {
             getLogger().info("Registering tab completers...");
             ReportsTabCompleter tabCompleter = new ReportsTabCompleter();
             getCommand("report").setTabCompleter(tabCompleter);
+            getCommand("bugreport").setTabCompleter(tabCompleter);
             getCommand("reports").setTabCompleter(tabCompleter);
             getCommand("report-language").setTabCompleter(tabCompleter);
             getCommand("report-telegram").setTabCompleter(tabCompleter);

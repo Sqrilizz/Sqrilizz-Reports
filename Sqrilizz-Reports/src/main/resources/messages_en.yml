@@ -3,12 +3,16 @@ prefix: "&8[{primary}&lSqrilizz{accent}Reports&8] {reset}"
 player-only: "{error}✖ This command can only be used by a player"
 no-permission: "{error}⚠ You don't have permission to use this command"
 report-usage: "{warning}📋 {bold}Usage:{reset} {secondary}/report <player> <reason>\n{info}💡 {bold}Example:{reset} {accent}/report Player Cheating"
+bugreport-usage: "{warning}📋 {bold}Usage:{reset} {secondary}/bugreport <category> <description>\n{info}💡 {bold}Example:{reset} {accent}/bugreport duplication Items duplicating in chest"
+bugreport-invalid-category: "{error}❌ Invalid category: {accent}[CATEGORY]{error}. Use one of the categories below:"
 player-not-found: "{error}❌ Player {accent}[PLAYER]{error} not found"
 report-offline: "{warning}⚠️ Player {accent}[PLAYER]{warning} is offline. Report cannot be sent."
 cannot-report-self: "{error}🚫 You cannot report yourself!"
 report-success: "{success}✅ You have reported {accent}[PLAYER]{success} for: {secondary}[REASON]"
+bugreport-success: "{success}✅ Bug report sent! {accent}Category:{reset} {secondary}[CATEGORY]{reset} | {accent}Description:{reset} {info}[DESCRIPTION]"
 report-received: "{warning}⚠️ You have been reported by {accent}[PLAYER]{warning}. Please follow the server rules!"
 admin-report-notification: "{primary}🚨 {bold}NEW REPORT{reset}\n{accent}👤 Reporter: {secondary}[REPORTER]\n{accent}🎯 Target: {warning}[TARGET]\n{accent}📝 Reason: {info}[REASON]\n{accent}⏰ Time: {secondary}[TIME]\n{accent}📍 Reporter location: {info}[REPORTER_LOC]\n{accent}📍 Target location: {info}[TARGET_LOC]"
+admin-bugreport-notification: "{primary}🐛 {bold}NEW BUG REPORT{reset}\n{accent}👤 Reporter: {secondary}[REPORTER]\n{accent}📂 Category: {warning}[CATEGORY]\n{accent}📝 Description: {info}[REASON]\n{accent}⏰ Time: {secondary}[TIME]\n{accent}📍 Reporter location: {info}[REPORTER_LOC]"
 no-reports: "{info}📋 No active reports"
 reports-list-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 REPORTS LIST{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
 reports-list-entry: "{secondary}• {accent}[PLAYER]{secondary}: {warning}[COUNT] {secondary}reports"
@@ -109,3 +113,21 @@ report-deleted: "&cReport #[ID] deleted!"
 report-closed: "&aReport #[ID] closed!"
 
 
+
+
+# Bug Report Categories
+bugreport-categories-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}🐛 BUG CATEGORIES{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+bugreport-category-item: "{secondary}• {accent}[CATEGORY]{secondary}: {info}[DESCRIPTION]"
+
+# Category Display Names
+bugreport-category-duplication: "Item Duplication"
+bugreport-category-crash: "Server Crash"
+bugreport-category-exploit: "Exploit/Glitch"
+bugreport-category-performance: "Performance/Lag"
+bugreport-category-gameplay: "Gameplay Mechanic"
+bugreport-category-world: "World Generation"
+bugreport-category-inventory: "Inventory/Items"
+bugreport-category-commands: "Commands"
+bugreport-category-permissions: "Permissions"
+bugreport-category-economy: "Economy"
+bugreport-category-other: "Other"

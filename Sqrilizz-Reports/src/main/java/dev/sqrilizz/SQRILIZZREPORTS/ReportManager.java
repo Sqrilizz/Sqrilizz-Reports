@@ -115,6 +115,57 @@ public class ReportManager {
         ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
 
+    public static void addBugReport(Player reporter, String category, String description) {
+        String reporterName = VersionUtils.getPlayerCleanName(reporter);
+        String targetName = "BUG_REPORT";
+        String fullReason = "[" + category.toUpperCase() + "] " + description;
+        
+        Report report = new Report(
+                reporterName,
+                targetName,
+                fullReason,
+                System.currentTimeMillis(),
+                getPlayerLocation(reporter),
+                "N/A",
+                false
+        );
+
+        // Persist to DB first to obtain ID
+        long id = 0L;
+        try {
+            id = DatabaseManager.saveReport(report);
+        } catch (Exception e) {
+            ErrorManager.logError("DB_SAVE_BUG_REPORT", e);
+            // Backup to JSON for recovery
+            ErrorManager.writeBackup("bugreport_create", targetName, report);
+        }
+        if (id > 0) report.id = id;
+
+        // Оптимизированная запись с WriteLock
+        LOCK.writeLock().lock();
+        try {
+            reports.computeIfAbsent(targetName, k -> new ArrayList<>()).add(0, report);
+            // Добавляем в индекс для O(1) поиска
+            if (report.id > 0) {
+                reportsById.put(report.id, report);
+            }
+        } finally {
+            LOCK.writeLock().unlock();
+        }
+        // Backup YAML
+        saveReports();
+
+        // Уведомляем админов о багрепорте
+        notifyAdminsBugReport(report, category);
+
+        // Асинхронная отправка уведомлений для максимальной производительности
+        NotificationUtils.sendBugReportNotificationsAsync(report, reporter, category, description, reporterName);
+        // Bukkit event
+        Bukkit.getPluginManager().callEvent(new ReportCreateEventBukkit(report));
+        // API listeners
+        ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
+    }
+
     private static String getPlayerLocation(Player player) {
         if (player == null || !player.isOnline()) {
             return "Неизвестно";
@@ -227,6 +278,21 @@ public class ReportManager {
                 .replace("[REPORTER_LOC]", report.reporterLocation)
                 .replace("[TARGET_LOC]", report.targetLocation);
         }
+
+        for (Player player : VersionUtils.getOnlinePlayers()) {
+            if (VersionUtils.hasPermission(player, "reports.admin")) {
+                VersionUtils.sendMessage(player, message);
+            }
+        }
+    }
+
+    private static void notifyAdminsBugReport(Report report, String category) {
+        String message = LanguageManager.getMessage("admin-bugreport-notification")
+            .replace("[REPORTER]", report.reporter)
+            .replace("[CATEGORY]", category.toUpperCase())
+            .replace("[REASON]", report.reason)
+            .replace("[TIME]", DATE_FORMAT.format(new Date(report.timestamp)))
+            .replace("[REPORTER_LOC]", report.reporterLocation);
 
         for (Player player : VersionUtils.getOnlinePlayers()) {
             if (VersionUtils.hasPermission(player, "reports.admin")) {

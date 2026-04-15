@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.9] - 2025-04-16
+
+### Added
+- **🐛 Bug Report System**: New `/bugreport` command for structured bug reporting
+  - 11 predefined bug categories (duplication, crash, exploit, performance, gameplay, world, inventory, commands, permissions, economy, other)
+  - Category validation with automatic suggestions
+  - Category synonyms support (e.g., `dupe` = `duplication`, `lag` = `performance`)
+  - Tab completion for categories and example descriptions
+  - Multi-language support for category names (EN/RU/AR)
+  - Admin notifications with category highlighting
+  - Integration with Telegram and Discord webhooks
+  - Same cooldown and anti-abuse protection as regular reports
+
+### Changed
+- **Enhanced Tab Completion**: Added comprehensive tab completion for `/bugreport` command
+  - First argument: all available categories and their synonyms
+  - Second argument: context-aware example descriptions based on selected category
+
+### Technical Details
+- New `BugReportCommand.java` with category validation
+- Updated `ReportManager.java` with `addBugReport()` method supporting categories
+- Enhanced `NotificationUtils.java` for bug report notifications
+- Updated `ReportsTabCompleter.java` with bug report category completion
+- Added 15+ new language keys across all language files (EN/RU/AR)
+
 ## [7.6.1] - 2025-03-27
 
 ### Added

@@ -3,12 +3,16 @@ prefix: "&8[{primary}&lSqrilizz{accent}Reports&8] {reset}"
 player-only: "{error}✖ هذا الأمر يمكن استخدامه من قبل اللاعبين فقط"
 no-permission: "{error}⚠ ليس لديك صلاحية لاستخدام هذا الأمر"
 report-usage: "{warning}📋 {bold}الاستخدام:{reset} {secondary}/report <اللاعب> <السبب>\n{info}💡 {bold}مثال:{reset} {accent}/report Player الغش"
+bugreport-usage: "{warning}📋 {bold}الاستخدام:{reset} {secondary}/bugreport <الفئة> <الوصف>\n{info}💡 {bold}مثال:{reset} {accent}/bugreport duplication مضاعفة العناصر في الصندوق"
+bugreport-invalid-category: "{error}❌ فئة غير صالحة: {accent}[CATEGORY]{error}. استخدم إحدى الفئات أدناه:"
 player-not-found: "{error}❌ اللاعب {accent}[PLAYER]{error} غير موجود"
 report-offline: "{warning}⚠️ اللاعب {accent}[PLAYER]{warning} غير متصل. لا يمكن إرسال البلاغ."
 cannot-report-self: "{error}🚫 لا يمكنك الإبلاغ عن نفسك!"
 report-success: "{success}✅ لقد أبلغت عن {accent}[PLAYER]{success} للسبب: {secondary}[REASON]"
+bugreport-success: "{success}✅ تم إرسال تقرير الخلل! {accent}الفئة:{reset} {secondary}[CATEGORY]{reset} | {accent}الوصف:{reset} {info}[DESCRIPTION]"
 report-received: "{warning}⚠️ تم الإبلاغ عنك من قبل {accent}[PLAYER]{warning}. يرجى اتباع قواعد السيرفر!"
 admin-report-notification: "{primary}🚨 {bold}بلاغ جديد{reset}\n{accent}👤 المُبلِغ: {secondary}[REPORTER]\n{accent}🎯 الهدف: {warning}[TARGET]\n{accent}📝 السبب: {info}[REASON]\n{accent}⏰ الوقت: {secondary}[TIME]\n{accent}📍 موقع المُبلِغ: {info}[REPORTER_LOC]\n{accent}📍 موقع الهدف: {info}[TARGET_LOC]"
+admin-bugreport-notification: "{primary}🐛 {bold}تقرير خلل جديد{reset}\n{accent}👤 المُرسِل: {secondary}[REPORTER]\n{accent}📂 الفئة: {warning}[CATEGORY]\n{accent}📝 الوصف: {info}[REASON]\n{accent}⏰ الوقت: {secondary}[TIME]\n{accent}📍 موقع المُرسِل: {info}[REPORTER_LOC]"
 no-reports: "{info}📋 لا توجد بلاغات نشطة"
 reports-list-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}📊 قائمة البلاغات{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
 reports-list-entry: "{secondary}• {accent}[PLAYER]{secondary}: {warning}[COUNT] {secondary}بلاغات"
@@ -109,3 +113,21 @@ report-deleted: "&cتم حذف البلاغ #[ID]!"
 report-closed: "&aتم إغلاق البلاغ #[ID]!"
 
 
+
+
+# فئات تقارير الأخطاء
+bugreport-categories-header: "{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n{primary}{bold}🐛 فئات الأخطاء{reset}\n{accent}▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+bugreport-category-item: "{secondary}• {accent}[CATEGORY]{secondary}: {info}[DESCRIPTION]"
+
+# أسماء الفئات
+bugreport-category-duplication: "مضاعفة العناصر"
+bugreport-category-crash: "تعطل السيرفر"
+bugreport-category-exploit: "استغلال/خلل"
+bugreport-category-performance: "الأداء/التأخير"
+bugreport-category-gameplay: "آلية اللعب"
+bugreport-category-world: "توليد العالم"
+bugreport-category-inventory: "المخزون/العناصر"
+bugreport-category-commands: "الأوامر"
+bugreport-category-permissions: "الصلاحيات"
+bugreport-category-economy: "الاقتصاد"
+bugreport-category-other: "أخرى"
