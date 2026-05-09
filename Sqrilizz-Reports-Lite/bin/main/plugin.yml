@@ -1,9 +1,9 @@
 name: Sqrilizz-Reports-Lite
-version: 8.0
+version: 1.0
 main: dev.sqrilizz.reports.Main
-api-version: 1.13
+api-version: 1.8
 author: Sqrilizz
-description: Simple and efficient report system for Minecraft servers
+description: Simple and efficient report system for Minecraft servers (1.8.9-1.21.10)
 website: https://github.com/Sqrilizz/Sqrilizz-Reports
 
 # Folia support

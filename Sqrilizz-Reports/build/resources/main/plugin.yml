@@ -1,5 +1,5 @@
 name: Sqrilizz-Reports
-version: '7.8'
+version: '8.0'
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
 api-version: '1.13'
 authors: [Sqrilizz]
@@ -19,6 +19,10 @@ commands:
     description: Report a player
     usage: /report <player> <reason>
     permission: reports.report
+  bugreport:
+    description: Report a bug
+    usage: /bugreport <category> <description>
+    permission: reports.bugreport
   reports:
     description: View reports
     usage: /reports
@@ -43,6 +47,9 @@ commands:
 permissions:
   reports.report:
     description: Allows using /report command
+    default: true
+  reports.bugreport:
+    description: Allows using /bugreport command
     default: true
   reports.admin:
     description: Allows viewing and managing reports

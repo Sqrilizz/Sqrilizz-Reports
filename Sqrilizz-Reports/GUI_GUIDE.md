@@ -1,138 +1,189 @@
-# GUI Меню Репортов - Руководство
+# GUI Guide - Sqrilizz-Reports
 
-## Обзор
+## Overview
 
-Начиная с версии 7.6.1, плагин включает полнофункциональное интерактивное GUI меню для управления репортами. Это позволяет администраторам быстро и удобно обрабатывать жалобы игроков прямо в игре.
+The GUI system provides a visual interface for managing reports with player heads, pagination, and quick actions.
 
-## Как открыть GUI
+## Opening the GUI
 
-Просто используйте команду:
+Command: `/reports`
+
+Permission: `reports.admin`
+
+## Main Reports List
+
+### Layout
+- Player heads showing reported players
+- Report count displayed on each head
+- Navigation arrows for pagination
+- Close button (red block)
+
+### Actions
+- **Left Click** on player head - View reports for that player
+- **Arrow buttons** - Navigate between pages
+- **Red block** - Close menu
+
+### Pagination
+- Shows up to 45 players per page
+- Automatic page calculation
+- Next/Previous buttons appear when needed
+
+## Player Reports View
+
+### Layout
+- List of all reports for selected player
+- Report details on each item
+- Action buttons at bottom
+- Navigation controls
+
+### Report Information
+- Report ID
+- Reporter name
+- Reason
+- Timestamp
+- Status (open/resolved)
+
+### Actions
+- **Click report** - Open action menu
+- **Teleport button** - Teleport to reported player
+- **Clear all button** - Remove all reports for player
+- **Back button** - Return to main list
+- **Navigation arrows** - Browse pages
+
+## Report Actions Menu
+
+### Available Actions
+
+**Teleport to Reporter**
+- Teleports you to the player who made the report
+- Only works if player is online
+
+**Teleport to Target**
+- Teleports you to the reported player
+- Only works if player is online
+
+**Punish Player**
+- Opens punishment menu
+- Various punishment options available
+
+**Resolve Report**
+- Marks report as resolved
+- Keeps report in history
+
+**Delete Report**
+- Permanently removes report
+- Cannot be undone
+
+**Back**
+- Return to player reports list
+
+## Punishment Menu
+
+### Preset Punishments
+
+**Warn**
+- Issues warning to player
+- Logged in report system
+
+**Kick**
+- Kicks player from server
+- Reason shown to player
+
+**Mute 1 Hour**
+- Mutes player for 1 hour
+- Requires compatible punishment plugin
+
+**Mute 1 Day**
+- Mutes player for 24 hours
+- Requires compatible punishment plugin
+
+**Ban 1 Day**
+- Bans player for 24 hours
+- Requires compatible punishment plugin
+
+**Ban 7 Days**
+- Bans player for 7 days
+- Requires compatible punishment plugin
+
+**Ban Permanent**
+- Permanently bans player
+- Requires compatible punishment plugin
+
+**Back**
+- Return to actions menu
+
+### After Punishment
+- Confirmation screen appears
+- Options to resolve or keep report open
+- Automatic return to reports list
+
+## Keyboard Shortcuts
+
+- **ESC** - Close current menu
+- **Click outside** - Close menu (if enabled)
+
+## Multi-Language Support
+
+All GUI elements support multiple languages:
+- English (en)
+- Russian (ru)
+- Arabic (ar)
+
+Language is set in config.yml or per-player with `/report-language`
+
+## Tips
+
+1. Use pagination for servers with many reports
+2. Right-click features may be added in future updates
+3. GUI updates automatically when reports change
+4. All actions are logged for audit trail
+5. Punishment commands require compatible plugin
+
+## Troubleshooting
+
+**GUI not opening:**
+- Check permission: `reports.admin`
+- Verify language files are loaded
+- Try `/report-reload`
+
+**Player heads not showing:**
+- Check server version (1.8.9+)
+- Verify player names are valid
+- Check console for errors
+
+**Actions not working:**
+- Verify target player is online (for teleport)
+- Check punishment plugin is installed
+- Review console logs
+
+**Pagination issues:**
+- Ensure reports exist
+- Check page calculation in logs
+- Try reloading plugin
+
+## Configuration
+
+GUI behavior can be customized in config.yml:
+
+```yaml
+# GUI settings (if available)
+gui:
+  items-per-page: 45
+  auto-refresh: true
+  close-on-action: false
 ```
-/reports
-```
 
-Или явно:
-```
-/reports gui
-```
+## Permissions
 
-Для текстового списка (старый формат):
-```
-/reports list
-```
+- `reports.admin` - Access to GUI
+- `reports.teleport` - Use teleport features (if separate)
+- `reports.punish` - Use punishment menu (if separate)
 
-## Структура меню
+## Future Features
 
-### 1. Главное меню репортов
-
-При открытии `/reports` вы увидите список всех игроков, на которых есть репорты:
-
-- **Голова игрока** - показывает имя игрока и количество репортов
-- **ЛКМ** (левая кнопка мыши) - открыть детальный просмотр репортов
-- **ПКМ** (правая кнопка мыши) - очистить все репорты на этого игрока
-- **Навигация** - стрелки для перехода между страницами (если репортов много)
-- **Закрыть** - красный барьер для закрытия меню
-
-### 2. Меню репортов игрока
-
-После клика на игрока открывается список всех репортов на него:
-
-**Информация о каждом репорте:**
-- ID репорта
-- Кто пожаловался
-- Причина жалобы
-- Время создания
-- Сколько времени прошло
-
-**Быстрые действия:**
-- 🔮 **Телепортироваться к игроку** - мгновенная телепортация к нарушителю
-- 🔥 **Очистить все репорты** - удалить все репорты на этого игрока
-- ⬅️ **Назад** - вернуться к списку игроков
-
-**Действия с репортом:**
-- **ЛКМ на репорте** - открыть меню действий для конкретного репорта
-
-### 3. Меню действий с репортом
-
-Детальное меню для работы с конкретным репортом:
-
-- 🔮 **ТП к жалобщику** - телепортироваться к игроку, который пожаловался
-- 👁️ **ТП к нарушителю** - телепортироваться к игроку, на которого пожаловались
-- ⚔️ **Наказать игрока** - открыть меню наказаний
-- ✅ **Решить репорт** - отметить репорт как решённый и удалить его
-- ❌ **Удалить репорт** - удалить репорт без действий
-- ⬅️ **Назад** - вернуться к списку репортов игрока
-
-### 4. Меню наказаний
-
-Быстрое применение наказаний с предустановленными настройками:
-
-- ⚠️ **Предупреждение** - выдать варн игроку
-- 🚪 **Кик** - выгнать игрока с сервера
-- 📄 **Мут 1 час** - заблокировать чат на 1 час
-- 📖 **Мут 1 день** - заблокировать чат на 1 день
-- 🪓 **Бан 1 день** - забанить на 1 день (репорты очищаются)
-- ⚔️ **Бан 7 дней** - забанить на 7 дней (репорты очищаются)
-- 🔨 **Перманентный бан** - забанить навсегда (репорты очищаются)
-- ⬅️ **Назад** - вернуться к меню действий
-
-## Рабочий процесс
-
-### Типичный сценарий обработки репорта:
-
-1. Администратор получает уведомление о новом репорте
-2. Открывает `/reports`
-3. Видит список игроков с репортами
-4. Кликает на игрока с наибольшим количеством репортов
-5. Просматривает детали всех репортов
-6. Кликает на конкретный репорт
-7. Телепортируется к нарушителю для проверки
-8. Если нарушение подтверждено:
-   - Открывает меню наказаний
-   - Выбирает подходящее наказание
-   - Репорты автоматически очищаются после бана
-9. Если нарушения нет:
-   - Нажимает "Решить репорт" (репорт удаляется)
-   - Или "Удалить репорт" для быстрого удаления
-
-## Требования к серверу
-
-Для работы команд наказания требуются следующие плагины:
-- Плагин для банов (поддерживающий команды `ban`, `tempban`)
-- Плагин для мутов (поддерживающий команды `mute`, `tempmute`)
-- Плагин для варнов (поддерживающий команду `warn`)
-- Плагин для киков (обычно встроено в Bukkit/Spigot)
-
-Популярные плагины:
-- LiteBans
-- AdvancedBan
-- BanManager
-- EssentialsX
-
-## Права доступа
-
-Для использования GUI требуется право:
-```
-reports.admin
-```
-
-Это же право требуется для команды `/reports`.
-
-## Особенности
-
-- **Автоматическая очистка**: При выдаче бана репорты автоматически очищаются
-- **Пагинация**: Поддержка больших списков репортов с навигацией
-- **Проверка онлайна**: Телепортация работает только если игрок онлайн
-- **Безопасность**: Все действия выполняются от имени консоли для надёжности
-- **Интуитивность**: Цветовая кодировка и понятные иконки
-
-## Совместимость
-
-- Minecraft 1.8.9 - 1.21.11
-- Paper, Spigot, Folia
-- Работает с любыми плагинами модерации
-
-## Обратная связсвязь
-
-Если у вас есть предложения по улучшению GUI или вы нашли баг, создайте issue на GitHub:
-https://github.com/Sqrilizz/Sqrilizz-Reports/issues
+Planned improvements:
+- Custom punishment commands
+- Report filtering
+- Search functionality
+- Bulk actions
+- Export reports

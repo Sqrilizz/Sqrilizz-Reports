@@ -3,6 +3,7 @@ package dev.sqrilizz.SQRILIZZREPORTS;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bstats.bukkit.Metrics;
 import dev.sqrilizz.SQRILIZZREPORTS.api.AuthManager;
 import dev.sqrilizz.SQRILIZZREPORTS.api.RESTServer;
 import dev.sqrilizz.SQRILIZZREPORTS.lifecycle.ShutdownManager;
@@ -40,6 +41,10 @@ public class Main extends JavaPlugin {
             getLogger().info("Initializing LanguageManager...");
             LanguageManager.initialize();
             getLogger().info("LanguageManager initialized");
+            
+            getLogger().info("Initializing CooldownManager...");
+            CooldownManager.initialize();
+            getLogger().info("CooldownManager initialized");
             
             getLogger().info("Initializing ReportManager...");
             ReportManager.initialize();
@@ -120,6 +125,12 @@ public class Main extends JavaPlugin {
                 AntiAbuseManager.cleanupOldData();
                 getLogger().info("Cleaned up old anti-abuse data");
             }, 20L * 60 * 60 * 6, 20L * 60 * 60 * 6); // 6 часов в тиках
+            
+            // Initialize bStats metrics
+            getLogger().info("Initializing bStats metrics...");
+            int pluginId = 24619; // Replace with your plugin ID from bStats
+            Metrics metrics = new Metrics(this, pluginId);
+            getLogger().info("bStats metrics initialized");
             
             getLogger().info("SQRILIZZREPORTS has been enabled successfully!");
         } catch (Exception e) {

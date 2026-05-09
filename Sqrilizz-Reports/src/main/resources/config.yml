@@ -132,8 +132,12 @@ performance:
 # ═══════════════════════════════════════════════════════════════
 # DATABASE
 # ═══════════════════════════════════════════════════════════════
+# Storage types:
+#   json   - Lightweight JSON file storage (default, ~10MB plugin size)
+#   sqlite - SQLite database (requires sqlite-jdbc dependency, +8MB)
+#   mysql  - MySQL/MariaDB database (for large servers)
 database:
-  type: sqlite
+  type: json
   mysql:
     host: "localhost"
     port: 3306

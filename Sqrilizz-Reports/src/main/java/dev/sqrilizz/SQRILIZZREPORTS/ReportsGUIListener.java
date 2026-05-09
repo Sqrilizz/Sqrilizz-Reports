@@ -78,8 +78,8 @@ public class ReportsGUIListener implements Listener {
         
         // Determine menu type by checking for keywords
         // Main reports list GUI (contains "Page" / "Страница" / "صفحة")
-        if (strippedTitle.contains("Page") || strippedTitle.contains("Страница") || strippedTitle.contains("صفحة")) {
-            handleReportsListClick(player, clicked, displayName, event.isLeftClick());
+        if (strippedTitle.contains("Page") || strippedTitle.contains("Страница") || strippedTitle.contains("صфحة")) {
+            handleReportsListClick(player, clicked, displayName, title, event.isLeftClick());
         }
         // Report actions GUI (contains "Report #" / "Репорт #" / "بلاغ #")
         else if ((strippedTitle.contains("Actions") || strippedTitle.contains("Действия") || strippedTitle.contains("الإجراءات")) 
@@ -131,7 +131,7 @@ public class ReportsGUIListener implements Listener {
                 targetName = strippedTitle.split("ضد ")[1].trim();
             }
             if (!targetName.isEmpty()) {
-                handlePlayerReportsClick(player, clicked, displayName, targetName);
+                handlePlayerReportsClick(player, clicked, displayName, targetName, title);
             }
         }
     }
@@ -149,7 +149,7 @@ public class ReportsGUIListener implements Listener {
         return false;
     }
     
-    private void handleReportsListClick(Player player, ItemStack clicked, String displayName, boolean isLeftClick) {
+    private void handleReportsListClick(Player player, ItemStack clicked, String displayName, String title, boolean isLeftClick) {
         // Close button
         if (isButton(displayName, "Close", "Закрыть", "إغلاق")) {
             player.closeInventory();
@@ -158,12 +158,16 @@ public class ReportsGUIListener implements Listener {
         
         // Navigation
         if (isButton(displayName, "Next", "Следующая", "التالية")) {
-            // TODO: Implement pagination
+            // Extract current page from title
+            int currentPage = extractPageFromTitle(title);
+            ReportsGUI.openReportsListGUI(player, currentPage + 1);
             return;
         }
         
         if (isButton(displayName, "Previous", "Предыдущая", "السابقة")) {
-            // TODO: Implement pagination
+            // Extract current page from title
+            int currentPage = extractPageFromTitle(title);
+            ReportsGUI.openReportsListGUI(player, currentPage - 1);
             return;
         }
         
@@ -193,10 +197,31 @@ public class ReportsGUIListener implements Listener {
         }
     }
     
-    private void handlePlayerReportsClick(Player player, ItemStack clicked, String displayName, String targetName) {
+    private void handlePlayerReportsClick(Player player, ItemStack clicked, String displayName, String targetName, String title) {
         // Close button
         if (isButton(displayName, "Close", "Закрыть", "إغلاق")) {
             player.closeInventory();
+            return;
+        }
+        
+        // Navigation buttons
+        if (isButton(displayName, "Next", "Следующая", "التالية")) {
+            // Use event title which is already a String
+            int currentPage = extractPageFromTitle(title);
+            player.closeInventory();
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                ReportsGUI.openPlayerReportsGUI(player, targetName, currentPage + 1);
+            }, 2L);
+            return;
+        }
+        
+        if (isButton(displayName, "Previous", "Предыдущая", "السابقة")) {
+            // Use event title which is already a String
+            int currentPage = extractPageFromTitle(title);
+            player.closeInventory();
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                ReportsGUI.openPlayerReportsGUI(player, targetName, currentPage - 1);
+            }, 2L);
             return;
         }
         
@@ -564,5 +589,26 @@ public class ReportsGUIListener implements Listener {
         }
         
         return null;
+    }
+    
+    /**
+     * Helper method to extract page number from GUI title
+     */
+    private int extractPageFromTitle(String title) {
+        try {
+            // Remove color codes
+            String stripped = title.replaceAll("§[0-9a-fk-or]", "");
+            
+            // Try to find pattern like "Page 1" / "Страница 1" / "صفحة 1"
+            String[] parts = stripped.split(" ");
+            for (int i = 0; i < parts.length; i++) {
+                if (parts[i].matches("\\d+")) {
+                    return Integer.parseInt(parts[i]) - 1; // Convert to 0-based index
+                }
+            }
+        } catch (Exception e) {
+            // If parsing fails, return 0
+        }
+        return 0;
     }
 }

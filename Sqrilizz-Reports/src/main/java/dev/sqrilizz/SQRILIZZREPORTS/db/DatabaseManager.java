@@ -9,12 +9,19 @@ public class DatabaseManager {
 
     public static void initialize() {
         var cfg = Main.getInstance().getConfig();
-        String type = cfg.getString("database.type", "sqlite").toLowerCase(Locale.ROOT);
+        String type = cfg.getString("database.type", "json").toLowerCase(Locale.ROOT);
+        
         if ("mysql".equals(type)) {
             driver = new MySQLDriver();
-        } else {
+            Main.getInstance().getLogger().info("Using MySQL database storage");
+        } else if ("sqlite".equals(type)) {
             driver = new SQLiteDriver();
+            Main.getInstance().getLogger().info("Using SQLite database storage");
+        } else {
+            driver = new JsonDriver();
+            Main.getInstance().getLogger().info("Using JSON file storage (lightweight)");
         }
+        
         driver.init();
     }
 

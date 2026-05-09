@@ -200,15 +200,25 @@ database:
 
 ---
 
-## 📄 Лицензия
+## Лицензия
 
-MIT License - см. файл [LICENSE](LICENSE)
+Этот проект лицензирован под Sqrilizz Custom License (SCL) - см. файл [LICENSE](LICENSE)
+
+### Основные моменты:
+- Бесплатно для личного использования и публичных серверов (включая донат)
+- Можно модифицировать для личного использования
+- Нельзя продавать или распространять без разрешения
+- Требуется указание авторства
+
+Для коммерческого использования или распространения: https://sqrilizz.xyz
 
 ---
 
 <div align="center">
 
-**Сделано с ❤️ [Sqrilizz](https://modrinth.com/user/Sqrilizz)**
+**Разработано Sqrilizz**
+
+Sqrilizz Entertainment / AuryxStudio
 
 [![GitHub](https://img.shields.io/badge/GitHub-Sqrilizz-black.svg?logo=github)](https://github.com/Sqrilizz)
 [![Modrinth](https://img.shields.io/badge/Modrinth-Sqrilizz-00AF5C.svg?logo=modrinth)](https://modrinth.com/user/Sqrilizz)

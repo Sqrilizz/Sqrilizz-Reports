@@ -1,5 +1,7 @@
 Manifest-Version: 1.0
 Multi-Release: true
 Implementation-Title: SQRILIZZ-REPORTS
-Implementation-Version: 7.8
+Implementation-Version: 8.0
+Built-By: Gradle 9.5.0
+Build-Jdk: 25.0.3 (Arch Linux)
 

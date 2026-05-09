@@ -16,6 +16,20 @@ class SQLiteDriver implements DatabaseManager.Driver {
     @Override
     public void init() {
         try {
+            // Check if SQLite JDBC is available
+            try {
+                Class.forName("org.sqlite.JDBC");
+            } catch (ClassNotFoundException e) {
+                Main.getInstance().getLogger().severe("═══════════════════════════════════════════════════════════");
+                Main.getInstance().getLogger().severe("SQLite JDBC driver not found!");
+                Main.getInstance().getLogger().severe("To use SQLite, add this dependency to build.gradle.kts:");
+                Main.getInstance().getLogger().severe("  implementation(\"org.xerial:sqlite-jdbc:3.47.2.0\")");
+                Main.getInstance().getLogger().severe("Or switch to JSON storage (lightweight, no dependencies):");
+                Main.getInstance().getLogger().severe("  database.type: json");
+                Main.getInstance().getLogger().severe("═══════════════════════════════════════════════════════════");
+                throw new RuntimeException("SQLite JDBC driver not found. Please add dependency or use JSON storage.");
+            }
+            
             File dataFolder = Main.getInstance().getDataFolder();
             if (!dataFolder.exists()) dataFolder.mkdirs();
             String dbPath = new File(dataFolder, "reports.db").getAbsolutePath();
