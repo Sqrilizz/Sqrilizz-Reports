@@ -3,6 +3,12 @@
 
 Modern report management system for Minecraft servers with GUI interface and multi-language support.
 
+## Requirements
+
+- **Minecraft:** 1.8.9 - 26.1.2
+- **Server:** Paper, Purpur, Pufferfish, Folia, or Spigot
+- **Java:** 25+
+
 ## Features
 
 - Interactive GUI for managing reports

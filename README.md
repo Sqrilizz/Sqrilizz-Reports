@@ -69,8 +69,10 @@ Modern report management system for Minecraft servers with interactive GUI inter
 ## Requirements
 
 - **Minecraft**: 1.8.9 - 26.1.2
-- **Server**: Paper, Spigot, or Folia
+- **Server**: Paper, Purpur, Pufferfish, Folia, or Spigot
 - **Java**: 25 or higher
+
+**Recommended:** Paper or Purpur for best performance and features
 
 ---
 
