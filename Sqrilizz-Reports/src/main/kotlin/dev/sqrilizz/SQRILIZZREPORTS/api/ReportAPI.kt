@@ -45,8 +45,7 @@ object ReportAPI {
                 getPlayerLocation(target), false
             )
 
-            ReportManager.getReports().getOrPut(targetName) { mutableListOf() }.add(report)
-            ReportManager.saveReports()
+            ReportManager.addSystemReport(report)
 
             val event = ReportEvent(null, target, reason, System.currentTimeMillis(), systemName)
             reportListeners.forEach { listener ->

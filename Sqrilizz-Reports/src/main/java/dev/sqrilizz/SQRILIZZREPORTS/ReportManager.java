@@ -114,6 +114,30 @@ public class ReportManager {
         Bukkit.getPluginManager().callEvent(new ReportCreateEventBukkit(report));
     }
 
+    public static void addSystemReport(Report report) {
+        String targetName = report.target;
+
+        long id = 0L;
+        try {
+            id = DatabaseManager.saveReport(report);
+        } catch (Exception e) {
+            ErrorManager.logError("DB_SAVE_SYSTEM_REPORT", e);
+            ErrorManager.writeBackup("system_report_create", targetName, report);
+        }
+        if (id > 0) report.id = id;
+
+        LOCK.writeLock().lock();
+        try {
+            reports.computeIfAbsent(targetName, k -> new ArrayList<>()).add(0, report);
+            if (report.id > 0) {
+                reportsById.put(report.id, report);
+            }
+        } finally {
+            LOCK.writeLock().unlock();
+        }
+        saveReports();
+    }
+
     public static void addBugReport(Player reporter, String category, String description) {
         String reporterName = VersionUtils.getPlayerCleanName(reporter);
         String targetName = "BUG_REPORT";
