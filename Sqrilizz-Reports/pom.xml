@@ -125,11 +125,9 @@
                 </configuration>
             </plugin>
 
-            <!-- Java compilation is handled by kotlin-maven-plugin above
-                 (it compiles both .kt and .java sources in mixed mode).
-                 We disable the default maven-compiler executions because
-                 Paper API 26.1.2 targets Java 25 class files which javac
-                 on JDK 21 cannot read. The Kotlin compiler handles this. -->
+            <!-- Java compilation runs AFTER Kotlin.
+                 disable default-compile so ordering is: kotlinc → javac.
+                 Targets Java 21 bytecode for backward compatibility. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -142,6 +140,13 @@
                     <execution>
                         <id>default-compile</id>
                         <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                     </execution>
                     <execution>
                         <id>default-testCompile</id>
