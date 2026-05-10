@@ -159,35 +159,40 @@ public class Main extends JavaPlugin {
             isFolia = false;
         }
         
-        // Get server version
+        // Dynamic version detection supporting all past and future versions
         String version = Bukkit.getVersion();
-        if (version.contains("1.8")) {
-            serverVersion = "1.8.x";
-            majorVersion = 8;
-        } else if (version.contains("1.9") || version.contains("1.10") || version.contains("1.11")) {
-            serverVersion = "1.9-1.11";
-            majorVersion = 9;
-        } else if (version.contains("1.12") || version.contains("1.13") || version.contains("1.14") || version.contains("1.15")) {
-            serverVersion = "1.12-1.15";
-            majorVersion = 12;
-        } else if (version.contains("1.16")) {
-            serverVersion = "1.16";
-            majorVersion = 16;
-        } else if (version.contains("1.17") || version.contains("1.18")) {
-            serverVersion = "1.17-1.18";
-            majorVersion = 17;
-        } else if (version.contains("1.19")) {
-            serverVersion = "1.19";
-            majorVersion = 19;
-        } else if (version.contains("1.20")) {
-            serverVersion = "1.20";
-            majorVersion = 20;
-        } else if (version.contains("1.21")) {
-            serverVersion = "1.21";
-            majorVersion = 21;
+        serverVersion = "unknown";
+        majorVersion = 0;
+        
+        // Try to extract version from Bukkit.getVersion() — format: "git-Paper-xxx (MC: X.Y.Z)" or similar
+        java.util.regex.Matcher mcMatcher = java.util.regex.Pattern.compile("MC:\\s*(\\d+)\\.(\\d+)").matcher(version);
+        if (mcMatcher.find()) {
+            int first = Integer.parseInt(mcMatcher.group(1));
+            int second = Integer.parseInt(mcMatcher.group(2));
+            if (first == 1) {
+                // Legacy format: 1.8, 1.9, ... 1.21
+                majorVersion = second;
+                serverVersion = "1." + second;
+            } else {
+                // New format: 24.1, 25.0, 26.1, etc.
+                majorVersion = first;
+                serverVersion = first + "." + second;
+            }
         } else {
-            serverVersion = "unknown";
-            majorVersion = 0;
+            // Fallback: try Bukkit.getBukkitVersion() — format: "X.Y.Z-RX.X-SNAPSHOT"
+            String bukkitVersion = Bukkit.getBukkitVersion();
+            java.util.regex.Matcher bvMatcher = java.util.regex.Pattern.compile("^(\\d+)\\.(\\d+)").matcher(bukkitVersion);
+            if (bvMatcher.find()) {
+                int first = Integer.parseInt(bvMatcher.group(1));
+                int second = Integer.parseInt(bvMatcher.group(2));
+                if (first == 1) {
+                    majorVersion = second;
+                    serverVersion = "1." + second;
+                } else {
+                    majorVersion = first;
+                    serverVersion = first + "." + second;
+                }
+            }
         }
     }
 
