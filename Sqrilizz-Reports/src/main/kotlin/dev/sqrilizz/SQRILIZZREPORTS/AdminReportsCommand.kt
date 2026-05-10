@@ -106,7 +106,7 @@ class AdminReportsCommand : CommandExecutor {
 
         AntiAbuseManager.markFalseReport(cleanReporterName)
 
-        VersionUtils.sendMessage(player, LanguageManager.getMessage("false-report-marked")
+        VersionUtils.sendMessage(player, LanguageManager.getMessage("false-report-punishment")
             .replace("[PLAYER]", cleanReporterName))
 
         dev.sqrilizz.SQRILIZZREPORTS.api.WebhookManager.sendFalseReportWebhook(

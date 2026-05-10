@@ -16,7 +16,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -30,7 +32,8 @@ public class ReportManager {
     private static Map<String, List<Report>> reports = new ConcurrentHashMap<>();
     // O(1) поиск по ID для максимальной производительности
     private static Map<Long, Report> reportsById = new ConcurrentHashMap<>();
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
+            .withZone(ZoneId.systemDefault());
 
     public static void initialize() {
         // YAML backup file
@@ -105,14 +108,10 @@ public class ReportManager {
         // Уведомляем админов (анонимно или нет)
         notifyAdmins(report);
 
-        // Записываем метрику создания репорта
-        
         // Асинхронная отправка уведомлений для максимальной производительности
         NotificationUtils.sendReportNotificationsAsync(report, reporter, target, reason, reporterName, targetName, isAnonymous);
         // Bukkit event
         Bukkit.getPluginManager().callEvent(new ReportCreateEventBukkit(report));
-        // API listeners
-        ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
 
     public static void addBugReport(Player reporter, String category, String description) {
@@ -162,8 +161,6 @@ public class ReportManager {
         NotificationUtils.sendBugReportNotificationsAsync(report, reporter, category, description, reporterName);
         // Bukkit event
         Bukkit.getPluginManager().callEvent(new ReportCreateEventBukkit(report));
-        // API listeners
-        ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
 
     private static String getPlayerLocation(Player player) {
@@ -215,14 +212,20 @@ public class ReportManager {
     }
 
     public static Map<String, List<Report>> getReports() {
-        return reports;
+        return Collections.unmodifiableMap(reports);
     }
 
     public static int getReportCount(String targetName) {
-        return reports.getOrDefault(targetName, new ArrayList<>()).size();
+        LOCK.readLock().lock();
+        try {
+            return reports.getOrDefault(targetName, new ArrayList<>()).size();
+        } finally {
+            LOCK.readLock().unlock();
+        }
     }
 
     public static void saveReports() {
+        LOCK.readLock().lock();
         try {
             reportsConfig.set("reports", null); // Очищаем старые данные
             
@@ -247,15 +250,17 @@ public class ReportManager {
             }
             
             reportsConfig.save(reportsFile);
-            
-            // Sync with database - replace all reports
-            try {
-                DatabaseManager.replaceAllReports(new HashMap<>(reports));
-            } catch (Exception e) {
-                Main.getInstance().getLogger().warning("Failed to sync reports to database: " + e.getMessage());
-            }
         } catch (IOException e) {
             Main.getInstance().getLogger().severe("Could not save reports: " + e.getMessage());
+        } finally {
+            LOCK.readLock().unlock();
+        }
+
+        // Sync with database - replace all reports
+        try {
+            DatabaseManager.replaceAllReports(new HashMap<>(reports));
+        } catch (Exception e) {
+            Main.getInstance().getLogger().warning("Failed to sync reports to database: " + e.getMessage());
         }
     }
 
@@ -266,7 +271,7 @@ public class ReportManager {
             // Анонимное уведомление
             message = LanguageManager.getMessage("anonymous-report-notification")
                 .replace("[REASON]", report.reason)
-                .replace("[TIME]", DATE_FORMAT.format(new Date(report.timestamp)))
+                .replace("[TIME]", DATE_FORMAT.format(Instant.ofEpochMilli(report.timestamp)))
                 .replace("[TARGET_LOC]", report.targetLocation);
         } else {
             // Обычное уведомление
@@ -274,7 +279,7 @@ public class ReportManager {
                 .replace("[REPORTER]", report.reporter)
                 .replace("[TARGET]", report.target)
                 .replace("[REASON]", report.reason)
-                .replace("[TIME]", DATE_FORMAT.format(new Date(report.timestamp)))
+                .replace("[TIME]", DATE_FORMAT.format(Instant.ofEpochMilli(report.timestamp)))
                 .replace("[REPORTER_LOC]", report.reporterLocation)
                 .replace("[TARGET_LOC]", report.targetLocation);
         }
@@ -291,7 +296,7 @@ public class ReportManager {
             .replace("[REPORTER]", report.reporter)
             .replace("[CATEGORY]", category.toUpperCase())
             .replace("[REASON]", report.reason)
-            .replace("[TIME]", DATE_FORMAT.format(new Date(report.timestamp)))
+            .replace("[TIME]", DATE_FORMAT.format(Instant.ofEpochMilli(report.timestamp)))
             .replace("[REPORTER_LOC]", report.reporterLocation);
 
         for (Player player : VersionUtils.getOnlinePlayers()) {
@@ -336,7 +341,7 @@ public class ReportManager {
     }
 
     public static boolean resolveReport(long id, String resolver) {
-        Report r = findById(id);
+        Report r = findReportById(id);
         if (r == null) return false;
         
         // Fire events before deletion
@@ -352,7 +357,7 @@ public class ReportManager {
     }
 
     public static boolean addReply(long id, String author, String message) {
-        Report r = findById(id);
+        Report r = findReportById(id);
         if (r == null) return false;
         Reply reply = new Reply(0L, id, author, message, System.currentTimeMillis());
         boolean ok = false;
@@ -364,8 +369,6 @@ public class ReportManager {
         r.replies.add(reply);
         saveReports();
         CacheManager.invalidate(r.target);
-        // Записываем метрику добавления ответа
-        
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportReplyEvent(reply));
         ReportAPI.notifyReplied(reply);
@@ -377,7 +380,7 @@ public class ReportManager {
     }
 
     public static boolean deleteReport(long id, String deleter) {
-        Report r = findById(id);
+        Report r = findReportById(id);
         if (r == null) return false;
         LOCK.writeLock().lock();
         try {
@@ -391,8 +394,6 @@ public class ReportManager {
         }
         saveReports();
         CacheManager.invalidate(r.target);
-        // Записываем метрику удаления репорта
-        
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportDeleteEvent(r, deleter));
         ReportAPI.notifyDeleted(r);
@@ -403,8 +404,7 @@ public class ReportManager {
     }
 
 
-    // O(1) поиск вместо O(n²) - критическая оптимизация!
-    private static Report findById(long id) {
+    public static Report findReportById(long id) {
         return reportsById.get(id);
     }
 
@@ -441,7 +441,7 @@ public class ReportManager {
         }
 
         public String getFormattedTime() {
-            return DATE_FORMAT.format(new Date(timestamp));
+            return DATE_FORMAT.format(Instant.ofEpochMilli(timestamp));
         }
 
         public String getTimeAgo() {

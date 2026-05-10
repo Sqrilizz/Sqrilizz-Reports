@@ -15,6 +15,7 @@ object DiscordWebhookManager {
     private var webhookUrl = ""
     private var enabled = false
     private val gson = Gson()
+    private val httpClient: HttpClient = HttpClient.newHttpClient()
     private val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
         .withZone(ZoneId.systemDefault())
 
@@ -70,14 +71,13 @@ object DiscordWebhookManager {
                     add("embeds", gson.toJsonTree(arrayOf(embed)))
                 }
 
-                val client = HttpClient.newHttpClient()
                 val request = HttpRequest.newBuilder()
                     .uri(URI.create(webhookUrl))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(webhook.toString()))
                     .build()
 
-                val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+                val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
 
                 if (response.statusCode() == 204) {
                     Main.getInstance().logger.info("Discord webhook sent successfully")

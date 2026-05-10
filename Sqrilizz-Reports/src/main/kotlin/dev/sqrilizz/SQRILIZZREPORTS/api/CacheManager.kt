@@ -32,8 +32,8 @@ object CacheManager {
     }
 
     @JvmStatic
-    fun getReportsCached(player: String): List<ReportManager.Report>? =
-        reportsCache?.get(player) { ReportManager.getPlayerReports(it) }
+    fun getReportsCached(player: String): List<ReportManager.Report> =
+        reportsCache?.get(player) { ReportManager.getPlayerReports(it) } ?: emptyList()
 
     @JvmStatic
     fun invalidate(player: String) {

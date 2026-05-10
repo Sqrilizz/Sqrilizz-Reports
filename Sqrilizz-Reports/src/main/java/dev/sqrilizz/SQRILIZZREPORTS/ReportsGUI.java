@@ -2,6 +2,7 @@ package dev.sqrilizz.SQRILIZZREPORTS;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -92,6 +93,7 @@ public class ReportsGUI {
         gui.setItem(49, close);
         
         player.openInventory(gui);
+        playSound(player, Sound.BLOCK_CHEST_OPEN);
     }
 
     /**
@@ -194,13 +196,15 @@ public class ReportsGUI {
         gui.setItem(53, close);
         
         admin.openInventory(gui);
+        playSound(admin, Sound.BLOCK_CHEST_OPEN);
     }
 
     /**
      * Opens action menu for a specific report
      */
+
     public static void openReportActionsGUI(Player admin, long reportId, String targetName) {
-        ReportManager.Report report = findReportById(reportId);
+        ReportManager.Report report = ReportManager.findReportById(reportId);
         
         if (report == null) {
             VersionUtils.sendMessage(admin, LanguageManager.getMessage("no-reports"));
@@ -272,6 +276,7 @@ public class ReportsGUI {
         gui.setItem(22, back);
         
         admin.openInventory(gui);
+        playSound(admin, Sound.UI_BUTTON_CLICK);
     }
     
     /**
@@ -337,6 +342,7 @@ public class ReportsGUI {
         gui.setItem(22, back);
         
         admin.openInventory(gui);
+        playSound(admin, Sound.UI_BUTTON_CLICK);
     }
     
     /**
@@ -388,8 +394,22 @@ public class ReportsGUI {
         gui.setItem(22, close);
         
         admin.openInventory(gui);
+        playSound(admin, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
     }
     
+    /**
+     * Play a sound if gui-sounds is enabled in config
+     */
+    public static void playSound(Player player, Sound sound) {
+        try {
+            if (Main.getInstance().getConfig().getBoolean("gui-sounds", true)) {
+                player.playSound(player.getLocation(), sound, 0.7f, 1.0f);
+            }
+        } catch (Exception ignored) {
+            // Sound may not exist on older versions
+        }
+    }
+
     /**
      * Helper method to create player head
      */
@@ -406,20 +426,5 @@ public class ReportsGUI {
         return head;
     }
     
-    /**
-     * Helper method to find report by ID
-     */
-    private static ReportManager.Report findReportById(long id) {
-        Map<String, List<ReportManager.Report>> allReports = ReportManager.getReports();
-        
-        for (List<ReportManager.Report> reports : allReports.values()) {
-            for (ReportManager.Report report : reports) {
-                if (report.id == id) {
-                    return report;
-                }
-            }
-        }
-        
-        return null;
-    }
+
 }

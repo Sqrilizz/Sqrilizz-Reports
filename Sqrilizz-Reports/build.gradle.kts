@@ -50,7 +50,6 @@ java {
 
 kotlin {
     jvmToolchain(25)
-    // Компилируем Kotlin в ту же директорию что и Java
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
     }

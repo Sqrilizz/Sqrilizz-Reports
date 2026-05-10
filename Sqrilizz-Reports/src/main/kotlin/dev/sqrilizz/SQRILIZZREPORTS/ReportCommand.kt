@@ -63,8 +63,10 @@ class ReportCommand : CommandExecutor {
             .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(targetPlayer))
             .replace("[REASON]", reason))
 
-        VersionUtils.sendMessage(targetPlayer, LanguageManager.getMessage("report-received")
-            .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(sender)))
+        if (Main.getInstance().config.getBoolean("notify-target", true)) {
+            VersionUtils.sendMessage(targetPlayer, LanguageManager.getMessage("report-received")
+                .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(sender)))
+        }
 
         return true
     }

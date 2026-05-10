@@ -16,6 +16,10 @@ language: en
 cooldown: 230
 auto-ban-threshold: 8
 anonymous-reports: false
+# Whether to notify the reported player that they were reported
+notify-target: true
+# Play sounds on GUI actions (open, click, success, error)
+gui-sounds: true
 
 # ═══════════════════════════════════════════════════════════════
 # ANTI-ABUSE SYSTEM
@@ -90,6 +94,20 @@ discord-bot:
       kick: true
       mute: true
       warn: true
+
+# ═══════════════════════════════════════════════════════════════
+# PUNISHMENT COMMANDS
+# Customize the commands executed for each punishment type.
+# Use [PLAYER] for target name, [REASON] for the reason.
+# ═══════════════════════════════════════════════════════════════
+punishment-commands:
+  warn: "warn [PLAYER] [REASON]"
+  kick: "kick [PLAYER] [REASON]"
+  mute-1h: "tempmute [PLAYER] 1h [REASON]"
+  mute-1d: "tempmute [PLAYER] 1d [REASON]"
+  ban-1d: "tempban [PLAYER] 1d [REASON]"
+  ban-7d: "tempban [PLAYER] 7d [REASON]"
+  ban-perm: "ban [PLAYER] [REASON]"
 
 # ═══════════════════════════════════════════════════════════════
 # DESIGN & COLORS

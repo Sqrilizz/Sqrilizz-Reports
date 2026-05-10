@@ -101,7 +101,7 @@ class BugReportCommand : CommandExecutor {
                 .filter { it.value == cat }
                 .joinToString(", ") { it.key }
             val aliasText = if (aliases.isNotEmpty()) " ($aliases)" else ""
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("bugreport-category-entry")
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("bugreport-category-item")
                 .replace("[CATEGORY]", cat)
                 .replace("[ALIASES]", aliasText)
                 .replace("[DESCRIPTION]", LanguageManager.getMessage("bugreport-category-$cat")))
