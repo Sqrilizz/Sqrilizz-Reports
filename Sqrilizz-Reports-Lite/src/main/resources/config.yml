@@ -1,5 +1,8 @@
-# Sqrilizz-Reports Lite v8.0 Configuration
+# Sqrilizz-Reports Lite Configuration
 # Simple, fast, reliable report system
+
+# Cooldown between reports (seconds)
+cooldown: 30
 
 # Telegram Notifications
 telegram:

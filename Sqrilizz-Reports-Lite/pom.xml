@@ -5,23 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.sqrilizz</groupId>
-    <artifactId>SQRILIZZ-REPORTS</artifactId>
+    <artifactId>Sqrilizz-Reports-Lite</artifactId>
     <version>8.0</version>
     <packaging>jar</packaging>
 
-    <name>Sqrilizz-Reports</name>
-    <description>A simple reports plugin with multi-version support</description>
+    <name>Sqrilizz-Reports-Lite</name>
+    <description>Simple and efficient report system for Minecraft servers</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <kotlin.version>2.3.0</kotlin.version>
         <paper.version>26.1.2.build.62-stable</paper.version>
-        <gson.version>2.11.0</gson.version>
-        <hikari.version>6.2.1</hikari.version>
-        <okhttp.version>4.12.0</okhttp.version>
-        <caffeine.version>3.2.0</caffeine.version>
-        <bstats.version>3.2.1</bstats.version>
+        <version>${project.version}</version>
     </properties>
 
     <repositories>
@@ -29,14 +25,10 @@
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
-        <repository>
-            <id>jitpack</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <!-- Paper API (provided by server at runtime) -->
+        <!-- Paper API (provided by server) -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -51,39 +43,11 @@
             <version>${kotlin.version}</version>
         </dependency>
 
-        <!-- JSON -->
+        <!-- SQLite driver -->
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
-        </dependency>
-
-        <!-- Connection pool -->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${hikari.version}</version>
-        </dependency>
-
-        <!-- HTTP client -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${okhttp.version}</version>
-        </dependency>
-
-        <!-- Cache -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>${caffeine.version}</version>
-        </dependency>
-
-        <!-- bStats -->
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>${bstats.version}</version>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.47.2.0</version>
         </dependency>
     </dependencies>
 
@@ -98,9 +62,7 @@
         </resources>
 
         <plugins>
-            <!-- Kotlin compilation — must be before maven-compiler-plugin.
-                 Compiles both Kotlin AND Java sources so that Java↔Kotlin
-                 cross-references work correctly. -->
+            <!-- Kotlin compilation (all sources are Kotlin) -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -108,14 +70,12 @@
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -125,19 +85,11 @@
                 </configuration>
             </plugin>
 
-            <!-- Java compilation is handled by kotlin-maven-plugin above
-                 (it compiles both .kt and .java sources in mixed mode).
-                 We disable the default maven-compiler executions because
-                 Paper API 26.1.2 targets Java 25 class files which javac
-                 on JDK 21 cannot read. The Kotlin compiler handles this. -->
+            <!-- Disable Java compiler (all sources are Kotlin) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
-                <configuration>
-                    <release>${java.version}</release>
-                    <encoding>UTF-8</encoding>
-                </configuration>
                 <executions>
                     <execution>
                         <id>default-compile</id>
@@ -150,7 +102,7 @@
                 </executions>
             </plugin>
 
-            <!-- Shade plugin — creates fat JAR with relocated dependencies -->
+            <!-- Shade plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -167,28 +119,12 @@
 
                             <relocations>
                                 <relocation>
-                                    <pattern>org.bstats</pattern>
-                                    <shadedPattern>dev.sqrilizz.SQRILIZZREPORTS.libs.bstats</shadedPattern>
+                                    <pattern>org.sqlite</pattern>
+                                    <shadedPattern>dev.sqrilizz.reports.libs.sqlite</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>kotlin</pattern>
-                                    <shadedPattern>dev.sqrilizz.SQRILIZZREPORTS.libs.kotlin</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google.gson</pattern>
-                                    <shadedPattern>dev.sqrilizz.SQRILIZZREPORTS.libs.gson</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>okhttp3</pattern>
-                                    <shadedPattern>dev.sqrilizz.SQRILIZZREPORTS.libs.okhttp3</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>okio</pattern>
-                                    <shadedPattern>dev.sqrilizz.SQRILIZZREPORTS.libs.okio</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.github.benmanes.caffeine</pattern>
-                                    <shadedPattern>dev.sqrilizz.SQRILIZZREPORTS.libs.caffeine</shadedPattern>
+                                    <shadedPattern>dev.sqrilizz.reports.libs.kotlin</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -200,24 +136,17 @@
                                         <exclude>META-INF/LICENSE*</exclude>
                                         <exclude>META-INF/NOTICE*</exclude>
                                         <exclude>META-INF/maven/**</exclude>
-                                        <exclude>META-INF/versions/**</exclude>
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/services/javax.annotation.processing.Processor</exclude>
-                                        <exclude>META-INF/native-image/**</exclude>
-                                        <exclude>META-INF/proguard/**</exclude>
                                         <exclude>META-INF/*.kotlin_module</exclude>
-                                        <exclude>org/checkerframework/**</exclude>
                                         <exclude>org/jetbrains/annotations/**</exclude>
                                         <exclude>org/intellij/**</exclude>
-                                        <exclude>DebugProbesKt.bin</exclude>
                                         <exclude>kotlin/**/*.kotlin_builtins</exclude>
                                     </excludes>
                                 </filter>
-                                <!-- Don't minimize these — loaded via reflection -->
                                 <filter>
-                                    <artifact>com.zaxxer:HikariCP</artifact>
+                                    <artifact>org.xerial:sqlite-jdbc</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>

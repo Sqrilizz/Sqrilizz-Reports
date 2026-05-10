@@ -1,15 +1,20 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.jetbrains.kotlin.jvm' version '2.3.0'
+    id 'com.gradleup.shadow' version '9.0.0-beta12'
 }
 
 group = 'dev.sqrilizz'
-version = '1.0'
+version = '8.0'
 description = 'Sqrilizz-Reports Lite - Simple and efficient report system'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 repositories {
@@ -18,27 +23,24 @@ repositories {
 }
 
 dependencies {
-    // Bukkit API for maximum compatibility (1.8.9+)
-    compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
-    
-    // SQLite driver
-    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+    compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.3.0'
+    implementation 'org.xerial:sqlite-jdbc:3.47.2.0'
 }
 
 shadowJar {
     archiveClassifier.set('')
-    
-    // Only include SQLite driver
+
     dependencies {
         include(dependency('org.xerial:sqlite-jdbc'))
+        include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
     }
-    
-    // Relocate to avoid conflicts
+
     relocate 'org.sqlite', 'dev.sqrilizz.reports.libs.sqlite'
-    
+    relocate 'kotlin', 'dev.sqrilizz.reports.libs.kotlin'
+
     mergeServiceFiles()
-    
-    // Minimize JAR size
     minimize()
 }
 
@@ -52,9 +54,11 @@ tasks.withType(JavaCompile) {
 
 processResources {
     filteringCharset = 'UTF-8'
-    
+
     filesMatching('plugin.yml') {
         expand([
+            'project.version': project.version,
+            'project.description': project.description,
             'version': project.version,
             'description': project.description
         ])
