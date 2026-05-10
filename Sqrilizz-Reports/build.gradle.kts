@@ -9,7 +9,7 @@ group = "dev.sqrilizz"
 version = "8.0"
 
 // Версии зависимостей
-val paperApiVersion = "26.1.2.build.+"
+val paperApiVersion = "26.1.2.build.62-stable"
 val gsonVersion = "2.11.0"
 val sqliteVersion = "3.47.2.0"
 val hikariVersion = "6.2.1"
@@ -51,14 +51,22 @@ java {
 kotlin {
     jvmToolchain(25)
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}
+
+// Paper API 26.1.2 metadata requires JVM 25. Override the attribute on
+// resolvable configurations so Gradle accepts the dependency on JVM 21.
+configurations.matching { it.isCanBeResolved }.configureEach {
+    attributes {
+        attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
     }
 }
 
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(25)
+        options.release.set(21)
     }
     
     compileKotlin {
@@ -87,6 +95,7 @@ tasks {
             // Исключаем классы которые загружаются через рефлексию
             exclude(dependency("org.xerial:.*"))
             exclude(dependency("com.zaxxer:.*"))
+            exclude(dependency("com.github.ben-manes.caffeine:.*"))
         }
         
         // Relocate зависимостей для избежания конфликтов
