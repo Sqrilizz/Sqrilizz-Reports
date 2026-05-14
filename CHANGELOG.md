@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.0] - 2026-05-14
+
+### Added
+- DebugManager with toggleable debug mode (default: off)
+- `/report-debug` command to toggle debug logging
+- Debug logging in GUI listener (click events, menu detection, button matching)
+- Debug logging in PunishmentManager (punishment actions, system detection)
+- Separate bug report format for Telegram and Discord (category instead of target)
+
+### Fixed
+- GUI button matching now case-insensitive (was breaking buttons like "TP to Reporter" vs "reporter")
+- Punishment menu title parsing (extract player name between `] ` and ` #` instead of splitting by `-`)
+- Player reports target name extraction (strips trailing `]` from title format)
+- Hardcoded Russian "Назад" button in punishment handler (now uses isButton with all language variants)
+
+### Changed
+- Bug report notifications now use dedicated format (Reporter, Category, Description, Time, Location)
+- Admin bug report notification format simplified (shorter field names)
+- Bug report Discord embed color changed to orange (0xFFA500) to distinguish from regular reports
+
+## [26.1.2] - 2026-05-14 | Test
+
+### Added
+- Discord webhook notification when a report is resolved (green embed with resolver info)
+
+### Changed
+- Plugin version updated to 26.1.2
+- Universal version detection: supports any Minecraft version from 1.8 to 26.x+ (and future versions)
+- Version parser now uses regex instead of hardcoded checks, with Bukkit fallback
+
+### Fixed
+- Discord webhook config path bug (`discord.webhook_url` → `discord.webhook.url` matching config.yml)
+- Discord webhook now respects `discord.webhook.enabled` config flag
+- Discord webhook ignores placeholder `YOUR_WEBHOOK_URL` values
+- `setWebhookUrl()` now saves to both nested and legacy config paths for compatibility
+- Version detection no longer falls to "unknown" for versions beyond 1.21
+
 ## [8.0] - 2026-05-09
 
 ### Added

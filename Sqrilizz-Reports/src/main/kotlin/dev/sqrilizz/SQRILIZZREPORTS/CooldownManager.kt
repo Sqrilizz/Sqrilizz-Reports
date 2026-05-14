@@ -17,7 +17,7 @@ object CooldownManager {
     @JvmStatic
     fun initialize() {
         val config = Main.getInstance().config
-        cooldownTime = config.getLong("cooldown-time", 60)
+        cooldownTime = config.getLong("reports.cooldown", 60)
         
         Main.getInstance().logger.info("CooldownManager initialized with cooldown: ${cooldownTime}s")
     }

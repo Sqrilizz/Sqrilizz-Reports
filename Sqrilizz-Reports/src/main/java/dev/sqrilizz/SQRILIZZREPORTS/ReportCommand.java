@@ -79,10 +79,6 @@ public class ReportCommand implements CommandExecutor {
             .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(targetPlayer))
             .replace("[REASON]", reason));
         
-        // Уведомляем цель о получении жалобы
-        VersionUtils.sendMessage(targetPlayer, LanguageManager.getMessage("report-received")
-            .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(player)));
-        
         return true;
     }
 } 

@@ -6,14 +6,14 @@ plugins {
 }
 
 group = "dev.sqrilizz"
-version = "8.0"
+version = "9.0"
 
 // Версии зависимостей
-val paperApiVersion = "26.1.2.build.+"
+val paperApiVersion = "1.21.4-R0.1-SNAPSHOT"
 val gsonVersion = "2.11.0"
 val sqliteVersion = "3.47.2.0"
 val hikariVersion = "6.2.1"
-val okhttpVersion = "4.12.0" // 5.x требует миграцию API
+val okhttpVersion = "4.12.0"
 val caffeineVersion = "3.2.0"
 val bstatsVersion = "3.2.1"
 
@@ -44,22 +44,22 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 kotlin {
-    jvmToolchain(25)
+    jvmToolchain(21)
     // Компилируем Kotlin в ту же директорию что и Java
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
 }
 
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(25)
+        options.release.set(21)
     }
     
     compileKotlin {
@@ -81,13 +81,18 @@ tasks {
     }
     
     shadowJar {
+        archiveBaseName.set("Sqrilizz-Reports")
         archiveClassifier.set("")
         
         // Минимизация JAR - удаляем неиспользуемые классы
         minimize {
-            // Исключаем классы которые загружаются через рефлексию
+            // Исключаем классы которые загружаются через рефлексию или нужны в runtime
+            exclude(dependency("org.bstats:.*"))
             exclude(dependency("org.xerial:.*"))
             exclude(dependency("com.zaxxer:.*"))
+            exclude(dependency("org.jetbrains.kotlin:.*"))
+            exclude(dependency("com.squareup.okhttp3:.*"))
+            exclude(dependency("com.github.ben-manes.caffeine:.*"))
         }
         
         // Relocate зависимостей для избежания конфликтов

@@ -27,6 +27,9 @@ public class Main extends JavaPlugin {
             // Save default config
             saveDefaultConfig();
             getLogger().info("Config saved");
+            
+            // Initialize debug manager early
+            DebugManager.initialize();
 
             // Initialize security/auth and REST API configuration
             getLogger().info("Initializing AuthManager...");
@@ -85,6 +88,10 @@ public class Main extends JavaPlugin {
             ShutdownManager.initialize();
             getLogger().info("Graceful shutdown system initialized");
             
+            getLogger().info("Initializing punishment system...");
+            dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.initialize();
+            getLogger().info("Punishment system initialized");
+            
             // Start REST Server last
             getLogger().info("Starting REST Server...");
             RESTServer.initialize();
@@ -99,6 +106,7 @@ public class Main extends JavaPlugin {
             getCommand("report-language").setExecutor(new LanguageCommand());
             getCommand("report-webhook").setExecutor(new WebhookCommand());
             getCommand("report-reload").setExecutor(new ReloadCommand());
+            getCommand("report-debug").setExecutor(new DebugCommand());
             
             // Register tab completers
             getLogger().info("Registering tab completers...");
@@ -159,35 +167,55 @@ public class Main extends JavaPlugin {
             isFolia = false;
         }
         
-        // Get server version
+        // Get server version - universal parser for any Minecraft version (1.8 - 26.x+)
         String version = Bukkit.getVersion();
-        if (version.contains("1.8")) {
-            serverVersion = "1.8.x";
-            majorVersion = 8;
-        } else if (version.contains("1.9") || version.contains("1.10") || version.contains("1.11")) {
-            serverVersion = "1.9-1.11";
-            majorVersion = 9;
-        } else if (version.contains("1.12") || version.contains("1.13") || version.contains("1.14") || version.contains("1.15")) {
-            serverVersion = "1.12-1.15";
-            majorVersion = 12;
-        } else if (version.contains("1.16")) {
-            serverVersion = "1.16";
-            majorVersion = 16;
-        } else if (version.contains("1.17") || version.contains("1.18")) {
-            serverVersion = "1.17-1.18";
-            majorVersion = 17;
-        } else if (version.contains("1.19")) {
-            serverVersion = "1.19";
-            majorVersion = 19;
-        } else if (version.contains("1.20")) {
-            serverVersion = "1.20";
-            majorVersion = 20;
-        } else if (version.contains("1.21")) {
-            serverVersion = "1.21";
-            majorVersion = 21;
-        } else {
-            serverVersion = "unknown";
-            majorVersion = 0;
+        serverVersion = "unknown";
+        majorVersion = 0;
+        
+        // Try to extract version number from Bukkit.getVersion() string
+        // Format is usually like "git-Paper-123 (MC: 1.21.4)" or "1.21.4-R0.1-SNAPSHOT"
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("(\\d+)\\.(\\d+)(?:\\.(\\d+))?").matcher(version);
+        if (matcher.find()) {
+            try {
+                int first = Integer.parseInt(matcher.group(1));
+                int second = Integer.parseInt(matcher.group(2));
+                String patch = matcher.group(3);
+                
+                if (first == 1) {
+                    // Legacy format: 1.8, 1.9, ..., 1.21
+                    majorVersion = second;
+                    serverVersion = patch != null ? "1." + second + "." + patch : "1." + second;
+                } else {
+                    // New format: 26.1.2, 25.0.1, etc. (post-1.x versions)
+                    majorVersion = 21 + first; // Map new versions above 1.21 threshold
+                    serverVersion = patch != null ? first + "." + second + "." + patch : first + "." + second;
+                }
+            } catch (NumberFormatException e) {
+                serverVersion = "unknown";
+                majorVersion = 21; // Default to latest known for safety
+            }
+        }
+        
+        // Fallback: also check Bukkit.getBukkitVersion() if primary detection failed
+        if (majorVersion == 0) {
+            String bukkitVersion = Bukkit.getBukkitVersion(); // e.g. "1.21.4-R0.1-SNAPSHOT"
+            matcher = java.util.regex.Pattern.compile("(\\d+)\\.(\\d+)").matcher(bukkitVersion);
+            if (matcher.find()) {
+                try {
+                    int first = Integer.parseInt(matcher.group(1));
+                    int second = Integer.parseInt(matcher.group(2));
+                    if (first == 1) {
+                        majorVersion = second;
+                        serverVersion = "1." + second;
+                    } else {
+                        majorVersion = 21 + first;
+                        serverVersion = first + "." + second;
+                    }
+                } catch (NumberFormatException e) {
+                    majorVersion = 21;
+                    serverVersion = "unknown";
+                }
+            }
         }
     }
 

@@ -76,9 +76,12 @@ public class ReportsGUIListener implements Listener {
         ItemMeta meta = clicked.getItemMeta();
         String displayName = meta.getDisplayName();
         
+        DebugManager.log("GUI", "Click: title='" + strippedTitle + "' item=" + clicked.getType() + " name='" + displayName + "' slot=" + event.getSlot());
+        
         // Determine menu type by checking for keywords
         // Main reports list GUI (contains "Page" / "Страница" / "صفحة")
         if (strippedTitle.contains("Page") || strippedTitle.contains("Страница") || strippedTitle.contains("صфحة")) {
+            DebugManager.log("GUI", "-> Reports list menu detected");
             handleReportsListClick(player, clicked, displayName, title, event.isLeftClick());
         }
         // Report actions GUI (contains "Report #" / "Репорт #" / "بلاغ #")
@@ -89,9 +92,10 @@ public class ReportsGUIListener implements Listener {
             if (parts.length >= 2) {
                 try {
                     long reportId = Long.parseLong(parts[1].trim().split(" ")[0]);
+                    DebugManager.log("GUI", "-> Report actions menu, reportId=" + reportId);
                     handleReportActionsClick(player, displayName, reportId);
                 } catch (NumberFormatException e) {
-                    // Invalid report ID
+                    DebugManager.warn("Failed to parse report ID from title: " + strippedTitle);
                 }
             }
         }
@@ -99,29 +103,40 @@ public class ReportsGUIListener implements Listener {
         else if ((strippedTitle.contains("Punishment") || strippedTitle.contains("Наказание") || strippedTitle.contains("العقوبة"))
                  && strippedTitle.contains("#")) {
             // Extract targetName and reportId from title
+            // Title format: "[Punishment] PlayerName #ID" or "[Наказание] PlayerName #ID"
             String[] parts = strippedTitle.split("#");
             if (parts.length >= 2) {
                 try {
                     long reportId = Long.parseLong(parts[1].trim());
-                    // Extract target name (everything before the #)
+                    // Extract target name: everything between "] " and " #"
                     String beforeHash = parts[0].trim();
-                    String[] nameParts = beforeHash.split("-");
-                    if (nameParts.length >= 2) {
-                        String targetName = nameParts[nameParts.length - 1].trim();
+                    int bracketEnd = beforeHash.lastIndexOf("] ");
+                    String targetName;
+                    if (bracketEnd >= 0) {
+                        targetName = beforeHash.substring(bracketEnd + 2).trim();
+                    } else {
+                        // Fallback: last word before #
+                        String[] words = beforeHash.split("\\s+");
+                        targetName = words[words.length - 1].trim();
+                    }
+                    if (!targetName.isEmpty()) {
+                        DebugManager.log("GUI", "-> Punishment menu, target=" + targetName + " reportId=" + reportId);
                         handlePunishmentClick(player, displayName, targetName, reportId);
                     }
                 } catch (NumberFormatException e) {
-                    // Invalid report ID
+                    DebugManager.warn("Failed to parse punishment report ID from title: " + strippedTitle);
                 }
             }
         }
         // Punishment confirmation GUI (contains "Applied" / "выдано" / "تم تطبيق")
         else if (strippedTitle.contains("Applied") || strippedTitle.contains("выдано") || strippedTitle.contains("تم تطبيق")) {
+            DebugManager.log("GUI", "-> Punishment confirm menu");
             handlePunishmentConfirmClick(player, displayName);
         }
         // Player reports GUI (contains player name, check by elimination)
         else if (strippedTitle.contains("Reports") || strippedTitle.contains("Репорты") || strippedTitle.contains("البلاغات")) {
             // Extract target name from title - it's after "on" / "на" / "ضد"
+            // Title format: "[Reports on PlayerName]" - need to strip trailing ] and brackets
             String targetName = "";
             if (strippedTitle.contains("on ")) {
                 targetName = strippedTitle.split("on ")[1].trim();
@@ -130,8 +145,15 @@ public class ReportsGUIListener implements Listener {
             } else if (strippedTitle.contains("ضد ")) {
                 targetName = strippedTitle.split("ضد ")[1].trim();
             }
+            // Strip trailing ] from title format like [Reports on Player]
+            if (targetName.endsWith("]")) {
+                targetName = targetName.substring(0, targetName.length() - 1).trim();
+            }
             if (!targetName.isEmpty()) {
+                DebugManager.log("GUI", "-> Player reports menu, target=" + targetName);
                 handlePlayerReportsClick(player, clicked, displayName, targetName, title);
+            } else {
+                DebugManager.warn("Could not extract target name from title: " + strippedTitle);
             }
         }
     }
@@ -140,9 +162,9 @@ public class ReportsGUIListener implements Listener {
      * Helper method to check if button name matches any language variant
      */
     private boolean isButton(String displayName, String... keywords) {
-        String stripped = displayName.replaceAll("§[0-9a-fk-or]", "");
+        String stripped = displayName.replaceAll("§[0-9a-fk-or]", "").toLowerCase();
         for (String keyword : keywords) {
-            if (stripped.contains(keyword)) {
+            if (stripped.contains(keyword.toLowerCase())) {
                 return true;
             }
         }
@@ -277,9 +299,11 @@ public class ReportsGUIListener implements Listener {
     }
 
     private void handleReportActionsClick(Player player, String displayName, long reportId) {
+        DebugManager.log("GUI", "handleReportActionsClick: reportId=" + reportId + " button='" + displayName + "'");
         ReportManager.Report report = findReportById(reportId);
         
         if (report == null) {
+            DebugManager.warn("Report not found: " + reportId);
             VersionUtils.sendMessage(player, LanguageManager.getMessage("report-not-found"));
             player.closeInventory();
             return;
@@ -371,7 +395,7 @@ public class ReportsGUIListener implements Listener {
     
     private void handlePunishmentClick(Player player, String displayName, String targetName, long reportId) {
         // Back button
-        if (displayName.contains("Назад")) {
+        if (isButton(displayName, "Back", "Назад", "رجوع")) {
             player.closeInventory();
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 ReportsGUI.openPlayerReportsGUI(player, targetName);
@@ -380,141 +404,99 @@ public class ReportsGUIListener implements Listener {
         }
         
         String cleanTargetName = NameUtils.cleanPlayerName(targetName);
-        String reason = LanguageManager.getMessage("punishment-reason-default").replace("[REASON]", "Нарушение правил (репорт)");
-        Player target = Bukkit.getPlayer(cleanTargetName);
-        final String[] punishmentType = {""};  // Use array to make it effectively final
+        String reason = "Report violation";
+        final String[] punishmentType = {""};
         
         // Warn
         if (isButton(displayName, "Warning", "Предупреждение", "تحذير")) {
-            punishmentType[0] = "Предупреждение";
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "warn " + cleanTargetName + " " + reason);
+            punishmentType[0] = "Warning";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.warn(
+                cleanTargetName, reason, player.getName()
+            );
             
-            // Notify target player
-            if (target != null && target.isOnline()) {
-                String warnMsg = LanguageManager.getMessage("punishment-warn")
-                    .replace("[REASON]", reason)
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, warnMsg);
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         // Kick
         else if (isButton(displayName, "Kick", "Кик", "طرد")) {
-            punishmentType[0] = "Кик";
-            // Notify before kick
-            if (target != null && target.isOnline()) {
-                String kickMsg = LanguageManager.getMessage("punishment-kick")
-                    .replace("[REASON]", reason)
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, kickMsg);
+            punishmentType[0] = "Kick";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.kick(
+                cleanTargetName, reason, player.getName()
+            );
+            
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kick " + cleanTargetName + " " + reason);
-            }, 20L);
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         // Mute 1h
         else if (isButton(displayName, "1 hour", "1 час", "ساعة")) {
-            punishmentType[0] = "Мут 1 час";
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempmute " + cleanTargetName + " 1h " + reason);
+            punishmentType[0] = "Mute 1 hour";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.mute(
+                cleanTargetName, reason, player.getName(), 1, java.util.concurrent.TimeUnit.HOURS
+            );
             
-            // Notify target player
-            if (target != null && target.isOnline()) {
-                String muteMsg = LanguageManager.getMessage("punishment-mute")
-                    .replace("[REASON]", reason)
-                    .replace("[DURATION]", "1 час")
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, muteMsg);
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         // Mute 1d
         else if (isButton(displayName, "1 day", "1 день", "يوم واحد") && isButton(displayName, "Mute", "Мут", "كتم")) {
-            punishmentType[0] = "Мут 1 день";
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempmute " + cleanTargetName + " 1d " + reason);
+            punishmentType[0] = "Mute 1 day";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.mute(
+                cleanTargetName, reason, player.getName(), 1, java.util.concurrent.TimeUnit.DAYS
+            );
             
-            // Notify target player
-            if (target != null && target.isOnline()) {
-                String muteMsg = LanguageManager.getMessage("punishment-mute")
-                    .replace("[REASON]", reason)
-                    .replace("[DURATION]", "1 день")
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, muteMsg);
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         // Ban 1d
         else if (isButton(displayName, "1 day", "1 день", "يوم واحد") && isButton(displayName, "Ban", "Бан", "حظر")) {
-            punishmentType[0] = "Бан 1 день";
-            // Notify before ban
-            if (target != null && target.isOnline()) {
-                String banMsg = LanguageManager.getMessage("punishment-ban")
-                    .replace("[REASON]", reason)
-                    .replace("[DURATION]", "1 день")
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, banMsg);
+            punishmentType[0] = "Ban 1 day";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.ban(
+                cleanTargetName, reason, player.getName(), 1, java.util.concurrent.TimeUnit.DAYS
+            );
+            
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempban " + cleanTargetName + " 1d " + reason);
-            }, 20L);
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         // Ban 7d
         else if (isButton(displayName, "7 days", "7 дней", "7 أيام")) {
-            punishmentType[0] = "Бан 7 дней";
-            // Notify before ban
-            if (target != null && target.isOnline()) {
-                String banMsg = LanguageManager.getMessage("punishment-ban")
-                    .replace("[REASON]", reason)
-                    .replace("[DURATION]", "7 дней")
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, banMsg);
+            punishmentType[0] = "Ban 7 days";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.ban(
+                cleanTargetName, reason, player.getName(), 7, java.util.concurrent.TimeUnit.DAYS
+            );
+            
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempban " + cleanTargetName + " 7d " + reason);
-            }, 20L);
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         // Permanent ban
         else if (isButton(displayName, "Permanent", "Перманентный", "دائم")) {
-            punishmentType[0] = "Перманентный бан";
-            // Notify before ban
-            if (target != null && target.isOnline()) {
-                String banMsg = LanguageManager.getMessage("punishment-ban")
-                    .replace("[REASON]", reason)
-                    .replace("[DURATION]", "Навсегда")
-                    .replace("[ADMIN]", player.getName());
-                VersionUtils.sendMessage(target, banMsg);
+            punishmentType[0] = "Permanent ban";
+            boolean success = dev.sqrilizz.SQRILIZZREPORTS.punishment.PunishmentManager.banPermanent(
+                cleanTargetName, reason, player.getName()
+            );
+            
+            if (success) {
+                VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
+                    .replace("[PLAYER]", cleanTargetName)
+                    .replace("[TYPE]", punishmentType[0]));
             }
-            
-            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ban " + cleanTargetName + " " + reason);
-            }, 20L);
-            
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("admin-punished")
-                .replace("[PLAYER]", cleanTargetName)
-                .replace("[TYPE]", punishmentType[0]));
         }
         
         // If punishment was applied, open confirmation menu
@@ -575,20 +557,10 @@ public class ReportsGUIListener implements Listener {
     }
     
     /**
-     * Helper method to find report by ID
+     * Helper method to find report by ID - O(1) lookup
      */
     private ReportManager.Report findReportById(long id) {
-        Map<String, List<ReportManager.Report>> allReports = ReportManager.getReports();
-        
-        for (List<ReportManager.Report> reports : allReports.values()) {
-            for (ReportManager.Report report : reports) {
-                if (report.id == id) {
-                    return report;
-                }
-            }
-        }
-        
-        return null;
+        return ReportManager.getReportById(id);
     }
     
     /**

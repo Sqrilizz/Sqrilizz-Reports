@@ -22,7 +22,7 @@ public class TelegramManager {
         try {
             if (Main.getInstance().getConfig().getBoolean("telegram.enabled", false)) {
                 botToken = Main.getInstance().getConfig().getString("telegram.token", "");
-                chatId = Main.getInstance().getConfig().getString("telegram.chat_id", "");
+                chatId = Main.getInstance().getConfig().getString("telegram.chat-id", "");
                 
                 if (!botToken.isEmpty() && !chatId.isEmpty()) {
                     // Create lightweight HTTP client
@@ -53,7 +53,7 @@ public class TelegramManager {
         Main.runTaskAsync(() -> {
             try {
                 String message = String.format(
-                    "🚨 *Новая жалоба*\n\n" +
+                    "*Новая жалоба*\n\n" +
                     "*От:* %s\n" +
                     "*На:* %s\n" +
                     "*Причина:* %s\n" +
@@ -71,6 +71,32 @@ public class TelegramManager {
                 sendMessage(message);
             } catch (Exception e) {
                 Main.getInstance().getLogger().warning("Failed to send Telegram report: " + e.getMessage());
+            }
+        });
+    }
+
+    public static void sendBugReport(ReportManager.Report report, String category) {
+        if (!isEnabled()) return;
+
+        Main.runTaskAsync(() -> {
+            try {
+                String message = String.format(
+                    "*Новый баг-репорт*\n\n" +
+                    "*Отправитель:* %s\n" +
+                    "*Категория:* %s\n" +
+                    "*Описание:* %s\n" +
+                    "*Время:* %s\n" +
+                    "*Координаты отправителя:* %s",
+                    report.reporter,
+                    category.toUpperCase(),
+                    report.reason,
+                    report.getFormattedTime(),
+                    report.reporterLocation
+                );
+
+                sendMessage(message);
+            } catch (Exception e) {
+                Main.getInstance().getLogger().warning("Failed to send Telegram bug report: " + e.getMessage());
             }
         });
     }

@@ -39,16 +39,27 @@ public class NotificationUtils {
      */
     public static void sendBugReportNotificationsAsync(ReportManager.Report report, Player reporter, 
                                                       String category, String description, String reporterName) {
-        // Используем CompletableFuture для асинхронной обработки
         CompletableFuture.runAsync(() -> {
             try {
-                sendTelegramNotification(report);
-                sendDiscordWebhookNotification(report);
+                sendTelegramBugReportNotification(report, category);
+                sendDiscordBugReportNotification(report, category);
                 sendCustomBugReportWebhook(reporter, category, description);
             } catch (Exception e) {
                 ErrorManager.logError("BUG_NOTIFICATION_ASYNC", e);
             }
         });
+    }
+    
+    private static void sendTelegramBugReportNotification(ReportManager.Report report, String category) {
+        if (TelegramManager.isEnabled()) {
+            TelegramManager.sendBugReport(report, category);
+        }
+    }
+    
+    private static void sendDiscordBugReportNotification(ReportManager.Report report, String category) {
+        if (DiscordWebhookManager.isEnabled()) {
+            DiscordWebhookManager.sendBugReport(report, category);
+        }
     }
     
     /**

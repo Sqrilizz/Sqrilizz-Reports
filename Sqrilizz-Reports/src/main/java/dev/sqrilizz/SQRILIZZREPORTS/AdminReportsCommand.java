@@ -129,21 +129,29 @@ public class AdminReportsCommand implements CommandExecutor {
         // Отмечаем ложную жалобу в AntiAbuseManager
         AntiAbuseManager.markFalseReport(cleanReporterName);
         
-        // Находим все отчеты от этого игрока
+        // Находим все отчеты от этого игрока и удаляем через безопасный метод
         Map<String, List<ReportManager.Report>> allReports = ReportManager.getReports();
         boolean found = false;
         
         for (Map.Entry<String, List<ReportManager.Report>> entry : allReports.entrySet()) {
             List<ReportManager.Report> reports = entry.getValue();
-            reports.removeIf(report -> report.reporter.equals(cleanReporterName));
-            if (!reports.isEmpty()) {
-                found = true;
+            for (ReportManager.Report report : reports) {
+                if (report.reporter.equals(cleanReporterName)) {
+                    found = true;
+                }
             }
         }
         
         if (found) {
-            // Сохраняем изменения
-            ReportManager.saveReports();
+            // Удаляем репорты от этого игрока через безопасный метод с блокировками
+            for (Map.Entry<String, List<ReportManager.Report>> entry : allReports.entrySet()) {
+                List<ReportManager.Report> reports = entry.getValue();
+                for (ReportManager.Report report : new java.util.ArrayList<>(reports)) {
+                    if (report.reporter.equals(cleanReporterName) && report.id > 0) {
+                        ReportManager.deleteReport(report.id, player.getName());
+                    }
+                }
+            }
             
             // Баним игрока за ложную жалобу
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tempban " + cleanReporterName + " 5d Ложная жалоба");
@@ -151,7 +159,8 @@ public class AdminReportsCommand implements CommandExecutor {
             VersionUtils.sendMessage(player, LanguageManager.getMessage("false-report-punishment")
                 .replace("[PLAYER]", cleanReporterName));
         } else {
-            VersionUtils.sendMessage(player, "§cИгрок " + cleanReporterName + " не найден в отчетах");
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("player-not-found")
+                .replace("[PLAYER]", cleanReporterName));
         }
     }
 

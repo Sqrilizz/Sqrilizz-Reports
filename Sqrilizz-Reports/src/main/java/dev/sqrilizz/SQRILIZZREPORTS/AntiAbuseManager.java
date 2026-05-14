@@ -93,7 +93,7 @@ public class AntiAbuseManager {
      * Проверяет лимит жалоб на конкретного игрока
      */
     private static boolean checkPlayerReportLimit(String reporterName, String targetName) {
-        int limit = Main.getInstance().getConfig().getInt("report-limits.per-player", 3);
+        int limit = Main.getInstance().getConfig().getInt("anti-abuse.per-player-limit", 3);
         return getPlayerTargetReportCount(reporterName, targetName) < limit;
     }
     
@@ -101,7 +101,7 @@ public class AntiAbuseManager {
      * Проверяет часовой лимит жалоб
      */
     private static boolean checkHourlyLimit(String reporterName) {
-        int limit = Main.getInstance().getConfig().getInt("report-limits.per-hour", 10);
+        int limit = Main.getInstance().getConfig().getInt("anti-abuse.hourly-limit", 10);
         return getHourlyReportCount(reporterName) < limit;
     }
     
@@ -131,12 +131,12 @@ public class AntiAbuseManager {
         String reporterName = VersionUtils.getPlayerCleanName(reporter);
         int hourlyCount = getHourlyReportCount(reporterName);
         
-        int warningThreshold = Main.getInstance().getConfig().getInt("anti-abuse.warning-threshold", 5);
-        int muteThreshold = Main.getInstance().getConfig().getInt("anti-abuse.temp-mute-threshold", 8);
+        int warningThreshold = Main.getInstance().getConfig().getInt("anti-abuse.spam-protection.warning-threshold", 5);
+        int muteThreshold = Main.getInstance().getConfig().getInt("anti-abuse.spam-protection.mute-threshold", 8);
         
         if (hourlyCount >= muteThreshold) {
             // Временный мут
-            int muteDuration = Main.getInstance().getConfig().getInt("anti-abuse.temp-mute-duration", 300);
+            int muteDuration = Main.getInstance().getConfig().getInt("anti-abuse.spam-protection.mute-duration", 300);
             tempMutedPlayers.put(reporterName, System.currentTimeMillis() + (muteDuration * 1000L));
             VersionUtils.sendMessage(reporter, LanguageManager.getMessage("abuse-temp-mute")
                 .replace("[DURATION]", String.valueOf(muteDuration)));
@@ -173,7 +173,7 @@ public class AntiAbuseManager {
      * Проверяет, имеет ли игрок пониженный приоритет
      */
     public static boolean hasLowPriority(String reporterName) {
-        int threshold = Main.getInstance().getConfig().getInt("report-limits.false-report-threshold", 3);
+        int threshold = Main.getInstance().getConfig().getInt("anti-abuse.false-reports.threshold", 3);
         return falseReportCounts.getOrDefault(reporterName, 0) >= threshold;
     }
     

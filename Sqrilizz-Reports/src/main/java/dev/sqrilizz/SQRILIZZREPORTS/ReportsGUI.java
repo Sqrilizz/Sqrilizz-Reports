@@ -5,16 +5,18 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 public class ReportsGUI {
     
-    private static final int REPORTS_PER_PAGE = 45;
+    private static final int REPORTS_PER_PAGE = 36; // 4 rows of 9
     
     /**
      * Opens the main reports list GUI
@@ -34,7 +36,13 @@ public class ReportsGUI {
             return;
         }
         
+        // Sort players by report count (most reports first)
         List<String> reportedPlayers = new ArrayList<>(reports.keySet());
+        reportedPlayers.sort((a, b) -> Integer.compare(
+            reports.getOrDefault(b, new ArrayList<>()).size(),
+            reports.getOrDefault(a, new ArrayList<>()).size()
+        ));
+        
         int totalPages = (int) Math.ceil((double) reportedPlayers.size() / REPORTS_PER_PAGE);
         
         if (page < 0) page = 0;
@@ -42,9 +50,13 @@ public class ReportsGUI {
         
         Inventory gui = Bukkit.createInventory(null, 54, LanguageManager.getMessage("gui-reports-title").replace("[PAGE]", String.valueOf(page + 1)));
         
+        // Fill top border (row 0, slots 0-8)
+        fillBorder(gui, 0, 8);
+        
         int startIndex = page * REPORTS_PER_PAGE;
         int endIndex = Math.min(startIndex + REPORTS_PER_PAGE, reportedPlayers.size());
         
+        // Place player heads in rows 1-4 (slots 9-44)
         for (int i = startIndex; i < endIndex; i++) {
             String targetName = reportedPlayers.get(i);
             List<ReportManager.Report> playerReports = reports.get(targetName);
@@ -52,20 +64,48 @@ public class ReportsGUI {
             
             ItemStack item = createPlayerHead(targetName);
             ItemMeta meta = item.getItemMeta();
-            // Set display name to just the player name with color
-            meta.setDisplayName(ColorManager.colorize("&e" + NameUtils.cleanPlayerName(targetName)));
+            
+            // Color name by severity
+            String color = reportCount >= 5 ? "&c&l" : reportCount >= 3 ? "&6" : "&e";
+            meta.setDisplayName(ColorManager.colorize(color + NameUtils.cleanPlayerName(targetName)));
             
             List<String> lore = new ArrayList<>();
+            lore.add(ColorManager.colorize("&8-----------------"));
             lore.add(LanguageManager.getMessage("gui-reports-count").replace("[COUNT]", String.valueOf(reportCount)));
-            lore.add("");
+            
+            // Show latest report reason preview
+            ReportManager.Report latest = playerReports.get(playerReports.size() - 1);
+            String reasonPreview = latest.reason.length() > 30 ? latest.reason.substring(0, 30) + "..." : latest.reason;
+            lore.add(ColorManager.colorize("&7" + LanguageManager.getRawMessage("gui-report-reason").replace("[REASON]", reasonPreview)));
+            lore.add(ColorManager.colorize("&7" + latest.getTimeAgo()));
+            lore.add(ColorManager.colorize("&8-----------------"));
             lore.add(LanguageManager.getMessage("gui-click-left").replace("[ACTION]", LanguageManager.getMessage("gui-open-reports")));
             lore.add(LanguageManager.getMessage("gui-click-right").replace("[ACTION]", LanguageManager.getMessage("gui-clear-all")));
             
             meta.setLore(lore);
             item.setItemMeta(meta);
             
-            gui.setItem(i - startIndex, item);
+            gui.setItem(9 + (i - startIndex), item);
         }
+        
+        // Fill bottom border (row 5, slots 45-53) 
+        fillBorder(gui, 45, 53);
+        
+        // Stats item (slot 45)
+        int totalReports = reports.values().stream().mapToInt(List::size).sum();
+        int totalPlayers = reports.size();
+        ItemStack stats = new ItemStack(Material.BOOK);
+        ItemMeta statsMeta = stats.getItemMeta();
+        statsMeta.setDisplayName(ColorManager.colorize("&b" + LanguageManager.getRawMessage("gui-reports-title").replace("[PAGE]", "")));
+        List<String> statsLore = new ArrayList<>();
+        statsLore.add(ColorManager.colorize("&8-----------------"));
+        statsLore.add(ColorManager.colorize("&7" + LanguageManager.getRawMessage("gui-reports-count").replace("[COUNT]", String.valueOf(totalReports))));
+        statsLore.add(ColorManager.colorize("&7Players: &f" + totalPlayers));
+        statsLore.add(ColorManager.colorize("&7Page: &f" + (page + 1) + "/" + totalPages));
+        statsLore.add(ColorManager.colorize("&8-----------------"));
+        statsMeta.setLore(statsLore);
+        stats.setItemMeta(statsMeta);
+        gui.setItem(45, stats);
         
         // Navigation buttons
         if (page > 0) {
@@ -207,69 +247,100 @@ public class ReportsGUI {
             return;
         }
         
-        Inventory gui = Bukkit.createInventory(null, 27, LanguageManager.getMessage("gui-report-actions").replace("[ID]", String.valueOf(reportId)));
+        Inventory gui = Bukkit.createInventory(null, 45, LanguageManager.getMessage("gui-report-actions").replace("[ID]", String.valueOf(reportId)));
         
-        // Teleport to reporter
+        // Fill borders
+        fillBorder(gui, 0, 8);
+        fillBorder(gui, 36, 44);
+        
+        // Report info card (slot 4, top center)
+        ItemStack info = new ItemStack(Material.PAPER);
+        ItemMeta infoMeta = info.getItemMeta();
+        infoMeta.setDisplayName(ColorManager.colorize("&b#" + report.id + " - " + NameUtils.cleanPlayerName(report.target)));
+        List<String> infoLore = new ArrayList<>();
+        infoLore.add(ColorManager.colorize("&8-----------------"));
+        infoLore.add(LanguageManager.getMessage("gui-report-from").replace("[REPORTER]", 
+            report.isAnonymous ? ColorManager.colorize("&7&oAnonymous") : NameUtils.cleanPlayerName(report.reporter)));
+        infoLore.add(LanguageManager.getMessage("gui-report-reason").replace("[REASON]", report.reason));
+        infoLore.add(LanguageManager.getMessage("gui-report-time").replace("[TIME]", report.getFormattedTime()));
+        infoLore.add(LanguageManager.getMessage("gui-report-ago").replace("[AGO]", report.getTimeAgo()));
+        infoLore.add(ColorManager.colorize("&8-----------------"));
+        infoMeta.setLore(infoLore);
+        info.setItemMeta(infoMeta);
+        gui.setItem(4, info);
+        
+        // Teleport to reporter (row 2)
         ItemStack tpReporter = new ItemStack(Material.ENDER_PEARL);
         ItemMeta tpReporterMeta = tpReporter.getItemMeta();
         tpReporterMeta.setDisplayName(LanguageManager.getMessage("gui-teleport-to-reporter"));
         List<String> tpReporterLore = new ArrayList<>();
+        tpReporterLore.add(ColorManager.colorize("&8-----------------"));
         tpReporterLore.add(LanguageManager.getMessage("gui-teleport-description").replace("[PLAYER]", report.reporter));
         tpReporterLore.add(LanguageManager.getMessage("gui-teleport-location").replace("[LOCATION]", report.reporterLocation));
+        tpReporterLore.add(ColorManager.colorize("&8-----------------"));
         tpReporterMeta.setLore(tpReporterLore);
         tpReporter.setItemMeta(tpReporterMeta);
-        gui.setItem(10, tpReporter);
+        gui.setItem(19, tpReporter);
         
         // Teleport to target
         ItemStack tpTarget = new ItemStack(Material.ENDER_EYE);
         ItemMeta tpTargetMeta = tpTarget.getItemMeta();
         tpTargetMeta.setDisplayName(LanguageManager.getMessage("gui-teleport-to-target"));
         List<String> tpTargetLore = new ArrayList<>();
+        tpTargetLore.add(ColorManager.colorize("&8-----------------"));
         tpTargetLore.add(LanguageManager.getMessage("gui-teleport-description").replace("[PLAYER]", report.target));
         tpTargetLore.add(LanguageManager.getMessage("gui-teleport-location").replace("[LOCATION]", report.targetLocation));
+        tpTargetLore.add(ColorManager.colorize("&8-----------------"));
         tpTargetMeta.setLore(tpTargetLore);
         tpTarget.setItemMeta(tpTargetMeta);
-        gui.setItem(11, tpTarget);
+        gui.setItem(21, tpTarget);
         
-        // Punish target
+        // Punish target (center)
         ItemStack punish = new ItemStack(Material.IRON_SWORD);
         ItemMeta punishMeta = punish.getItemMeta();
         punishMeta.setDisplayName(LanguageManager.getMessage("gui-punish-player"));
+        punishMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<String> punishLore = new ArrayList<>();
+        punishLore.add(ColorManager.colorize("&8-----------------"));
         punishLore.add(LanguageManager.getMessage("gui-punish-description"));
         punishLore.add(LanguageManager.getMessage("gui-punish-for").replace("[PLAYER]", report.target));
+        punishLore.add(ColorManager.colorize("&8-----------------"));
         punishMeta.setLore(punishLore);
         punish.setItemMeta(punishMeta);
-        gui.setItem(13, punish);
+        gui.setItem(22, punish);
         
         // Resolve report
         ItemStack resolve = new ItemStack(Material.LIME_DYE);
         ItemMeta resolveMeta = resolve.getItemMeta();
         resolveMeta.setDisplayName(LanguageManager.getMessage("gui-resolve-report"));
         List<String> resolveLore = new ArrayList<>();
+        resolveLore.add(ColorManager.colorize("&8-----------------"));
         resolveLore.add(LanguageManager.getMessage("gui-resolve-description"));
         resolveLore.add(LanguageManager.getMessage("gui-resolve-description2"));
+        resolveLore.add(ColorManager.colorize("&8-----------------"));
         resolveMeta.setLore(resolveLore);
         resolve.setItemMeta(resolveMeta);
-        gui.setItem(15, resolve);
+        gui.setItem(23, resolve);
         
         // Delete report
         ItemStack delete = new ItemStack(Material.RED_DYE);
         ItemMeta deleteMeta = delete.getItemMeta();
         deleteMeta.setDisplayName(LanguageManager.getMessage("gui-delete-report"));
         List<String> deleteLore = new ArrayList<>();
+        deleteLore.add(ColorManager.colorize("&8-----------------"));
         deleteLore.add(LanguageManager.getMessage("gui-delete-description"));
         deleteLore.add(LanguageManager.getMessage("gui-delete-description2"));
+        deleteLore.add(ColorManager.colorize("&8-----------------"));
         deleteMeta.setLore(deleteLore);
         delete.setItemMeta(deleteMeta);
-        gui.setItem(16, delete);
+        gui.setItem(25, delete);
         
         // Back button
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta backMeta = back.getItemMeta();
         backMeta.setDisplayName(LanguageManager.getMessage("gui-back"));
         back.setItemMeta(backMeta);
-        gui.setItem(22, back);
+        gui.setItem(40, back);
         
         admin.openInventory(gui);
     }
@@ -278,63 +349,120 @@ public class ReportsGUI {
      * Opens punishment menu for a player
      */
     public static void openPunishmentGUI(Player admin, String targetName, long reportId) {
-        Inventory gui = Bukkit.createInventory(null, 27, LanguageManager.getMessage("gui-punishment-menu").replace("[PLAYER]", targetName).replace("[ID]", String.valueOf(reportId)));
+        Inventory gui = Bukkit.createInventory(null, 45, LanguageManager.getMessage("gui-punishment-menu").replace("[PLAYER]", targetName).replace("[ID]", String.valueOf(reportId)));
+        
+        // Fill borders
+        fillBorder(gui, 0, 8);
+        fillBorder(gui, 36, 44);
+        
+        // Target info (top center)
+        ItemStack targetInfo = createPlayerHead(targetName);
+        ItemMeta targetMeta = targetInfo.getItemMeta();
+        targetMeta.setDisplayName(ColorManager.colorize("&c" + NameUtils.cleanPlayerName(targetName)));
+        List<String> targetLore = new ArrayList<>();
+        targetLore.add(ColorManager.colorize("&8-----------------"));
+        targetLore.add(ColorManager.colorize("&7Report ID: &f#" + reportId));
+        targetLore.add(ColorManager.colorize("&8-----------------"));
+        targetMeta.setLore(targetLore);
+        targetInfo.setItemMeta(targetMeta);
+        gui.setItem(4, targetInfo);
         
         // Warn
         ItemStack warn = new ItemStack(Material.YELLOW_DYE);
         ItemMeta warnMeta = warn.getItemMeta();
         warnMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-warn"));
+        List<String> warnLore = new ArrayList<>();
+        warnLore.add(ColorManager.colorize("&8-----------------"));
+        warnLore.add(ColorManager.colorize("&7Severity: &eLow"));
+        warnLore.add(ColorManager.colorize("&8-----------------"));
+        warnMeta.setLore(warnLore);
         warn.setItemMeta(warnMeta);
-        gui.setItem(10, warn);
+        gui.setItem(19, warn);
         
         // Kick
         ItemStack kick = new ItemStack(Material.IRON_DOOR);
         ItemMeta kickMeta = kick.getItemMeta();
         kickMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-kick"));
+        List<String> kickLore = new ArrayList<>();
+        kickLore.add(ColorManager.colorize("&8-----------------"));
+        kickLore.add(ColorManager.colorize("&7Severity: &6Medium"));
+        kickLore.add(ColorManager.colorize("&8-----------------"));
+        kickMeta.setLore(kickLore);
         kick.setItemMeta(kickMeta);
-        gui.setItem(11, kick);
+        gui.setItem(20, kick);
         
         // Mute 1h
         ItemStack mute1h = new ItemStack(Material.PAPER);
         ItemMeta mute1hMeta = mute1h.getItemMeta();
         mute1hMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-mute-1h"));
+        List<String> mute1hLore = new ArrayList<>();
+        mute1hLore.add(ColorManager.colorize("&8-----------------"));
+        mute1hLore.add(ColorManager.colorize("&7Duration: &f1 hour"));
+        mute1hLore.add(ColorManager.colorize("&8-----------------"));
+        mute1hMeta.setLore(mute1hLore);
         mute1h.setItemMeta(mute1hMeta);
-        gui.setItem(12, mute1h);
+        gui.setItem(21, mute1h);
         
         // Mute 1d
         ItemStack mute1d = new ItemStack(Material.BOOK);
         ItemMeta mute1dMeta = mute1d.getItemMeta();
         mute1dMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-mute-1d"));
+        List<String> mute1dLore = new ArrayList<>();
+        mute1dLore.add(ColorManager.colorize("&8-----------------"));
+        mute1dLore.add(ColorManager.colorize("&7Duration: &f1 day"));
+        mute1dLore.add(ColorManager.colorize("&8-----------------"));
+        mute1dMeta.setLore(mute1dLore);
         mute1d.setItemMeta(mute1dMeta);
-        gui.setItem(13, mute1d);
+        gui.setItem(22, mute1d);
         
         // Ban 1d
         ItemStack ban1d = new ItemStack(Material.IRON_AXE);
         ItemMeta ban1dMeta = ban1d.getItemMeta();
         ban1dMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-ban-1d"));
+        ban1dMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<String> ban1dLore = new ArrayList<>();
+        ban1dLore.add(ColorManager.colorize("&8-----------------"));
+        ban1dLore.add(ColorManager.colorize("&7Duration: &f1 day"));
+        ban1dLore.add(ColorManager.colorize("&7Severity: &cHigh"));
+        ban1dLore.add(ColorManager.colorize("&8-----------------"));
+        ban1dMeta.setLore(ban1dLore);
         ban1d.setItemMeta(ban1dMeta);
-        gui.setItem(14, ban1d);
+        gui.setItem(23, ban1d);
         
         // Ban 7d
         ItemStack ban7d = new ItemStack(Material.DIAMOND_AXE);
         ItemMeta ban7dMeta = ban7d.getItemMeta();
         ban7dMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-ban-7d"));
+        ban7dMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<String> ban7dLore = new ArrayList<>();
+        ban7dLore.add(ColorManager.colorize("&8-----------------"));
+        ban7dLore.add(ColorManager.colorize("&7Duration: &f7 days"));
+        ban7dLore.add(ColorManager.colorize("&7Severity: &cHigh"));
+        ban7dLore.add(ColorManager.colorize("&8-----------------"));
+        ban7dMeta.setLore(ban7dLore);
         ban7d.setItemMeta(ban7dMeta);
-        gui.setItem(15, ban7d);
+        gui.setItem(24, ban7d);
         
         // Permanent ban
         ItemStack banPerm = new ItemStack(Material.NETHERITE_AXE);
         ItemMeta banPermMeta = banPerm.getItemMeta();
         banPermMeta.setDisplayName(LanguageManager.getMessage("gui-punishment-ban-perm"));
+        banPermMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<String> banPermLore = new ArrayList<>();
+        banPermLore.add(ColorManager.colorize("&8-----------------"));
+        banPermLore.add(ColorManager.colorize("&7Duration: &4PERMANENT"));
+        banPermLore.add(ColorManager.colorize("&7Severity: &4&lCritical"));
+        banPermLore.add(ColorManager.colorize("&8-----------------"));
+        banPermMeta.setLore(banPermLore);
         banPerm.setItemMeta(banPermMeta);
-        gui.setItem(16, banPerm);
+        gui.setItem(25, banPerm);
         
         // Back button
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta backMeta = back.getItemMeta();
         backMeta.setDisplayName(LanguageManager.getMessage("gui-back"));
         back.setItemMeta(backMeta);
-        gui.setItem(22, back);
+        gui.setItem(40, back);
         
         admin.openInventory(gui);
     }
@@ -391,6 +519,21 @@ public class ReportsGUI {
     }
     
     /**
+     * Fills border slots with gray glass panes
+     */
+    private static void fillBorder(Inventory gui, int from, int to) {
+        ItemStack pane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta paneMeta = pane.getItemMeta();
+        paneMeta.setDisplayName(" ");
+        pane.setItemMeta(paneMeta);
+        for (int i = from; i <= to; i++) {
+            if (gui.getItem(i) == null) {
+                gui.setItem(i, pane);
+            }
+        }
+    }
+    
+    /**
      * Helper method to create player head
      */
     private static ItemStack createPlayerHead(String playerName) {
@@ -407,19 +550,9 @@ public class ReportsGUI {
     }
     
     /**
-     * Helper method to find report by ID
+     * Helper method to find report by ID - O(1) lookup
      */
     private static ReportManager.Report findReportById(long id) {
-        Map<String, List<ReportManager.Report>> allReports = ReportManager.getReports();
-        
-        for (List<ReportManager.Report> reports : allReports.values()) {
-            for (ReportManager.Report report : reports) {
-                if (report.id == id) {
-                    return report;
-                }
-            }
-        }
-        
-        return null;
+        return ReportManager.getReportById(id);
     }
 }

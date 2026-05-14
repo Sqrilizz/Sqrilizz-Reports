@@ -45,11 +45,11 @@ public class ReloadCommand implements CommandExecutor {
             DatabaseManager.replaceAllReports(ReportManager.getReports());
             
             VersionUtils.sendMessage(player, LanguageManager.getMessage("config-reloaded"));
-            VersionUtils.sendMessage(player, ColorManager.colorize("{info}🔧 Настройки очистки имен: " + NameUtils.getCleaningStats()));
-            VersionUtils.sendMessage(player, ColorManager.colorize("{success}🎨 Дизайн: " + (ColorManager.isHexSupported() ? "Hex цвета" : "Legacy цвета")));
+            VersionUtils.sendMessage(player, ColorManager.colorize("{info}Настройки очистки имен: " + NameUtils.getCleaningStats()));
+            VersionUtils.sendMessage(player, ColorManager.colorize("{success}Дизайн: " + (ColorManager.isHexSupported() ? "Hex цвета" : "Legacy цвета")));
             
         } catch (Exception e) {
-            VersionUtils.sendMessage(player, ColorManager.colorize("{error}❌ Ошибка при перезагрузке конфигурации: " + e.getMessage()));
+            VersionUtils.sendMessage(player, ColorManager.colorize("{error}Ошибка при перезагрузке конфигурации: " + e.getMessage()));
             Main.getInstance().getLogger().severe("Failed to reload configuration: " + e.getMessage());
             e.printStackTrace();
         }

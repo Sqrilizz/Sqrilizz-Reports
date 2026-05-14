@@ -43,7 +43,7 @@ public class ShutdownManager {
      */
     public static void performGracefulShutdown() {
         if (isShuttingDown.compareAndSet(false, true)) {
-            Main.getInstance().getLogger().info("🔄 Starting graceful shutdown...");
+            Main.getInstance().getLogger().info("[SHUTDOWN] Starting graceful shutdown...");
             
             long startTime = System.currentTimeMillis();
             
@@ -62,11 +62,10 @@ public class ShutdownManager {
                 allShutdowns.get(30, TimeUnit.SECONDS);
                 
                 long duration = System.currentTimeMillis() - startTime;
-                String report = "Performance monitoring disabled";
-                Main.getInstance().getLogger().info("✅ Graceful shutdown completed in " + duration + "ms");
+                Main.getInstance().getLogger().info("[SHUTDOWN] Graceful shutdown completed in " + duration + "ms");
                 
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("⚠️ Some components failed to shutdown gracefully: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[SHUTDOWN] Some components failed to shutdown gracefully: " + e.getMessage());
             } finally {
                 shutdownExecutor.shutdown();
             }
@@ -83,11 +82,11 @@ public class ShutdownManager {
     private static CompletableFuture<Void> shutdownRESTServer() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("🌐 Shutting down REST server...");
+                Main.getInstance().getLogger().info("[REST] Shutting down REST server...");
                 RESTServer.shutdown();
-                Main.getInstance().getLogger().info("✅ REST server shutdown complete");
+                Main.getInstance().getLogger().info("[REST] REST server shutdown complete");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ REST server shutdown failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[REST] REST server shutdown failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -95,11 +94,11 @@ public class ShutdownManager {
     private static CompletableFuture<Void> shutdownDatabase() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("💾 Shutting down database connections...");
+                Main.getInstance().getLogger().info("[DATABASE] Shutting down database connections...");
                 DatabaseManager.close();
-                Main.getInstance().getLogger().info("✅ Database shutdown complete");
+                Main.getInstance().getLogger().info("[DATABASE] Database shutdown complete");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ Database shutdown failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[DATABASE] Database shutdown failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -107,11 +106,11 @@ public class ShutdownManager {
     private static CompletableFuture<Void> shutdownCache() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("⚡ Shutting down cache system...");
+                Main.getInstance().getLogger().info("[CACHE] Shutting down cache system...");
                 CacheManager.cleanUp();
-                Main.getInstance().getLogger().info("✅ Cache shutdown complete");
+                Main.getInstance().getLogger().info("[CACHE] Cache shutdown complete");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ Cache shutdown failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[CACHE] Cache shutdown failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -119,11 +118,11 @@ public class ShutdownManager {
     private static CompletableFuture<Void> shutdownDiscordBot() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("🤖 Shutting down Discord bot...");
+                Main.getInstance().getLogger().info("[DISCORD] Shutting down Discord bot...");
                 // DiscordBot.shutdown(); // Если есть такой метод
-                Main.getInstance().getLogger().info("✅ Discord bot shutdown complete");
+                Main.getInstance().getLogger().info("[DISCORD] Discord bot shutdown complete");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ Discord bot shutdown failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[DISCORD] Discord bot shutdown failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -131,11 +130,11 @@ public class ShutdownManager {
     private static CompletableFuture<Void> shutdownTelegramBot() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("📱 Shutting down optimized Telegram manager...");
+                Main.getInstance().getLogger().info("[TELEGRAM] Shutting down Telegram manager...");
                 dev.sqrilizz.SQRILIZZREPORTS.TelegramManager.shutdown();
-                Main.getInstance().getLogger().info("✅ Telegram manager shutdown complete");
+                Main.getInstance().getLogger().info("[TELEGRAM] Telegram manager shutdown complete");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ Telegram manager shutdown failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[TELEGRAM] Telegram manager shutdown failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -143,12 +142,12 @@ public class ShutdownManager {
     private static CompletableFuture<Void> savePerformanceReport() {
         return CompletableFuture.runAsync(() -> {
             try {
-                Main.getInstance().getLogger().info("📊 Saving final performance report...");
+                Main.getInstance().getLogger().info("[PERFORMANCE] Saving final performance report...");
                 String report = "Performance monitoring disabled";
-                Main.getInstance().getLogger().info("Final Performance Report:\n" + report);
-                Main.getInstance().getLogger().info("✅ Performance report saved");
+                Main.getInstance().getLogger().info("Final Performance Report: " + report);
+                Main.getInstance().getLogger().info("[PERFORMANCE] Performance report saved");
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("❌ Performance report save failed: " + e.getMessage());
+                Main.getInstance().getLogger().warning("[PERFORMANCE] Performance report save failed: " + e.getMessage());
             }
         }, shutdownExecutor);
     }
@@ -157,13 +156,13 @@ public class ShutdownManager {
      * Принудительное завершение (для экстренных случаев)
      */
     public static void forceShutdown() {
-        Main.getInstance().getLogger().warning("🚨 FORCE SHUTDOWN INITIATED");
+        Main.getInstance().getLogger().warning("[FORCE SHUTDOWN] Force shutdown initiated");
         isShuttingDown.set(true);
         
         try {
             shutdownExecutor.shutdownNow();
             if (!shutdownExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                Main.getInstance().getLogger().severe("❌ Force shutdown timeout");
+                Main.getInstance().getLogger().severe("[FORCE SHUTDOWN] Force shutdown timeout");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

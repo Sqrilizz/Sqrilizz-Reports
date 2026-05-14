@@ -347,6 +347,9 @@ public class ReportManager {
         NotificationUtils.sendEventWebhook("report_resolved", 
             NotificationUtils.createEventPayload("report_resolved", id, resolver));
         
+        // Отправляем уведомление в Discord через вебхук
+        DiscordWebhookManager.sendResolvedReport(r, resolver);
+        
         // Delete the report instead of marking as resolved
         return deleteReport(id, resolver);
     }
@@ -405,6 +408,10 @@ public class ReportManager {
 
     // O(1) поиск вместо O(n²) - критическая оптимизация!
     private static Report findById(long id) {
+        return reportsById.get(id);
+    }
+
+    public static Report getReportById(long id) {
         return reportsById.get(id);
     }
 

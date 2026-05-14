@@ -21,19 +21,19 @@ public class LanguageCommand implements CommandExecutor {
         }
 
         if (args.length != 1) {
-            VersionUtils.sendMessage(player, ColorManager.colorize("{error}❌ Использование: {secondary}/report-language <ru|en|ar>"));
+            VersionUtils.sendMessage(player, ColorManager.colorize("{error}Использование: {secondary}/report-language <ru|en|ar>"));
             return true;
         }
 
         String language = args[0].toLowerCase();
         if (!language.equals("ru") && !language.equals("en") && !language.equals("ar")) {
-            VersionUtils.sendMessage(player, ColorManager.colorize("{error}❌ Поддерживаемые языки: {accent}ru{secondary}, {accent}en{secondary}, {accent}ar"));
+            VersionUtils.sendMessage(player, ColorManager.colorize("{error}Поддерживаемые языки: {accent}ru{secondary}, {accent}en{secondary}, {accent}ar"));
             return true;
         }
 
         LanguageManager.setLanguage(language);
         String languageName = getLanguageName(language);
-        VersionUtils.sendMessage(player, ColorManager.colorize("{success}🌍 Язык сервера изменен на {accent}" + languageName));
+        VersionUtils.sendMessage(player, ColorManager.colorize("{success}Язык сервера изменен на {accent}" + languageName));
         return true;
     }
     
