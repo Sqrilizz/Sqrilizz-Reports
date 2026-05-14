@@ -1,0 +1,23 @@
+reports:
+  sqrilizz:
+    '0':
+      id: 2
+      reporter: Skoleroz
+      target: sqrilizz
+      reason: test
+      timestamp: 1778779035671
+      reporterLocation: 'world: 132, 79, -206'
+      targetLocation: 'world: 142, 82, -227'
+      isAnonymous: false
+      status: open
+  BUG_REPORT:
+    '0':
+      id: 1
+      reporter: sqrilizz
+      target: BUG_REPORT
+      reason: '[GAMEPLAY] ну типо тест bugreports'
+      timestamp: 1778778585843
+      reporterLocation: 'world: 146, 79, -203'
+      targetLocation: N/A
+      isAnonymous: false
+      status: open

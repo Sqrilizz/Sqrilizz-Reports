@@ -136,7 +136,7 @@ public class Main extends JavaPlugin {
             
             // Initialize bStats metrics
             getLogger().info("Initializing bStats metrics...");
-            int pluginId = 24619; // Replace with your plugin ID from bStats
+            int pluginId = 31222; // Replace with your plugin ID from bStats
             Metrics metrics = new Metrics(this, pluginId);
             getLogger().info("bStats metrics initialized");
             

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.1] - 2026-05-15
+
+### Fixed
+- bStats plugin ID corrected from 24619 to 31222
+
 ## [9.0] - 2026-05-14
 
 ### Added

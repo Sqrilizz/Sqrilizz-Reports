@@ -1,5 +1,5 @@
 name: Sqrilizz-Reports
-version: '8.0'
+version: '9.1'
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
 api-version: '1.13'
 authors: [Sqrilizz]
@@ -43,6 +43,10 @@ commands:
     description: Reload plugin configuration
     usage: /report-reload
     permission: reports.reload
+  report-debug:
+    description: Toggle debug mode
+    usage: /report-debug
+    permission: reports.admin
 
 permissions:
   reports.report:

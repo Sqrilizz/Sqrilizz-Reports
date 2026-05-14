@@ -1,5 +1,5 @@
 name: Sqrilizz-Reports
-version: '9.0'
+version: '9.1'
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
 api-version: '1.13'
 authors: [Sqrilizz]

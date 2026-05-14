@@ -1,0 +1,279 @@
+# ================================================================
+#  Sqrilizz-Reports Configuration
+#  Version: 26.1.2
+#  Minecraft: 1.8.9 - 26.1.2 (Paper, Purpur, Pufferfish, Folia, Spigot)
+# ================================================================
+
+# ================================================================
+# LANGUAGE
+# ================================================================
+# Available: en (English), ru (Russian), ar (Arabic)
+language: en
+
+# ================================================================
+# REPORTS
+# ================================================================
+reports:
+  # Cooldown between reports (seconds)
+  cooldown: 60
+  
+  # Auto-ban player after X reports
+  auto-ban:
+    enabled: true
+    threshold: 8
+    duration: 5d
+  
+  # Allow anonymous reports (without reporter name)
+  anonymous: false
+  
+  # Notify target player when reported
+  notify-target: false
+  
+  # Report expiration (auto-delete old reports)
+  expiration:
+    enabled: true
+    days: 30
+
+# ================================================================
+# ANTI-ABUSE SYSTEM
+# ================================================================
+anti-abuse:
+  enabled: true
+  
+  # Maximum reports per player
+  per-player-limit: 3
+  
+  # Maximum reports per hour
+  hourly-limit: 10
+  
+  # False report detection
+  false-reports:
+    threshold: 3
+    action: warn
+  
+  # Spam protection
+  spam-protection:
+    warning-threshold: 5
+    mute-threshold: 8
+    mute-duration: 300
+
+# ================================================================
+# PUNISHMENT SYSTEM
+# ================================================================
+# Supported: LiteBans, AdvancedBan, BanManager, Bukkit
+punishment:
+  # Auto-detect punishment plugin
+  auto-detect: true
+  
+  # Force specific system (litebans, advancedban, banmanager, bukkit)
+  force-system: none
+  
+  # Punishment presets
+  presets:
+    warn:
+      enabled: true
+      reason: Violation of server rules
+    
+    kick:
+      enabled: true
+      reason: Kicked by moderator
+    
+    mute:
+      enabled: true
+      durations:
+      - 1h
+      - 1d
+      - 7d
+      reason: Chat violation
+    
+    ban:
+      enabled: true
+      durations:
+      - 1d
+      - 7d
+      - 30d
+      - permanent
+      reason: Banned for rule violation
+
+# ================================================================
+# GUI SETTINGS
+# ================================================================
+gui:
+  # Reports per page
+  reports-per-page: 45
+  
+  # Auto-refresh GUI (seconds, 0 = disabled)
+  auto-refresh: 0
+  
+  # Show player heads in GUI
+  player-heads: true
+  
+  # GUI sounds
+  sounds:
+    enabled: true
+    click: CLICK
+    success: LEVEL_UP
+    error: VILLAGER_NO
+
+# ================================================================
+# NAME CLEANING
+# ================================================================
+name-cleaning:
+  enabled: true
+  remove-color-codes: true
+  remove-hex-colors: true
+  remove-formatting: true
+  max-length: 16
+  log-cleaning: false
+
+# ================================================================
+# PERMISSIONS
+# ================================================================
+permissions:
+  admin: reports.admin
+  bypass: reports.bypass
+  reload: reports.reload
+  language: reports.language
+  telegram: reports.telegram
+  webhook: reports.webhook
+
+# ================================================================
+# TELEGRAM INTEGRATION
+# ================================================================
+telegram:
+  enabled: false
+  token: YOUR_BOT_TOKEN
+  chat-id: YOUR_CHAT_ID
+  
+  # Telegram moderation
+  moderation:
+    enabled: false
+    admin-ids: []
+    commands:
+      ban: true
+      kick: true
+      mute: true
+      warn: true
+
+# ================================================================
+# DISCORD INTEGRATION
+# ================================================================
+discord:
+  # Simple webhook
+  webhook:
+    enabled: true
+    url: https://discord.com/api/webhooks/1494795750473863220/x5SWAl_WYxqjYL5p6HZFmSL2skGxEgzstAEvbIRmC4fyqpZ4jAaS1jFEe8ICv7DJnIp1
+  
+  # Discord bot (advanced)
+  bot:
+    enabled: false
+    token: YOUR_BOT_TOKEN
+    guild-id: YOUR_GUILD_ID
+    channel-id: YOUR_CHANNEL_ID
+    mod-roles: []
+    status: Watching reports
+    
+    # Bot moderation
+    moderation:
+      enabled: false
+      commands:
+        ban: true
+        kick: true
+        mute: true
+        warn: true
+  webhook_url: https://discord.com/api/webhooks/1494795750473863220/x5SWAl_WYxqjYL5p6HZFmSL2skGxEgzstAEvbIRmC4fyqpZ4jAaS1jFEe8ICv7DJnIp1
+
+# ================================================================
+# DESIGN & COLORS
+# ================================================================
+design:
+  # Use hex colors (1.16+)
+  hex-colors: true
+  
+  # Color scheme
+  colors:
+    primary: '#FF6B6B'
+    secondary: '#4ECDC4'
+    success: '#45B7D1'
+    warning: '#FFA726'
+    error: '#EF5350'
+    info: '#66BB6A'
+    accent: '#AB47BC'
+    reset: '#FFFFFF'
+
+# ================================================================
+# REST API
+# ================================================================
+rest-api:
+  enabled: false
+  port: 8971
+  token: CHANGE_ME
+  
+  # IP whitelist
+  ip-whitelist:
+    enabled: false
+    ips: []
+  
+  # Webhook secret
+  webhook-secret: CHANGE_ME
+  
+  # Rate limiting
+  rate-limit:
+    enabled: true
+    requests-per-second: 10
+
+# ================================================================
+# PERFORMANCE
+# ================================================================
+performance:
+  # Cache settings
+  cache:
+    expire-after-write: 30
+    maximum-size: 10000
+    record-stats: false
+  
+  # Async operations
+  async:
+    enabled: true
+    thread-pool-size: 4
+
+# ================================================================
+# DATABASE
+# ================================================================
+# Storage types:
+#   json   - Lightweight JSON storage (default, ~5MB)
+#   sqlite - SQLite database (requires dependency, +8MB)
+#   mysql  - MySQL/MariaDB (for large servers)
+database:
+  type: json
+  
+  # JSON storage settings
+  json:
+    auto-save: true
+    save-interval: 300
+    backup: true
+    backup-interval: 3600
+  
+  # SQLite settings (requires sqlite-jdbc dependency)
+  sqlite:
+    file: reports.db
+    pool-size: 5
+  
+  # MySQL settings
+  mysql:
+    host: localhost
+    port: 3306
+    database: sqrilizz_reports
+    username: root
+    password: password
+    pool-size: 10
+    connection-timeout: 30000
+    params: useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=UTC
+
+# ================================================================
+# DEBUG
+# ================================================================
+debug:
+  enabled: true
+  log-level: INFO
+  performance-monitoring: false

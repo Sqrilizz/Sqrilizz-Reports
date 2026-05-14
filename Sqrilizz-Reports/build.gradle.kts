@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.sqrilizz"
-version = "9.0"
+version = "9.1"
 
 // Версии зависимостей
 val paperApiVersion = "1.21.4-R0.1-SNAPSHOT"

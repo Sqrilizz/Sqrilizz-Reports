@@ -1,0 +1,15 @@
+report-times:
+  sqrilizz:
+  - 1778777335039
+  - 1778778114167
+  - 1778778480932
+  - 1778778585846
+  - 1778778892321
+  Skoleroz:
+  - 1778779035674
+target-reports:
+  sqrilizz:
+    Skoleroz: 3
+    BUG_REPORT: 2
+  Skoleroz:
+    sqrilizz: 1
