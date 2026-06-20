@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           VER="${GITHUB_REF_NAME#v}"
-          python3 -c "
+          python3 << 'PYEOF'
 import re
 with open('CHANGELOG.md') as f:
     content = f.read()
@@ -58,7 +58,7 @@ else:
 # Escape for GitHub Actions output
 text = text.replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
 print(f'changelog={text}')
-"
+PYEOF
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
