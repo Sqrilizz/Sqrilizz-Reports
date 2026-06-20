@@ -1,7 +1,7 @@
 # 🔧 Installation Guide - Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-7.2-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--1.21+-blue.svg)](https://www.minecraft.net/)
+[![Version](https://img.shields.io/badge/version-9.2-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Minecraft](https://img.shields.io/badge/minecraft-1.8--9.2-blue.svg)](https://www.minecraft.net/)
 
 > **Complete installation guide for all platforms**
 

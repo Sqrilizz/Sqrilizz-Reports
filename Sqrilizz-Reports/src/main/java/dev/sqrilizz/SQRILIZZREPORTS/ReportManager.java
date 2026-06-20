@@ -1,19 +1,14 @@
 package dev.sqrilizz.SQRILIZZREPORTS;
 
 import dev.sqrilizz.SQRILIZZREPORTS.api.CacheManager;
-import dev.sqrilizz.SQRILIZZREPORTS.db.DatabaseManager;
-import dev.sqrilizz.SQRILIZZREPORTS.errors.ErrorManager;
 import dev.sqrilizz.SQRILIZZREPORTS.api.ReportAPI;
-import dev.sqrilizz.SQRILIZZREPORTS.api.ReportDeleteEvent;
 import dev.sqrilizz.SQRILIZZREPORTS.api.ReportCreateEventBukkit;
+import dev.sqrilizz.SQRILIZZREPORTS.api.ReportDeleteEvent;
 import dev.sqrilizz.SQRILIZZREPORTS.api.ReportReplyEvent;
 import dev.sqrilizz.SQRILIZZREPORTS.api.ReportResolveEvent;
+import dev.sqrilizz.SQRILIZZREPORTS.db.DatabaseManager;
+import dev.sqrilizz.SQRILIZZREPORTS.errors.ErrorManager;
 import dev.sqrilizz.SQRILIZZREPORTS.utils.NotificationUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -21,25 +16,38 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class ReportManager {
+
     private static FileConfiguration reportsConfig;
     private static File reportsFile;
     // Оптимизированная синхронизация: ReadWriteLock вместо широкой блокировки
     private static final ReadWriteLock LOCK = new ReentrantReadWriteLock();
-    private static Map<String, List<Report>> reports = new ConcurrentHashMap<>();
+    private static Map<String, List<Report>> reports =
+        new ConcurrentHashMap<>();
     // O(1) поиск по ID для максимальной производительности
     private static Map<Long, Report> reportsById = new ConcurrentHashMap<>();
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+        "dd.MM.yyyy HH:mm:ss"
+    );
 
     public static void initialize() {
         // YAML backup file
-        reportsFile = new File(Main.getInstance().getDataFolder(), "reports.yml");
+        reportsFile = new File(
+            Main.getInstance().getDataFolder(),
+            "reports.yml"
+        );
         if (!reportsFile.exists()) {
             try {
                 reportsFile.createNewFile();
             } catch (IOException e) {
-                Main.getInstance().getLogger().severe("Could not create reports.yml: " + e.getMessage());
+                Main.getInstance()
+                    .getLogger()
+                    .severe("Could not create reports.yml: " + e.getMessage());
             }
         }
         reportsConfig = YamlConfiguration.loadConfiguration(reportsFile);
@@ -53,28 +61,40 @@ public class ReportManager {
             Map<String, List<Report>> fromDb = DatabaseManager.loadReports();
             if (fromDb != null && !fromDb.isEmpty()) {
                 reports = new ConcurrentHashMap<>(fromDb);
+                rebuildReportsById();
             } else {
                 loadReportsFromYaml();
             }
         } catch (Exception e) {
-            Main.getInstance().getLogger().warning("Failed to load reports from DB, using YAML backup: " + e.getMessage());
+            Main.getInstance()
+                .getLogger()
+                .warning(
+                    "Failed to load reports from DB, using YAML backup: " +
+                        e.getMessage()
+                );
             loadReportsFromYaml();
         }
     }
 
-    public static void addReport(Player reporter, Player target, String reason) {
+    public static void addReport(
+        Player reporter,
+        Player target,
+        String reason
+    ) {
         String targetName = VersionUtils.getPlayerCleanName(target);
         String reporterName = VersionUtils.getPlayerCleanName(reporter);
-        boolean isAnonymous = Main.getInstance().getConfig().getBoolean("anonymous-reports", false);
-        
+        boolean isAnonymous = Main.getInstance()
+            .getConfig()
+            .getBoolean("anonymous-reports", false);
+
         Report report = new Report(
-                reporterName,
-                targetName,
-                reason,
-                System.currentTimeMillis(),
-                getPlayerLocation(reporter),
-                getPlayerLocation(target),
-                isAnonymous
+            reporterName,
+            targetName,
+            reason,
+            System.currentTimeMillis(),
+            getPlayerLocation(reporter),
+            getPlayerLocation(target),
+            isAnonymous
         );
 
         // Persist to DB first to obtain ID
@@ -91,7 +111,9 @@ public class ReportManager {
         // Оптимизированная запись с WriteLock
         LOCK.writeLock().lock();
         try {
-            reports.computeIfAbsent(targetName, k -> new ArrayList<>()).add(0, report);
+            reports
+                .computeIfAbsent(targetName, k -> new ArrayList<>())
+                .add(0, report);
             // Добавляем в индекс для O(1) поиска
             if (report.id > 0) {
                 reportsById.put(report.id, report);
@@ -106,28 +128,42 @@ public class ReportManager {
         notifyAdmins(report);
 
         // Записываем метрику создания репорта
-        
+
         // Асинхронная отправка уведомлений для максимальной производительности
-        NotificationUtils.sendReportNotificationsAsync(report, reporter, target, reason, reporterName, targetName, isAnonymous);
+        NotificationUtils.sendReportNotificationsAsync(
+            report,
+            reporter,
+            target,
+            reason,
+            reporterName,
+            targetName,
+            isAnonymous
+        );
         // Bukkit event
-        Bukkit.getPluginManager().callEvent(new ReportCreateEventBukkit(report));
+        Bukkit.getPluginManager().callEvent(
+            new ReportCreateEventBukkit(report)
+        );
         // API listeners
         ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
 
-    public static void addBugReport(Player reporter, String category, String description) {
+    public static void addBugReport(
+        Player reporter,
+        String category,
+        String description
+    ) {
         String reporterName = VersionUtils.getPlayerCleanName(reporter);
         String targetName = "BUG_REPORT";
         String fullReason = "[" + category.toUpperCase() + "] " + description;
-        
+
         Report report = new Report(
-                reporterName,
-                targetName,
-                fullReason,
-                System.currentTimeMillis(),
-                getPlayerLocation(reporter),
-                "N/A",
-                false
+            reporterName,
+            targetName,
+            fullReason,
+            System.currentTimeMillis(),
+            getPlayerLocation(reporter),
+            "N/A",
+            false
         );
 
         // Persist to DB first to obtain ID
@@ -144,7 +180,9 @@ public class ReportManager {
         // Оптимизированная запись с WriteLock
         LOCK.writeLock().lock();
         try {
-            reports.computeIfAbsent(targetName, k -> new ArrayList<>()).add(0, report);
+            reports
+                .computeIfAbsent(targetName, k -> new ArrayList<>())
+                .add(0, report);
             // Добавляем в индекс для O(1) поиска
             if (report.id > 0) {
                 reportsById.put(report.id, report);
@@ -159,9 +197,17 @@ public class ReportManager {
         notifyAdminsBugReport(report, category);
 
         // Асинхронная отправка уведомлений для максимальной производительности
-        NotificationUtils.sendBugReportNotificationsAsync(report, reporter, category, description, reporterName);
+        NotificationUtils.sendBugReportNotificationsAsync(
+            report,
+            reporter,
+            category,
+            description,
+            reporterName
+        );
         // Bukkit event
-        Bukkit.getPluginManager().callEvent(new ReportCreateEventBukkit(report));
+        Bukkit.getPluginManager().callEvent(
+            new ReportCreateEventBukkit(report)
+        );
         // API listeners
         ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
@@ -170,12 +216,12 @@ public class ReportManager {
         if (player == null || !player.isOnline()) {
             return "Неизвестно";
         }
-        
+
         String world = player.getWorld().getName();
         int x = player.getLocation().getBlockX();
         int y = player.getLocation().getBlockY();
         int z = player.getLocation().getBlockZ();
-        
+
         return String.format("%s: %d, %d, %d", world, x, y, z);
     }
 
@@ -208,7 +254,9 @@ public class ReportManager {
         // Оптимизированное чтение с ReadLock
         LOCK.readLock().lock();
         try {
-            return new ArrayList<>(reports.getOrDefault(targetName, new ArrayList<>()));
+            return new ArrayList<>(
+                reports.getOrDefault(targetName, new ArrayList<>())
+            );
         } finally {
             LOCK.readLock().unlock();
         }
@@ -225,48 +273,70 @@ public class ReportManager {
     public static void saveReports() {
         try {
             reportsConfig.set("reports", null); // Очищаем старые данные
-            
+
             for (Map.Entry<String, List<Report>> entry : reports.entrySet()) {
                 String targetName = entry.getKey();
                 List<Report> targetReports = entry.getValue();
-                
+
                 for (int i = 0; i < targetReports.size(); i++) {
                     Report report = targetReports.get(i);
                     String path = "reports." + targetName + "." + i;
-                    
+
                     reportsConfig.set(path + ".id", report.id);
                     reportsConfig.set(path + ".reporter", report.reporter);
                     reportsConfig.set(path + ".target", report.target);
                     reportsConfig.set(path + ".reason", report.reason);
                     reportsConfig.set(path + ".timestamp", report.timestamp);
-                    reportsConfig.set(path + ".reporterLocation", report.reporterLocation);
-                    reportsConfig.set(path + ".targetLocation", report.targetLocation);
-                    reportsConfig.set(path + ".isAnonymous", report.isAnonymous);
+                    reportsConfig.set(
+                        path + ".reporterLocation",
+                        report.reporterLocation
+                    );
+                    reportsConfig.set(
+                        path + ".targetLocation",
+                        report.targetLocation
+                    );
+                    reportsConfig.set(
+                        path + ".isAnonymous",
+                        report.isAnonymous
+                    );
                     reportsConfig.set(path + ".status", report.status);
+                    reportsConfig.set(path + ".resolvedBy", report.resolvedBy);
+                    reportsConfig.set(path + ".resolvedAt", report.resolvedAt);
                 }
             }
-            
+
             reportsConfig.save(reportsFile);
-            
+
             // Sync with database - replace all reports
             try {
                 DatabaseManager.replaceAllReports(new HashMap<>(reports));
             } catch (Exception e) {
-                Main.getInstance().getLogger().warning("Failed to sync reports to database: " + e.getMessage());
+                Main.getInstance()
+                    .getLogger()
+                    .warning(
+                        "Failed to sync reports to database: " + e.getMessage()
+                    );
             }
         } catch (IOException e) {
-            Main.getInstance().getLogger().severe("Could not save reports: " + e.getMessage());
+            Main.getInstance()
+                .getLogger()
+                .severe("Could not save reports: " + e.getMessage());
         }
     }
 
     private static void notifyAdmins(Report report) {
         String message;
-        
+
         if (report.isAnonymous) {
             // Анонимное уведомление
-            message = LanguageManager.getMessage("anonymous-report-notification")
+            message = LanguageManager.getMessage(
+                "anonymous-report-notification"
+            )
                 .replace("[REASON]", report.reason)
-                .replace("[TIME]", DATE_FORMAT.format(new Date(report.timestamp)))
+                .replace(
+                    "[TIME]",
+                    DATE_FORMAT.format(new Date(report.timestamp))
+                )
                 .replace("[TARGET_LOC]", report.targetLocation);
         } else {
             // Обычное уведомление
@@ -274,7 +344,10 @@ public class ReportManager {
                 .replace("[REPORTER]", report.reporter)
                 .replace("[TARGET]", report.target)
                 .replace("[REASON]", report.reason)
-                .replace("[TIME]", DATE_FORMAT.format(new Date(report.timestamp)))
+                .replace(
+                    "[TIME]",
+                    DATE_FORMAT.format(new Date(report.timestamp))
+                )
                 .replace("[REPORTER_LOC]", report.reporterLocation)
                 .replace("[TARGET_LOC]", report.targetLocation);
         }
@@ -287,7 +360,9 @@ public class ReportManager {
     }
 
     private static void notifyAdminsBugReport(Report report, String category) {
-        String message = LanguageManager.getMessage("admin-bugreport-notification")
+        String message = LanguageManager.getMessage(
+            "admin-bugreport-notification"
+        )
             .replace("[REPORTER]", report.reporter)
             .replace("[CATEGORY]", category.toUpperCase())
             .replace("[REASON]", report.reason)
@@ -304,60 +379,155 @@ public class ReportManager {
     private static void loadReportsFromYaml() {
         reports.clear();
         reportsById.clear(); // Очищаем индекс
-        
+
         if (reportsConfig.contains("reports")) {
-            for (String targetName : reportsConfig.getConfigurationSection("reports").getKeys(false)) {
+            for (String targetName : reportsConfig
+                .getConfigurationSection("reports")
+                .getKeys(false)) {
                 List<Report> targetReports = new ArrayList<>();
-                
-                for (String index : reportsConfig.getConfigurationSection("reports." + targetName).getKeys(false)) {
+
+                for (String index : reportsConfig
+                    .getConfigurationSection("reports." + targetName)
+                    .getKeys(false)) {
                     String path = "reports." + targetName + "." + index;
-                    
+
                     long id = reportsConfig.getLong(path + ".id", 0L);
-                    String reporter = reportsConfig.getString(path + ".reporter", "Unknown");
-                    String target = reportsConfig.getString(path + ".target", targetName);
-                    String reason = reportsConfig.getString(path + ".reason", "No reason");
-                    long timestamp = reportsConfig.getLong(path + ".timestamp", System.currentTimeMillis());
-                    String reporterLocation = reportsConfig.getString(path + ".reporterLocation", "Неизвестно");
-                    String targetLocation = reportsConfig.getString(path + ".targetLocation", "Неизвестно");
-                    boolean isAnonymous = reportsConfig.getBoolean(path + ".isAnonymous", false);
-                    String status = reportsConfig.getString(path + ".status", "open");
-                    
-                    Report r = new Report(id, reporter, target, reason, timestamp, reporterLocation, targetLocation, isAnonymous, status);
+                    String reporter = reportsConfig.getString(
+                        path + ".reporter",
+                        "Unknown"
+                    );
+                    String target = reportsConfig.getString(
+                        path + ".target",
+                        targetName
+                    );
+                    String reason = reportsConfig.getString(
+                        path + ".reason",
+                        "No reason"
+                    );
+                    long timestamp = reportsConfig.getLong(
+                        path + ".timestamp",
+                        System.currentTimeMillis()
+                    );
+                    String reporterLocation = reportsConfig.getString(
+                        path + ".reporterLocation",
+                        "Неизвестно"
+                    );
+                    String targetLocation = reportsConfig.getString(
+                        path + ".targetLocation",
+                        "Неизвестно"
+                    );
+                    boolean isAnonymous = reportsConfig.getBoolean(
+                        path + ".isAnonymous",
+                        false
+                    );
+                    String status = reportsConfig.getString(
+                        path + ".status",
+                        "open"
+                    );
+                    String resolvedBy = reportsConfig.getString(
+                        path + ".resolvedBy",
+                        null
+                    );
+                    long resolvedAt = reportsConfig.getLong(
+                        path + ".resolvedAt",
+                        0L
+                    );
+
+                    Report r = new Report(
+                        id,
+                        reporter,
+                        target,
+                        reason,
+                        timestamp,
+                        reporterLocation,
+                        targetLocation,
+                        isAnonymous,
+                        status,
+                        resolvedBy,
+                        resolvedAt
+                    );
                     targetReports.add(r);
                     // Добавляем в индекс для O(1) поиска
                     if (id > 0) {
                         reportsById.put(id, r);
                     }
                 }
-                
+
                 reports.put(targetName, targetReports);
             }
+        }
+    }
+
+    /**
+     * Восстанавливает индекс reportsById из загруженных данных
+     */
+    private static void rebuildReportsById() {
+        reportsById.clear();
+        for (List<Report> reportList : reports.values()) {
+            for (Report r : reportList) {
+                if (r.id > 0) {
+                    reportsById.put(r.id, r);
+                }
+            }
+        }
+    }
+
+    /**
+     * Отправляет сообщение репортёру (если он онлайн)
+     */
+    public static void notifyReporter(long reportId, String message) {
+        Report r = findById(reportId);
+        if (r == null) return;
+        Player reporter = Bukkit.getPlayer(r.reporter);
+        if (reporter != null && reporter.isOnline()) {
+            VersionUtils.sendMessage(reporter, message);
         }
     }
 
     public static boolean resolveReport(long id, String resolver) {
         Report r = findById(id);
         if (r == null) return false;
-        
-        // Fire events before deletion
-        Bukkit.getPluginManager().callEvent(new ReportResolveEvent(r, resolver));
+
+        // Fire events
+        Bukkit.getPluginManager().callEvent(
+            new ReportResolveEvent(r, resolver)
+        );
         ReportAPI.notifyResolved(r);
-        
+
         // Оптимизированный webhook
-        NotificationUtils.sendEventWebhook("report_resolved", 
-            NotificationUtils.createEventPayload("report_resolved", id, resolver));
-        
-        // Отправляем уведомление в Discord через вебхук
-        DiscordWebhookManager.sendResolvedReport(r, resolver);
-        
-        // Delete the report instead of marking as resolved
-        return deleteReport(id, resolver);
+        NotificationUtils.sendEventWebhook(
+            "report_resolved",
+            NotificationUtils.createEventPayload(
+                "report_resolved",
+                id,
+                resolver
+            )
+        );
+
+        // Помечаем как решённый, сохраняем кто и когда решил
+        r.status = "resolved";
+        r.resolvedBy = resolver;
+        r.resolvedAt = System.currentTimeMillis();
+        try {
+            DatabaseManager.resolveReport(id, resolver);
+        } catch (Exception e) {
+            ErrorManager.logError("DB_RESOLVE", e);
+        }
+        saveReports();
+        CacheManager.invalidate(r.target);
+        return true;
     }
 
     public static boolean addReply(long id, String author, String message) {
         Report r = findById(id);
         if (r == null) return false;
-        Reply reply = new Reply(0L, id, author, message, System.currentTimeMillis());
+        Reply reply = new Reply(
+            0L,
+            id,
+            author,
+            message,
+            System.currentTimeMillis()
+        );
         boolean ok = false;
         try {
             ok = DatabaseManager.addReply(id, author, message, reply.timestamp);
@@ -368,12 +538,16 @@ public class ReportManager {
         saveReports();
         CacheManager.invalidate(r.target);
         // Записываем метрику добавления ответа
-        
+
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportReplyEvent(reply));
         ReportAPI.notifyReplied(reply);
         // Оптимизированный webhook для ответов
-        var payload = NotificationUtils.createEventPayload("report_reply", id, author);
+        var payload = NotificationUtils.createEventPayload(
+            "report_reply",
+            id,
+            author
+        );
         payload.put("message", message);
         NotificationUtils.sendEventWebhook("report_reply", payload);
         return ok;
@@ -384,9 +558,13 @@ public class ReportManager {
         if (r == null) return false;
         LOCK.writeLock().lock();
         try {
-            List<Report> lst = reports.getOrDefault(r.target, new ArrayList<>());
+            List<Report> lst = reports.getOrDefault(
+                r.target,
+                new ArrayList<>()
+            );
             lst.removeIf(rep -> rep.id == id);
-            if (lst.isEmpty()) reports.remove(r.target); else reports.put(r.target, lst);
+            if (lst.isEmpty()) reports.remove(r.target);
+            else reports.put(r.target, lst);
             // Удаляем из индекса
             reportsById.remove(id);
         } finally {
@@ -395,16 +573,17 @@ public class ReportManager {
         saveReports();
         CacheManager.invalidate(r.target);
         // Записываем метрику удаления репорта
-        
+
         // Fire events
         Bukkit.getPluginManager().callEvent(new ReportDeleteEvent(r, deleter));
         ReportAPI.notifyDeleted(r);
         // Оптимизированный webhook для удаления
-        NotificationUtils.sendEventWebhook("report_deleted", 
-            NotificationUtils.createEventPayload("report_deleted", id, deleter));
+        NotificationUtils.sendEventWebhook(
+            "report_deleted",
+            NotificationUtils.createEventPayload("report_deleted", id, deleter)
+        );
         return true;
     }
-
 
     // O(1) поиск вместо O(n²) - критическая оптимизация!
     private static Report findById(long id) {
@@ -416,6 +595,7 @@ public class ReportManager {
     }
 
     public static class Report {
+
         public long id;
         public final String reporter;
         public final String target;
@@ -425,17 +605,109 @@ public class ReportManager {
         public final String targetLocation;
         public final boolean isAnonymous;
         public String status;
+        public String resolvedBy;
+        public long resolvedAt;
         public final List<Reply> replies = new ArrayList<>();
 
-        public Report(String reporter, String target, String reason, long timestamp, String reporterLocation, String targetLocation) {
-            this(0L, reporter, target, reason, timestamp, reporterLocation, targetLocation, false, "open");
+        public boolean isResolved() {
+            return "resolved".equals(status) || "closed".equals(status);
         }
 
-        public Report(String reporter, String target, String reason, long timestamp, String reporterLocation, String targetLocation, boolean isAnonymous) {
-            this(0L, reporter, target, reason, timestamp, reporterLocation, targetLocation, isAnonymous, "open");
+        public String getResolvedBy() {
+            return resolvedBy != null ? resolvedBy : "";
         }
 
-        public Report(long id, String reporter, String target, String reason, long timestamp, String reporterLocation, String targetLocation, boolean isAnonymous, String status) {
+        public String getFormattedResolvedTime() {
+            if (resolvedAt <= 0) return "";
+            return DATE_FORMAT.format(new Date(resolvedAt));
+        }
+
+        public Report(
+            String reporter,
+            String target,
+            String reason,
+            long timestamp,
+            String reporterLocation,
+            String targetLocation
+        ) {
+            this(
+                0L,
+                reporter,
+                target,
+                reason,
+                timestamp,
+                reporterLocation,
+                targetLocation,
+                false,
+                "open",
+                null,
+                0L
+            );
+        }
+
+        public Report(
+            String reporter,
+            String target,
+            String reason,
+            long timestamp,
+            String reporterLocation,
+            String targetLocation,
+            boolean isAnonymous
+        ) {
+            this(
+                0L,
+                reporter,
+                target,
+                reason,
+                timestamp,
+                reporterLocation,
+                targetLocation,
+                isAnonymous,
+                "open",
+                null,
+                0L
+            );
+        }
+
+        public Report(
+            long id,
+            String reporter,
+            String target,
+            String reason,
+            long timestamp,
+            String reporterLocation,
+            String targetLocation,
+            boolean isAnonymous,
+            String status
+        ) {
+            this(
+                id,
+                reporter,
+                target,
+                reason,
+                timestamp,
+                reporterLocation,
+                targetLocation,
+                isAnonymous,
+                status,
+                null,
+                0L
+            );
+        }
+
+        public Report(
+            long id,
+            String reporter,
+            String target,
+            String reason,
+            long timestamp,
+            String reporterLocation,
+            String targetLocation,
+            boolean isAnonymous,
+            String status,
+            String resolvedBy,
+            long resolvedAt
+        ) {
             this.id = id;
             this.reporter = reporter;
             this.target = target;
@@ -445,6 +717,8 @@ public class ReportManager {
             this.targetLocation = targetLocation;
             this.isAnonymous = isAnonymous;
             this.status = status == null ? "open" : status;
+            this.resolvedBy = resolvedBy;
+            this.resolvedAt = resolvedAt;
         }
 
         public String getFormattedTime() {
@@ -463,21 +737,32 @@ public class ReportManager {
             } else if (hours > 0) {
                 return hours + " " + LanguageManager.getMessage("time-hours");
             } else if (minutes > 0) {
-                return minutes + " " + LanguageManager.getMessage("time-minutes");
+                return (
+                    minutes + " " + LanguageManager.getMessage("time-minutes")
+                );
             } else {
-                return seconds + " " + LanguageManager.getMessage("time-seconds");
+                return (
+                    seconds + " " + LanguageManager.getMessage("time-seconds")
+                );
             }
         }
     }
 
     public static class Reply {
+
         public final long id;
         public final long reportId;
         public final String author;
         public final String message;
         public final long timestamp;
 
-        public Reply(long id, long reportId, String author, String message, long timestamp) {
+        public Reply(
+            long id,
+            long reportId,
+            String author,
+            String message,
+            long timestamp
+        ) {
             this.id = id;
             this.reportId = reportId;
             this.author = author;
@@ -486,4 +771,3 @@ public class ReportManager {
         }
     }
 }
- 

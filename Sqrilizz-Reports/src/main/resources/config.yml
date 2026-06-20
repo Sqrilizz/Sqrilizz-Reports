@@ -1,7 +1,7 @@
 # ================================================================
 #  Sqrilizz-Reports Configuration
-#  Version: 26.1.2
-#  Minecraft: 1.8.9 - 26.1.2 (Paper, Purpur, Pufferfish, Folia, Spigot)
+#  Version: 9.2
+#  Minecraft: 1.8.9 - 9.2 (Paper, Purpur, Pufferfish, Folia, Spigot)
 # ================================================================
 
 # ================================================================
@@ -16,19 +16,19 @@ language: en
 reports:
   # Cooldown between reports (seconds)
   cooldown: 60
-  
+
   # Auto-ban player after X reports
   auto-ban:
     enabled: true
     threshold: 8
     duration: 5d
-  
+
   # Allow anonymous reports (without reporter name)
   anonymous: false
-  
+
   # Notify target player when reported
   notify-target: false
-  
+
   # Report expiration (auto-delete old reports)
   expiration:
     enabled: true
@@ -39,18 +39,18 @@ reports:
 # ================================================================
 anti-abuse:
   enabled: true
-  
+
   # Maximum reports per player
   per-player-limit: 3
-  
+
   # Maximum reports per hour
   hourly-limit: 10
-  
+
   # False report detection
   false-reports:
     threshold: 3
     action: warn
-  
+
   # Spam protection
   spam-protection:
     warning-threshold: 5
@@ -64,20 +64,20 @@ anti-abuse:
 punishment:
   # Auto-detect punishment plugin
   auto-detect: true
-  
+
   # Force specific system (litebans, advancedban, banmanager, bukkit)
   force-system: none
-  
+
   # Punishment presets
   presets:
     warn:
       enabled: true
       reason: "Violation of server rules"
-    
+
     kick:
       enabled: true
       reason: "Kicked by moderator"
-    
+
     mute:
       enabled: true
       durations:
@@ -85,7 +85,7 @@ punishment:
         - 1d
         - 7d
       reason: "Chat violation"
-    
+
     ban:
       enabled: true
       durations:
@@ -101,13 +101,13 @@ punishment:
 gui:
   # Reports per page
   reports-per-page: 45
-  
+
   # Auto-refresh GUI (seconds, 0 = disabled)
   auto-refresh: 0
-  
+
   # Show player heads in GUI
   player-heads: true
-  
+
   # GUI sounds
   sounds:
     enabled: true
@@ -144,7 +144,7 @@ telegram:
   enabled: false
   token: "YOUR_BOT_TOKEN"
   chat-id: "YOUR_CHAT_ID"
-  
+
   # Telegram moderation
   moderation:
     enabled: false
@@ -163,7 +163,7 @@ discord:
   webhook:
     enabled: false
     url: "YOUR_WEBHOOK_URL"
-  
+
   # Discord bot (advanced)
   bot:
     enabled: false
@@ -172,7 +172,7 @@ discord:
     channel-id: "YOUR_CHANNEL_ID"
     mod-roles: []
     status: "Watching reports"
-    
+
     # Bot moderation
     moderation:
       enabled: false
@@ -188,7 +188,7 @@ discord:
 design:
   # Use hex colors (1.16+)
   hex-colors: true
-  
+
   # Color scheme
   colors:
     primary: "#FF6B6B"
@@ -207,15 +207,15 @@ rest-api:
   enabled: false
   port: 8971
   token: "CHANGE_ME"
-  
+
   # IP whitelist
   ip-whitelist:
     enabled: false
     ips: []
-  
+
   # Webhook secret
   webhook-secret: "CHANGE_ME"
-  
+
   # Rate limiting
   rate-limit:
     enabled: true
@@ -230,7 +230,7 @@ performance:
     expire-after-write: 30
     maximum-size: 10000
     record-stats: false
-  
+
   # Async operations
   async:
     enabled: true
@@ -245,19 +245,19 @@ performance:
 #   mysql  - MySQL/MariaDB (for large servers)
 database:
   type: json
-  
+
   # JSON storage settings
   json:
     auto-save: true
     save-interval: 300
     backup: true
     backup-interval: 3600
-  
+
   # SQLite settings (requires sqlite-jdbc dependency)
   sqlite:
     file: "reports.db"
     pool-size: 5
-  
+
   # MySQL settings
   mysql:
     host: "localhost"

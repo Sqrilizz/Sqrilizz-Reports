@@ -1,8 +1,8 @@
 # Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-8.0-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--26.1.2-blue.svg)](https://www.minecraft.net/)
-[![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
+[![Version](https://img.shields.io/badge/version-9.2-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Minecraft](https://img.shields.io/badge/minecraft-1.8--9.2-blue.svg)](https://www.minecraft.net/)
+[![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-Custom-red.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 
@@ -68,9 +68,9 @@ Modern report management system for Minecraft servers with interactive GUI inter
 
 ## Requirements
 
-- **Minecraft**: 1.8.9 - 26.1.2
+- **Minecraft**: 1.8.9 - 9.2
 - **Server**: Paper, Purpur, Pufferfish, Folia, or Spigot
-- **Java**: 25 or higher
+- **Java**: 21 or higher
 
 **Recommended:** Paper or Purpur for best performance and features
 
@@ -267,7 +267,7 @@ Detailed documentation available in `/docs` folder:
 ## Building from Source
 
 Requirements:
-- Java 25+
+- Java 21+
 - Gradle 9.5.0+
 
 ```bash
@@ -276,15 +276,15 @@ cd Sqrilizz-Reports/Sqrilizz-Reports
 ./gradlew build
 ```
 
-JAR will be in `build/libs/SQRILIZZ-REPORTS-8.0.jar`
+JAR will be in `build/libs/Sqrilizz-Reports-9.2.jar`
 
 ---
 
 ## Changelog
 
-### Version 8.0
-- Updated to Paper API 26.1.2
-- Updated to Java 25
+### Version 9.2
+- Plugin version set to 9.2
+- Build targets Java 21 for server compatibility
 - Added Kotlin 2.3.0 utilities
 - Replaced SQLite with lightweight JSON storage (18MB → 3.5MB)
 - Implemented full GUI pagination

@@ -1,6 +1,6 @@
 # ⚙️ Configuration Guide - Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-7.2-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Version](https://img.shields.io/badge/version-9.2-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
 
 > **Complete configuration reference**
 

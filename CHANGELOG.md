@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.2] - 2026-06-19
+
+### Added
+- New action buttons in GUI: "Notify Player", "Mark Resolved", "Not a Bug / Not a Violation"
+- Confirmation dialog before Resolved / Not a Bug actions
+- Player notifications for all report actions
+- Discord webhooks for notify, resolve, and not-a-bug actions
+- Persist resolved reports (status + resolvedBy + resolvedAt) instead of deleting
+- History display in GUI (resolved reports shown greyed out with ✓ badge)
+- GitHub Actions build & release workflow
+- Explicit server software support notes: Paper, Purpur, Pufferfish, Spigot, and Folia
+- Compatibility note for most Paper-compatible forks such as Leaves, Gale, and Canvas
+
+### Fixed
+- Bug reports now properly populate reportsById index on load
+- Fixed `openReportActionsGUI` showing "no-reports" instead of "report-not-found" when report is null
+- Fixed confirmation GUI not being recognized as plugin GUI (missing isOurGUI check)
+- Fixed double Discord webhook on resolve actions
+- Updated version badges in README files
+- Fixed Gradle/plugin metadata to publish as version 9.2
+- Fixed GUI compatibility on legacy and modern versions by resolving renamed materials through `VersionUtils`
+- Fixed player head owner handling on old servers by falling back from `setOwningPlayer` to legacy `setOwner`
+
+### Changed
+- Unified color scheme for action buttons using config colors
+- Resolved reports no longer deleted, kept in database with status
+- Release target clarified: Java 21+, Minecraft compatibility target 1.8.9–9.2
+
 ## [9.1] - 2026-05-15
 
 ### Fixed
@@ -27,13 +55,13 @@ All notable changes to this project will be documented in this file.
 - Admin bug report notification format simplified (shorter field names)
 - Bug report Discord embed color changed to orange (0xFFA500) to distinguish from regular reports
 
-## [26.1.2] - 2026-05-14 | Test
+## [9.2] - 2026-05-14 | Test
 
 ### Added
 - Discord webhook notification when a report is resolved (green embed with resolver info)
 
 ### Changed
-- Plugin version updated to 26.1.2
+- Plugin version updated to 9.2
 - Universal version detection: supports any Minecraft version from 1.8 to 26.x+ (and future versions)
 - Version parser now uses regex instead of hardcoded checks, with Bukkit fallback
 
@@ -56,7 +84,7 @@ All notable changes to this project will be documented in this file.
 - Thread-safe storage operations with ReadWriteLock
 
 ### Changed
-- Updated Paper API from 1.21.11 to 26.1.2
+- Updated Paper API from 1.21.11 to 9.2
 - Updated Java requirement from 21 to 25
 - Updated Gradle from 8.14.2 to 9.5.0
 - Updated Shadow plugin from 8.1.1 to 9.3.1

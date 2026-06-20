@@ -1,10 +1,10 @@
 name: Sqrilizz-Reports
-version: '9.1'
+version: "${version}"
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
-api-version: '1.13'
+api-version: "1.13"
 authors: [Sqrilizz]
 description: A simple reports plugin with multi-version support
-website: https://www.sqrilizz.xyz
+website: https://www.sqrilizz.tech
 load: POSTWORLD
 folia-supported: true
 
