@@ -5,6 +5,7 @@
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-Custom-red.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1a1d82daee3f49ed9677fcbb5fa594df)](https://app.codacy.com/gh/Sqrilizz/Sqrilizz-Reports/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 Modern report management system for Minecraft servers with interactive GUI interface.
 
