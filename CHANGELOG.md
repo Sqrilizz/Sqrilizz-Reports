@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.2.1] - 2026-06-22
+
+### Fixed
+- Bug reports no longer blocked by the per-player complaint limit (3 of 3) — the limit applies only to player reports, not bug reports
+- Corrected config key mismatch in limit messages: `report-limits.*` → `anti-abuse.*`, so the displayed limit now matches the actual value from `config.yml`
+
 ## [9.2] - 2026-06-19
 
 ### Added

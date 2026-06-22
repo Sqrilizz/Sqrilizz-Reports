@@ -46,19 +46,19 @@ public class AntiAbuseManager {
             return false;
         }
         
-        // Проверяем лимит жалоб на конкретного игрока
-        if (!checkPlayerReportLimit(reporterName, targetName)) {
-            int limit = Main.getInstance().getConfig().getInt("report-limits.per-player", 3);
+        // Проверяем лимит жалоб на конкретного игрока (не применяется к баг-репортам)
+        if (!targetName.equals("BUG_REPORT") && !checkPlayerReportLimit(reporterName, targetName)) {
+            int limit = Main.getInstance().getConfig().getInt("anti-abuse.per-player-limit", 3);
             int current = getPlayerTargetReportCount(reporterName, targetName);
             VersionUtils.sendMessage(reporter, LanguageManager.getMessage("report-limit-reached")
                 .replace("[LIMIT]", String.valueOf(current))
                 .replace("[MAX]", String.valueOf(limit)));
             return false;
         }
-        
+
         // Проверяем часовой лимит
         if (!checkHourlyLimit(reporterName)) {
-            int limit = Main.getInstance().getConfig().getInt("report-limits.per-hour", 10);
+            int limit = Main.getInstance().getConfig().getInt("anti-abuse.hourly-limit", 10);
             int current = getHourlyReportCount(reporterName);
             VersionUtils.sendMessage(reporter, LanguageManager.getMessage("hourly-limit-reached")
                 .replace("[LIMIT]", String.valueOf(current))
