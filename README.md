@@ -297,7 +297,7 @@ JAR will be in `build/libs/Sqrilizz-Reports-9.2.jar`
 See [CHANGELOG.md](CHANGELOG.md) for full history.
 
 ---
-![https://bstats.org/plugin/bukkit/Sqrilizz%20Reports/31222.svg](https://bstats.org/plugin/bukkit/Sqrilizz%20Reports/31222.svg)
+![https://bstats.org/signatures/bukkit/Sqrilizz%20Reports.svg](https://bstats.org/signatures/bukkit/Sqrilizz%20Reports.svg)
 
 ## Support
 
