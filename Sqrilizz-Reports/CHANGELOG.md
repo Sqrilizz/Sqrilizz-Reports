@@ -1,5 +1,13 @@
 # Changelog - Sqrilizz-Reports
 
+## [9.3.0] - 2026-07-01
+
+### Changed
+- Verified and declared support for Minecraft 26.2 (new date-based versioning); sources compile cleanly against Paper API `26.2.build.40-alpha`
+- Still compiled against Paper API 1.21.11 with Java 21 bytecode, so the same jar runs on 1.21+ servers (Java 21) and 26.x servers (Java 25) — Paper API 26.x itself requires Java 25 and would break 1.21 compatibility
+- Updated dependencies: Gson 2.14.0, HikariCP 6.3.0, sqlite-jdbc 3.49.1.0
+- `runServer` test target updated from 1.21.4 to 1.21.11
+
 ## [9.2] - 2026-06-19
 
 ### Added

@@ -6,15 +6,16 @@ plugins {
 }
 
 group = "dev.sqrilizz"
-version = "9.2.1"
+version = "9.3.0"
 
 // Версии зависимостей
-// 9.2 — версия плагина. Paper API оставляем на реальной доступной версии,
-// иначе Gradle не сможет скачать несуществующий артефакт paper-api:9.2.
+// Компилируем против последней версии линейки 1.21 (Java 21),
+// чтобы jar работал на 1.21+ и на новых датированных версиях (26.x).
+// Paper API 26.x требует Java 25 и сломал бы совместимость с 1.21-серверами.
 val paperApiVersion = "1.21.11-R0.1-SNAPSHOT"
-val gsonVersion = "2.11.0"
-val sqliteVersion = "3.47.2.0"
-val hikariVersion = "6.2.1"
+val gsonVersion = "2.14.0"
+val sqliteVersion = "3.49.1.0"
+val hikariVersion = "6.3.0"
 val okhttpVersion = "4.12.0"
 val caffeineVersion = "3.2.0"
 val bstatsVersion = "3.2.1"
@@ -151,6 +152,6 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.11")
     }
 }
