@@ -30,7 +30,7 @@
 https://modrinth.com/plugin/sqrilizz-report
 
 # Download latest version
-wget https://github.com/Sqrilizz/Sqrilizz-Reports/releases/latest/download/Sqrilizz-Reports-9.4.0.jar
+wget https://github.com/Sqrilizz/Sqrilizz-Reports/releases/latest/download/Sqrilizz-Reports-Standard-Edition-9.4.0.jar
 ```
 
 ### Option 2: GitHub Releases

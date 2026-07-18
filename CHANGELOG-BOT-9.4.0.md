@@ -1,4 +1,4 @@
-# Sqrilizz-Reports 9.4.0 - Discord Bot Build
+# Sqrilizz-Reports Bot Edition 9.4.0
 
 ## Requirements
 
@@ -8,7 +8,7 @@
 
 ## Includes
 
-This build contains every feature from the Standard Build, plus the Discord bot.
+This build contains every feature from Standard Edition, plus the Discord bot.
 
 ## Discord Bot Features
 
@@ -21,4 +21,4 @@ This build contains every feature from the Standard Build, plus the Discord bot.
 
 ## Artifact
 
-Use `Sqrilizz-Reports-Bot-9.4.0.jar`.
+Use `Sqrilizz-Reports-Bot-Edition-9.4.0.jar`.

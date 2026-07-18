@@ -87,8 +87,8 @@ Modern report management system for Minecraft servers with interactive GUI inter
 
 ### Build variants
 
-- `Sqrilizz-Reports-9.4.0.jar` — standard version with GUI actions, webhooks and Telegram notifications.
-- `Sqrilizz-Reports-Bot-9.4.0.jar` — includes the Discord bot. New reports receive `Решён` and `Не баг`/`Ложный репорт` buttons and a Minecraft-head thumbnail in the configured Discord channel. Only Discord administrators and role IDs listed in `discord.bot.mod-roles` can use them.
+- `Sqrilizz-Reports-Standard-Edition-9.4.0.jar` — Standard Edition with GUI actions, webhooks, and Telegram notifications.
+- `Sqrilizz-Reports-Bot-Edition-9.4.0.jar` — Bot Edition with the Discord bot. New reports receive `Решён` and `Не баг`/`Ложный репорт` buttons and a Minecraft-head thumbnail in the configured Discord channel. Only Discord administrators and role IDs listed in `discord.bot.mod-roles` can use them.
 
 Use only one variant at a time. For the Bot version, set `discord.bot.enabled`, `token`, `channel-id`, and moderator role IDs in `config.yml`.
 
@@ -284,7 +284,7 @@ cd Sqrilizz-Reports/Sqrilizz-Reports
 ./gradlew build
 ```
 
-JAR will be in `build/libs/Sqrilizz-Reports-9.4.0.jar`
+JAR will be in `build/libs/Sqrilizz-Reports-Standard-Edition-9.4.0.jar`
 
 ---
 

@@ -6,7 +6,7 @@ Modern report management for Paper servers: GUI moderation, report history, Disc
 
 ## Which File Should I Download?
 
-### `Sqrilizz-Reports-9.4.0.jar` — Standard Build
+### `Sqrilizz-Reports-Standard-Edition-9.4.0.jar` — Standard Edition
 
 Choose this if you need the report system, GUI actions, Discord webhooks, Telegram notifications, REST API, and databases. It is the recommended build for most servers.
 
@@ -14,11 +14,11 @@ Choose this if you need the report system, GUI actions, Discord webhooks, Telegr
 - No Discord bot account or token required
 - Use Discord webhooks if you only need report notifications in Discord
 
-### `Sqrilizz-Reports-Bot-9.4.0.jar` — Discord Bot Build
+### `Sqrilizz-Reports-Bot-Edition-9.4.0.jar` — Bot Edition
 
 Choose this only if moderators must manage reports from Discord with buttons.
 
-- Includes everything in the Standard Build
+- Includes everything in Standard Edition
 - New report cards have `Resolved` and `Not a Bug` / `False Report` buttons
 - Shows Minecraft head thumbnails and updates the card with the final status and moderator
 - Requires a Discord bot token, channel ID, and moderator role IDs in `config.yml`

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [9.4.0] - 2026-07-18
 
 ### Added
-- A separate Discord Bot-JAR with moderator buttons for resolving reports or marking them as not a bug / false report
+- A separate Bot Edition with moderator buttons for resolving reports or marking them as not a bug / false report
 - Discord report cards show Minecraft head thumbnails, a status field, the acting moderator, and disabled final controls
 - Offline-player reports with the target location recorded as offline
 - Persistent report statuses: open, in progress, resolved, not a bug, not a violation, false report, and closed
@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - The `gui.player-heads` setting now works for all report GUI cards
 - The main build now targets Paper 26.2 and Java 25; support for Java 21 and Minecraft 1.21.x has been dropped
-- The standard and Bot-JAR artifacts are both published as version 9.4.0
+- Standard Edition and Bot Edition artifacts are both published as version 9.4.0
 
 ## [9.2.1] - 2026-06-22
 

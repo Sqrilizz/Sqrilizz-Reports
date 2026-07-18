@@ -1,4 +1,4 @@
-# Sqrilizz-Reports 9.4.0 - Standard Build
+# Sqrilizz-Reports Standard Edition 9.4.0
 
 ## Requirements
 
@@ -24,4 +24,4 @@
 
 ## Artifact
 
-Use `Sqrilizz-Reports-9.4.0.jar`.
+Use `Sqrilizz-Reports-Standard-Edition-9.4.0.jar`.

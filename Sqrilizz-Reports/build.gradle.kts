@@ -99,7 +99,7 @@ tasks {
     }
 
     shadowJar {
-        archiveBaseName.set("Sqrilizz-Reports")
+        archiveBaseName.set("Sqrilizz-Reports-Standard-Edition")
         archiveClassifier.set("")
 
         // Минимизация JAR - удаляем неиспользуемые классы
@@ -155,8 +155,8 @@ tasks {
 
     register<ShadowJar>("botShadowJar") {
         group = "build"
-        description = "Builds Sqrilizz-Reports with the Discord bot integration"
-        archiveBaseName.set("Sqrilizz-Reports-Bot")
+        description = "Builds Sqrilizz-Reports Bot Edition with the Discord bot integration"
+        archiveBaseName.set("Sqrilizz-Reports-Bot-Edition")
         archiveClassifier.set("")
         from(sourceSets.main.get().output)
         from(sourceSets.named("discordBot").get().output)
