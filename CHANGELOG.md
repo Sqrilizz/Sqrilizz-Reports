@@ -5,19 +5,27 @@ All notable changes to this project will be documented in this file.
 ## [9.4.0] - 2026-07-18
 
 ### Added
-- Discord bot report cards show a Minecraft-head thumbnail and status field
-- Localized status labels and reports-menu statistics
-- Duplicate protection for recent open complaints from the same reporter to the same target
+- A separate Discord Bot-JAR with moderator buttons for resolving reports or marking them as not a bug / false report
+- Discord report cards show Minecraft head thumbnails, a status field, the acting moderator, and disabled final controls
+- Offline-player reports with the target location recorded as offline
+- Persistent report statuses: open, in progress, resolved, not a bug, not a violation, false report, and closed
+- Localized status labels and reports-menu statistics in English, Russian, and Arabic
+- Reporter notifications for every final moderation outcome
 - Telegram moderation notifications for report status changes
+- Audit webhook events for report creation, status changes, and report cleanup
+- Duplicate protection for recent open complaints from the same reporter to the same target
+- Automatic migration of renamed configuration keys from older releases
 
 ### Fixed
 - Reports menu now previews the newest report for each player
 - Discord bot buttons acknowledge interactions before the server-side status change
 - Discord report cards now show the moderator's final decision and disable the action controls
+- JSON, SQLite, and MySQL stores now persist the final status, moderator, and resolution time consistently
 
 ### Changed
 - The `gui.player-heads` setting now works for all report GUI cards
 - The main build now targets Paper 26.2 and Java 25; support for Java 21 and Minecraft 1.21.x has been dropped
+- The standard and Bot-JAR artifacts are both published as version 9.4.0
 
 ## [9.2.1] - 2026-06-22
 
