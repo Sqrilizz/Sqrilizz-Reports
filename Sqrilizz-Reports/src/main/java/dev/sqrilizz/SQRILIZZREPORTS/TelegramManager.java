@@ -101,6 +101,40 @@ public class TelegramManager {
         });
     }
 
+    public static void sendStatusUpdate(
+        ReportManager.Report report,
+        String resolver,
+        ReportManager.Status status
+    ) {
+        if (!isEnabled()) return;
+
+        Main.runTaskAsync(() -> {
+            try {
+                String reportType = "BUG_REPORT".equals(report.target)
+                    ? "баг-репорт"
+                    : "жалоба";
+                String message = String.format(
+                    "*Статус репорта изменён*\n\n" +
+                    "*ID:* %d\n" +
+                    "*Тип:* %s\n" +
+                    "*Отправитель:* %s\n" +
+                    "*Цель:* %s\n" +
+                    "*Статус:* %s\n" +
+                    "*Модератор:* %s",
+                    report.id,
+                    reportType,
+                    report.isAnonymous ? "Аноним" : report.reporter,
+                    "BUG_REPORT".equals(report.target) ? "Сервер" : report.target,
+                    getStatusLabel(status),
+                    resolver
+                );
+                sendMessage(message);
+            } catch (Exception e) {
+                Main.getInstance().getLogger().warning("Failed to send Telegram status update: " + e.getMessage());
+            }
+        });
+    }
+
     public static void sendMessage(String text) {
         if (!isEnabled()) return;
 
@@ -149,5 +183,17 @@ public class TelegramManager {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private static String getStatusLabel(ReportManager.Status status) {
+        return switch (status) {
+            case IN_PROGRESS -> "На проверке";
+            case RESOLVED -> "Решён";
+            case NOT_A_BUG -> "Не баг";
+            case NOT_A_VIOLATION -> "Не нарушение";
+            case FALSE_REPORT -> "Ложный репорт";
+            case CLOSED -> "Закрыт";
+            default -> "Открыт";
+        };
     }
 }

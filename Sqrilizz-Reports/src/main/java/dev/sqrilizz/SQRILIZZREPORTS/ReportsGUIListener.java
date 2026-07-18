@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 public class ReportsGUIListener implements Listener {
 
@@ -335,14 +334,7 @@ public class ReportsGUIListener implements Listener {
             return;
         }
 
-        // Player head clicked
-        if (
-            clicked.getType().toString().contains("PLAYER_HEAD") ||
-            clicked.getType().toString().contains("SKULL")
-        ) {
-            SkullMeta skullMeta = (SkullMeta) clicked.getItemMeta();
-
-            // Extract player name from display name (now it's just the colored name)
+        if (eventSlotIsPlayerCard(clicked, displayName)) {
             String targetName = displayName
                 .replaceAll("§[0-9a-fk-or]", "")
                 .trim();
@@ -359,7 +351,7 @@ public class ReportsGUIListener implements Listener {
                 );
             } else {
                 // Clear all reports
-                ReportManager.clearReports(targetName);
+                ReportManager.clearReports(targetName, player.getName());
                 VersionUtils.sendMessage(
                     player,
                     LanguageManager.getMessage("reports-cleared").replace(
@@ -377,6 +369,12 @@ public class ReportsGUIListener implements Listener {
                 );
             }
         }
+    }
+
+    private boolean eventSlotIsPlayerCard(ItemStack clicked, String displayName) {
+        if (displayName == null || displayName.isBlank()) return false;
+        String plainName = displayName.replaceAll("§[0-9a-fk-or]", "").trim();
+        return ReportManager.getReports().containsKey(plainName);
     }
 
     private void handlePlayerReportsClick(
@@ -473,7 +471,7 @@ public class ReportsGUIListener implements Listener {
 
         // Clear all reports
         if (isButton(displayName, "Clear", "Очистить", "مسح")) {
-            ReportManager.clearReports(targetName);
+            ReportManager.clearReports(targetName, player.getName());
             VersionUtils.sendMessage(
                 player,
                 LanguageManager.getMessage("reports-cleared").replace(
@@ -709,13 +707,14 @@ public class ReportsGUIListener implements Listener {
             )
         ) {
             boolean isBug = "BUG_REPORT".equals(report.target);
+            String actionType = isBug ? "NOT_A_BUG" : "NOT_A_VIOLATION";
             confirmContexts.put(
                 player.getName(),
                 new ConfirmActionContext(
                     reportId,
                     report.target,
                     report.reporter,
-                    "NOT_A_BUG",
+                    actionType,
                     isBug
                 )
             );
@@ -728,7 +727,7 @@ public class ReportsGUIListener implements Listener {
                         reportId,
                         report.target,
                         report.reporter,
-                        "NOT_A_BUG",
+                        actionType,
                         isBug
                     );
                 },
@@ -740,8 +739,6 @@ public class ReportsGUIListener implements Listener {
         // Resolve report (old-style, keep for backward compatibility)
         if (isButton(displayName, "Resolve", "Решить", "حل")) {
             ReportManager.resolveReport(reportId, player.getName());
-            // Discord webhook for old Resolve button
-            DiscordWebhookManager.sendResolvedReport(report, player.getName());
             VersionUtils.sendMessage(
                 player,
                 LanguageManager.getMessage("report-resolved").replace(
@@ -1083,39 +1080,16 @@ public class ReportsGUIListener implements Listener {
             boolean isResolved = "RESOLVED".equals(ctx.actionType);
             boolean isBug = ctx.isBugReport;
 
-            String notifyKey = isResolved
-                ? (isBug ? "report-resolved-bug" : "report-resolved-player")
-                : (isBug
-                      ? "report-not-bug-message"
-                      : "report-not-violation-message");
             String adminMsgKey = isResolved
                 ? "report-resolved"
                 : (isBug ? "report-not-bug-done" : "report-not-violation-done");
 
-            // Notify reporter
-            ReportManager.notifyReporter(
-                ctx.reportId,
-                LanguageManager.getMessage(notifyKey)
-            );
-
-            // Discord webhook
-            ReportManager.Report report = findReportById(ctx.reportId);
-            if (report != null) {
-                if (isResolved) {
-                    DiscordWebhookManager.sendResolvedReport(
-                        report,
-                        player.getName()
-                    );
-                } else {
-                    DiscordWebhookManager.sendNotABugReport(
-                        report,
-                        player.getName()
-                    );
-                }
-            }
-
-            // Resolve (mark as resolved, keeps the report with status)
-            ReportManager.resolveReport(ctx.reportId, player.getName());
+            ReportManager.Status status = switch (ctx.actionType) {
+                case "RESOLVED" -> ReportManager.Status.RESOLVED;
+                case "NOT_A_BUG" -> ReportManager.Status.NOT_A_BUG;
+                default -> ReportManager.Status.NOT_A_VIOLATION;
+            };
+            ReportManager.updateStatus(ctx.reportId, player.getName(), status);
 
             VersionUtils.sendMessage(
                 player,

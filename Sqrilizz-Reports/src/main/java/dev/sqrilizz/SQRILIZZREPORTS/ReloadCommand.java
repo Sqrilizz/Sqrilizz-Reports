@@ -26,12 +26,14 @@ public class ReloadCommand implements CommandExecutor {
         try {
             // Перезагружаем конфигурацию
             Main.getInstance().reloadConfig();
+            ConfigMigration.apply();
             
             // Перезагружаем менеджеры в правильном порядке
             ColorManager.initialize();
             LanguageManager.initialize();
             TelegramManager.initialize();
             DiscordWebhookManager.initialize();
+            DiscordBotBridge.reload();
             AntiAbuseManager.initialize();
 
             // Re-init Auth and REST

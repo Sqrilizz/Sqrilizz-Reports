@@ -115,9 +115,10 @@ public class ReportsGUI {
             );
 
             // Show latest report reason preview
-            ReportManager.Report latest = playerReports.get(
-                playerReports.size() - 1
-            );
+            ReportManager.Report latest = playerReports
+                .stream()
+                .max(Comparator.comparingLong(report -> report.timestamp))
+                .orElseThrow();
             String reasonPreview =
                 latest.reason.length() > 30
                     ? latest.reason.substring(0, 30) + "..."
@@ -128,6 +129,12 @@ public class ReportsGUI {
                         LanguageManager.getRawMessage(
                             "gui-report-reason"
                         ).replace("[REASON]", reasonPreview)
+                )
+            );
+            lore.add(
+                LanguageManager.getMessage("gui-report-status").replace(
+                    "[STATUS]",
+                    getStatusLabel(latest)
                 )
             );
             lore.add(ColorManager.colorize("&7" + latest.getTimeAgo()));
@@ -183,16 +190,22 @@ public class ReportsGUI {
         statsLore.add(ColorManager.colorize("&8-----------------"));
         statsLore.add(
             ColorManager.colorize(
-                "&7Active: &c" + activeReports + "&7/" + totalReports
+                LanguageManager.getMessage("gui-stats-active")
+                    .replace("[ACTIVE]", "&c" + activeReports)
+                    .replace("[TOTAL]", "&f" + totalReports)
             )
         );
         statsLore.add(
             ColorManager.colorize(
-                "&7Players: &f" + activePlayers + "&7/" + totalPlayers
+                LanguageManager.getMessage("gui-stats-players")
+                    .replace("[ACTIVE]", "&f" + activePlayers)
+                    .replace("[TOTAL]", "&f" + totalPlayers)
             )
         );
         statsLore.add(
-            ColorManager.colorize("&7Page: &f" + (page + 1) + "/" + totalPages)
+            LanguageManager.getMessage("gui-stats-page")
+                .replace("[PAGE]", "&f" + (page + 1))
+                .replace("[TOTAL]", "&f" + totalPages)
         );
         statsLore.add(ColorManager.colorize("&8-----------------"));
         statsMeta.setLore(statsLore);
@@ -298,7 +311,7 @@ public class ReportsGUI {
                             "[ID]",
                             String.valueOf(report.id)
                         ) +
-                        (isResolved ? " &8[&a✓&8]" : "")
+                        (isResolved ? " &8[" + getStatusLabel(report) + "&8]" : "")
                 )
             );
 
@@ -330,13 +343,10 @@ public class ReportsGUI {
             if (isResolved) {
                 lore.add(
                     ColorManager.colorize(
-                        "&a" +
-                            LanguageManager.getMessage(
-                                "gui-report-status"
-                            ).replace(
-                                "[STATUS]",
-                                LanguageManager.getMessage("status-resolved")
-                            )
+                        LanguageManager.getMessage("gui-report-status").replace(
+                            "[STATUS]",
+                            getStatusLabel(report)
+                        )
                     )
                 );
                 if (!report.getResolvedBy().isEmpty()) {
@@ -977,16 +987,32 @@ public class ReportsGUI {
      * Helper method to create player head
      */
     private static ItemStack createPlayerHead(String playerName) {
+        if (!Main.getInstance().getConfig().getBoolean("gui.player-heads", true)) {
+            return new ItemStack(Material.PAPER);
+        }
         ItemStack head = VersionUtils.createItem(
             "PLAYER_HEAD",
             "SKULL_ITEM",
             (short) 3
         );
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-        VersionUtils.setSkullOwner(meta, playerName);
-
-        head.setItemMeta(meta);
+        ItemMeta itemMeta = head.getItemMeta();
+        if (itemMeta instanceof SkullMeta meta) {
+            VersionUtils.setSkullOwner(meta, playerName);
+            head.setItemMeta(meta);
+        }
         return head;
+    }
+
+    private static String getStatusLabel(ReportManager.Report report) {
+        return switch (report.status) {
+            case "in_progress" -> LanguageManager.getMessage("status-in-progress");
+            case "resolved" -> LanguageManager.getMessage("status-resolved");
+            case "not_a_bug" -> LanguageManager.getMessage("status-not-a-bug");
+            case "not_a_violation" -> LanguageManager.getMessage("status-not-a-violation");
+            case "false_report" -> LanguageManager.getMessage("status-false-report");
+            case "closed" -> LanguageManager.getMessage("status-closed");
+            default -> LanguageManager.getMessage("status-open");
+        };
     }
 
     /**

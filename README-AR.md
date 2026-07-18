@@ -1,8 +1,8 @@
 # 🚨 Sqrilizz-Reports - النسخة العربية
 
-[![Version](https://img.shields.io/badge/version-9.2-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--9.2-blue.svg)](https://www.minecraft.net/)
-[![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
+[![Version](https://img.shields.io/badge/version-9.4.0-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
+[![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-Custom-red.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 

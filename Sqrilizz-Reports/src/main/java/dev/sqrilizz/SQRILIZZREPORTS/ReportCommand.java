@@ -30,20 +30,6 @@ public class ReportCommand implements CommandExecutor {
             return true;
         }
 
-        // Проверяем кулдаун
-        if (CooldownManager.hasCooldown(VersionUtils.getPlayerUUID(player))) {
-            long remainingTime = CooldownManager.getRemainingTime(VersionUtils.getPlayerUUID(player));
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("cooldown-message")
-                .replace("[COOLDOWN]", String.valueOf(remainingTime)));
-            return true;
-        }
-
-        // Проверяем систему защиты от злоупотреблений
-        if (!AntiAbuseManager.canReport(player, targetName)) {
-            return true;
-        }
-
-        // Проверяем, не пытается ли игрок пожаловаться на себя
         if (targetName.equalsIgnoreCase(player.getName())) {
             VersionUtils.sendMessage(player, LanguageManager.getMessage("cannot-report-self"));
             return true;
@@ -59,26 +45,55 @@ public class ReportCommand implements CommandExecutor {
                     .replace("[PLAYER]", targetName));
                 return true;
             }
-            // Для оффлайн игроков создаем временный Player объект или используем другой подход
-            VersionUtils.sendMessage(player, LanguageManager.getMessage("report-offline")
+            targetName = NameUtils.cleanPlayerName(offlinePlayer.getName());
+        } else {
+            targetName = VersionUtils.getPlayerCleanName(targetPlayer);
+        }
+
+        ReportManager.Report duplicate = findDuplicate(player, targetName);
+        if (duplicate != null) {
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("duplicate-report")
+                .replace("[ID]", String.valueOf(duplicate.id))
                 .replace("[PLAYER]", targetName));
             return true;
         }
 
-        // Отправляем жалобу
-        ReportManager.addReport(player, targetPlayer, reason);
-        
-        // Регистрируем жалобу в системе защиты от злоупотреблений
-        AntiAbuseManager.recordReport(player, VersionUtils.getPlayerCleanName(targetPlayer));
-        
-        // Устанавливаем кулдаун
+        if (CooldownManager.hasCooldown(VersionUtils.getPlayerUUID(player))) {
+            long remainingTime = CooldownManager.getRemainingTime(VersionUtils.getPlayerUUID(player));
+            VersionUtils.sendMessage(player, LanguageManager.getMessage("cooldown-message")
+                .replace("[COOLDOWN]", String.valueOf(remainingTime)));
+            return true;
+        }
+
+        if (!AntiAbuseManager.canReport(player, targetName)) {
+            return true;
+        }
+
+        if (targetPlayer == null) {
+            ReportManager.addOfflineReport(player, targetName, reason);
+        } else {
+            ReportManager.addReport(player, targetPlayer, reason);
+        }
+
+        AntiAbuseManager.recordReport(player, targetName);
         CooldownManager.setCooldown(VersionUtils.getPlayerUUID(player));
-        
-        // Уведомляем игрока об успешной отправке
+
         VersionUtils.sendMessage(player, LanguageManager.getMessage("report-success")
-            .replace("[PLAYER]", VersionUtils.getPlayerDisplayName(targetPlayer))
+            .replace("[PLAYER]", targetName)
             .replace("[REASON]", reason));
-        
         return true;
     }
-} 
+
+    private ReportManager.Report findDuplicate(Player reporter, String targetName) {
+        if (!Main.getInstance().getConfig().getBoolean("reports.duplicate-protection.enabled", true)) {
+            return null;
+        }
+        long windowMillis = Main.getInstance().getConfig()
+            .getLong("reports.duplicate-protection.window-seconds", 900L) * 1000L;
+        return ReportManager.findRecentOpenReport(
+            VersionUtils.getPlayerCleanName(reporter),
+            targetName,
+            windowMillis
+        );
+    }
+}

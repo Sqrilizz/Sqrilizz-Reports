@@ -1,7 +1,7 @@
 # ================================================================
 #  Sqrilizz-Reports Configuration
-#  Version: 9.2
-#  Minecraft: 1.8.9 - 9.2 (Paper, Purpur, Pufferfish, Folia, Spigot)
+#  Version: 9.4.0
+#  Minecraft: 26.2+ (Paper, Purpur, Pufferfish, Folia)
 # ================================================================
 
 # ================================================================
@@ -25,6 +25,10 @@ reports:
 
   # Allow anonymous reports (without reporter name)
   anonymous: false
+
+  duplicate-protection:
+    enabled: true
+    window-seconds: 900
 
   # Notify target player when reported
   notify-target: false
@@ -170,8 +174,11 @@ discord:
     token: "YOUR_BOT_TOKEN"
     guild-id: "YOUR_GUILD_ID"
     channel-id: "YOUR_CHANNEL_ID"
-    mod-roles: []
     status: "Watching reports"
+
+    # Discord role IDs allowed to press report action buttons.
+    # Administrators always have access.
+    mod-roles: []
 
     # Bot moderation
     moderation:
@@ -211,15 +218,16 @@ rest-api:
   # IP whitelist
   ip-whitelist:
     enabled: false
-    ips: []
+    list: []
 
   # Webhook secret
-  webhook-secret: "CHANGE_ME"
+  webhook:
+    secret: "CHANGE_ME"
 
   # Rate limiting
   rate-limit:
     enabled: true
-    requests-per-second: 10
+    rps: 10
 
 # ================================================================
 # PERFORMANCE
@@ -263,11 +271,13 @@ database:
     host: "localhost"
     port: 3306
     database: "sqrilizz_reports"
-    username: "root"
+    user: "root"
     password: "password"
     pool-size: 10
     connection-timeout: 30000
     params: "useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=UTC"
+
+webhooks: {}
 
 # ================================================================
 # DEBUG

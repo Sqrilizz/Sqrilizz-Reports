@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     java
     kotlin("jvm") version "2.3.0"
@@ -6,19 +8,36 @@ plugins {
 }
 
 group = "dev.sqrilizz"
-version = "9.3.0"
+version = "9.4.0"
 
 // Версии зависимостей
-// Компилируем против последней версии линейки 1.21 (Java 21),
-// чтобы jar работал на 1.21+ и на новых датированных версиях (26.x).
-// Paper API 26.x требует Java 25 и сломал бы совместимость с 1.21-серверами.
-val paperApiVersion = "1.21.11-R0.1-SNAPSHOT"
+val paperApiVersion = "26.2.build.+"
 val gsonVersion = "2.14.0"
 val sqliteVersion = "3.49.1.0"
 val hikariVersion = "6.3.0"
 val okhttpVersion = "4.12.0"
 val caffeineVersion = "3.2.0"
 val bstatsVersion = "3.2.1"
+val jdaVersion = "6.2.0"
+
+val botImplementation by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = false
+}
+
+val botRuntime by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    extendsFrom(botImplementation)
+}
+
+sourceSets {
+    create("discordBot") {
+        java.srcDir("src/bot/java")
+        compileClasspath += sourceSets.main.get().output + configurations.compileClasspath.get() + botRuntime
+        runtimeClasspath += output + compileClasspath + configurations.runtimeClasspath.get()
+    }
+}
 
 repositories {
     mavenCentral()
@@ -43,36 +62,32 @@ dependencies {
 
     // bStats
     implementation("org.bstats:bstats-bukkit:$bstatsVersion")
+    compileOnly("net.dv8tion:JDA:$jdaVersion")
+    add("botImplementation", "net.dv8tion:JDA:$jdaVersion")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
 kotlin {
-    jvmToolchain(21)
-    // Компилируем Kotlin в ту же директорию что и Java
+    jvmToolchain(25)
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
     }
 }
 
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(21)
+        options.release.set(25)
     }
 
-    compileKotlin {
-        // Компилируем в ту же директорию что и Java
-        destinationDirectory.set(layout.buildDirectory.dir("classes/java/main"))
-    }
-
-    // Важно: компилируем Kotlin ДО Java
     compileJava {
         dependsOn(compileKotlin)
+        classpath += files(compileKotlin.flatMap { it.destinationDirectory })
         options.compilerArgs.add("-Xlint:deprecation")
     }
 
@@ -138,8 +153,40 @@ tasks {
         }
     }
 
+    register<ShadowJar>("botShadowJar") {
+        group = "build"
+        description = "Builds Sqrilizz-Reports with the Discord bot integration"
+        archiveBaseName.set("Sqrilizz-Reports-Bot")
+        archiveClassifier.set("")
+        from(sourceSets.main.get().output)
+        from(sourceSets.named("discordBot").get().output)
+        configurations = listOf(project.configurations.runtimeClasspath.get(), botRuntime)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        relocate("org.bstats", "dev.sqrilizz.SQRILIZZREPORTS.libs.bstats")
+        relocate("kotlin", "dev.sqrilizz.SQRILIZZREPORTS.libs.kotlin")
+        relocate("com.google.gson", "dev.sqrilizz.SQRILIZZREPORTS.libs.gson")
+        relocate("okhttp3", "dev.sqrilizz.SQRILIZZREPORTS.libs.okhttp3")
+        relocate("okio", "dev.sqrilizz.SQRILIZZREPORTS.libs.okio")
+        relocate("com.github.benmanes.caffeine", "dev.sqrilizz.SQRILIZZREPORTS.libs.caffeine")
+        mergeServiceFiles()
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/LICENSE*")
+        exclude("META-INF/NOTICE*")
+        exclude("META-INF/maven/**")
+        exclude("META-INF/*.SF")
+        exclude("META-INF/*.DSA")
+        exclude("META-INF/*.RSA")
+        manifest {
+            attributes(
+                "Multi-Release" to "true",
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version
+            )
+        }
+    }
+
     build {
-        dependsOn(shadowJar)
+        dependsOn(shadowJar, named("botShadowJar"))
     }
 
     // Задача для копирования JAR в папку плагинов (если нужно)
@@ -152,6 +199,6 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("26.2")
     }
 }

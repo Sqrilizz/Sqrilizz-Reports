@@ -87,14 +87,15 @@ public class JsonDriver implements DatabaseManager.Driver {
     }
     
     @Override
-    public boolean resolveReport(long id, String resolver) {
+    public boolean updateReportStatus(long id, String status, String resolver, long resolvedAt) {
         lock.writeLock().lock();
         try {
             for (List<ReportManager.Report> reports : cache.values()) {
                 for (ReportManager.Report report : reports) {
                     if (report.id == id) {
-                        report.status = "resolved";
-                        // Note: resolver and resolvedAt are not stored in current Report structure
+                        report.status = status;
+                        report.resolvedBy = resolver;
+                        report.resolvedAt = resolvedAt;
                         saveToFileThrottled();
                         return true;
                     }

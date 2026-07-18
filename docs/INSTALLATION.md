@@ -1,7 +1,7 @@
 # 🔧 Installation Guide - Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-9.2-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--9.2-blue.svg)](https://www.minecraft.net/)
+[![Version](https://img.shields.io/badge/version-9.4.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 
 > **Complete installation guide for all platforms**
 
@@ -10,8 +10,8 @@
 ## 📋 Requirements
 
 ### System Requirements
-- **Java**: 21+ (recommended)
-- **Minecraft**: 1.8.8 - 1.21+
+- **Java**: 25+
+- **Minecraft**: 26.2+
 - **RAM**: 512MB+ available
 - **Storage**: 50MB+ free space
 
@@ -30,7 +30,7 @@
 https://modrinth.com/plugin/sqrilizz-report
 
 # Download latest version
-wget https://cdn.modrinth.com/data/sqrilizz-report/versions/7.2/Sqrilizz-Reports-7.2.jar
+wget https://github.com/Sqrilizz/Sqrilizz-Reports/releases/latest/download/Sqrilizz-Reports-9.4.0.jar
 ```
 
 ### Option 2: GitHub Releases

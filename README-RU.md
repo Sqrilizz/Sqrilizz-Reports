@@ -1,7 +1,7 @@
 # 🚨 Sqrilizz-Reports - Русская версия
 
-[![Version](https://img.shields.io/badge/version-9.2-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--9.2-blue.svg)](https://www.minecraft.net/)
+[![Version](https://img.shields.io/badge/version-9.4.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 
 > **Легкий и высокопроизводительный плагин жалоб с интерактивным GUI**
@@ -175,7 +175,9 @@ database:
 
 ## 🌐 Поддержка платформ
 
-**Minecraft**: 1.8.9 - 1.21.11 (все версии)  
+**Minecraft**: 26.2+
+
+**Java**: 25+
 **Сервер**: Paper (рекомендуется), Spigot, Folia  
 **Java**: 21+ требуется
 

@@ -1,5 +1,22 @@
 # Changelog - Sqrilizz-Reports
 
+## [9.4.0] - 2026-07-18
+
+### Added
+- Discord bot embeds now include a Minecraft head thumbnail: the reported player for a complaint and the reporter for a bug report
+- Added localized labels for all report statuses and localized statistics in the reports menu
+- Duplicate protection blocks a new complaint from the same reporter against the same player while a recent open report exists
+- Telegram sends a moderation notification whenever a report status changes
+
+### Fixed
+- Player cards in the reports menu now show the newest report instead of an older entry
+- Discord button interactions are acknowledged immediately, preventing timeout errors while the report is updated on the server thread
+- Discord report cards are updated with the final status and moderator, then their controls are disabled
+
+### Changed
+- `gui.player-heads` now controls player heads in every GUI; when disabled, the menu uses paper cards without breaking their actions
+- The main build now targets Paper 26.2 and Java 25; support for Java 21 and Minecraft 1.21.x has been dropped
+
 ## [9.3.0] - 2026-07-01
 
 ### Changed

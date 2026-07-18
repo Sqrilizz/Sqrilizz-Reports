@@ -1,8 +1,8 @@
 # Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-9.3.0-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
-[![Minecraft](https://img.shields.io/badge/minecraft-1.8--26.2-blue.svg)](https://www.minecraft.net/)
-[![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.java.net/)
+[![Version](https://img.shields.io/badge/version-9.4.0-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
+[![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-Custom-red.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1a1d82daee3f49ed9677fcbb5fa594df)](https://app.codacy.com/gh/Sqrilizz/Sqrilizz-Reports/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
@@ -69,7 +69,7 @@ Modern report management system for Minecraft servers with interactive GUI inter
 
 ## Requirements
 
-- **Minecraft**: 1.8.9 - 26.2
+- **Minecraft**: 26.2+
 - **Server**: Paper, Purpur, Pufferfish, Folia, or Spigot
 - **Java**: 21 or higher
 
@@ -84,6 +84,13 @@ Modern report management system for Minecraft servers with interactive GUI inter
 3. Restart server
 4. Configure `config.yml` if needed
 5. Done! Plugin works out of the box
+
+### Build variants
+
+- `Sqrilizz-Reports-9.4.0.jar` — standard version with GUI actions, webhooks and Telegram notifications.
+- `Sqrilizz-Reports-Bot-9.4.0.jar` — includes the Discord bot. New reports receive `Решён` and `Не баг`/`Ложный репорт` buttons and a Minecraft-head thumbnail in the configured Discord channel. Only Discord administrators and role IDs listed in `discord.bot.mod-roles` can use them.
+
+Use only one variant at a time. For the Bot version, set `discord.bot.enabled`, `token`, `channel-id`, and moderator role IDs in `config.yml`.
 
 ---
 
@@ -268,7 +275,7 @@ Detailed documentation available in `/docs` folder:
 ## Building from Source
 
 Requirements:
-- Java 21+
+- Java 25+
 - Gradle 9.5.0+
 
 ```bash
@@ -277,15 +284,16 @@ cd Sqrilizz-Reports/Sqrilizz-Reports
 ./gradlew build
 ```
 
-JAR will be in `build/libs/Sqrilizz-Reports-9.2.jar`
+JAR will be in `build/libs/Sqrilizz-Reports-9.4.0.jar`
 
 ---
 
 ## Changelog
 
-### Version 9.2
-- Plugin version set to 9.2
-- Build targets Java 21 for server compatibility
+### Version 9.4.0
+- Added Discord bot report controls with final status cards and Minecraft head thumbnails
+- Added offline reports, report status history, audit webhooks, Telegram status notifications and duplicate protection
+- Build targets Minecraft 26.2 and Java 25
 - Added Kotlin 2.3.0 utilities
 - Replaced SQLite with lightweight JSON storage (18MB → 3.5MB)
 - Implemented full GUI pagination

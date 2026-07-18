@@ -27,6 +27,7 @@ public class NotificationUtils {
             try {
                 sendTelegramNotification(report);
                 sendDiscordWebhookNotification(report);
+                DiscordBotBridge.sendReport(report, false);
                     sendCustomWebhook(reporter, target, reason);
             } catch (Exception e) {
                 ErrorManager.logError("NOTIFICATION_ASYNC", e);
@@ -43,6 +44,7 @@ public class NotificationUtils {
             try {
                 sendTelegramBugReportNotification(report, category);
                 sendDiscordBugReportNotification(report, category);
+                DiscordBotBridge.sendReport(report, true);
                 sendCustomBugReportWebhook(reporter, category, description);
             } catch (Exception e) {
                 ErrorManager.logError("BUG_NOTIFICATION_ASYNC", e);

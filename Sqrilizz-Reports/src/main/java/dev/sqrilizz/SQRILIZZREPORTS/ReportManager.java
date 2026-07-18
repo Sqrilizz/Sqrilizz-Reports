@@ -23,6 +23,26 @@ import org.bukkit.entity.Player;
 
 public class ReportManager {
 
+    public enum Status {
+        OPEN("open"),
+        IN_PROGRESS("in_progress"),
+        RESOLVED("resolved"),
+        NOT_A_BUG("not_a_bug"),
+        NOT_A_VIOLATION("not_a_violation"),
+        FALSE_REPORT("false_report"),
+        CLOSED("closed");
+
+        private final String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
+    }
+
     private static FileConfiguration reportsConfig;
     private static File reportsFile;
     // Оптимизированная синхронизация: ReadWriteLock вместо широкой блокировки
@@ -81,11 +101,19 @@ public class ReportManager {
         Player target,
         String reason
     ) {
-        String targetName = VersionUtils.getPlayerCleanName(target);
+        addReport(reporter, VersionUtils.getPlayerCleanName(target), reason, getPlayerLocation(target));
+    }
+
+    public static void addOfflineReport(Player reporter, String targetName, String reason) {
+        addReport(reporter, targetName, reason, "Не в сети");
+    }
+
+    private static void addReport(Player reporter, String targetName, String reason, String targetLocation) {
+        Player target = Bukkit.getPlayerExact(targetName);
         String reporterName = VersionUtils.getPlayerCleanName(reporter);
         boolean isAnonymous = Main.getInstance()
             .getConfig()
-            .getBoolean("anonymous-reports", false);
+            .getBoolean("reports.anonymous", false);
 
         Report report = new Report(
             reporterName,
@@ -93,7 +121,7 @@ public class ReportManager {
             reason,
             System.currentTimeMillis(),
             getPlayerLocation(reporter),
-            getPlayerLocation(target),
+            targetLocation,
             isAnonymous
         );
 
@@ -143,6 +171,7 @@ public class ReportManager {
         Bukkit.getPluginManager().callEvent(
             new ReportCreateEventBukkit(report)
         );
+        sendAuditEvent("report_created", report, null);
         // API listeners
         ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
@@ -208,6 +237,7 @@ public class ReportManager {
         Bukkit.getPluginManager().callEvent(
             new ReportCreateEventBukkit(report)
         );
+        sendAuditEvent("bugreport_created", report, null);
         // API listeners
         ReportAPI.onReportCreate(l -> {}); // no-op to ensure class load
     }
@@ -226,9 +256,15 @@ public class ReportManager {
     }
 
     public static void clearReports(String targetName) {
+        clearReports(targetName, null);
+    }
+
+    public static void clearReports(String targetName, String actor) {
+        int removedCount;
         LOCK.writeLock().lock();
         try {
             List<Report> removed = reports.remove(targetName);
+            removedCount = removed == null ? 0 : removed.size();
             // Удаляем из индекса
             if (removed != null) {
                 removed.forEach(r -> reportsById.remove(r.id));
@@ -237,17 +273,31 @@ public class ReportManager {
             LOCK.writeLock().unlock();
         }
         saveReports();
+        if (actor != null && removedCount > 0) {
+            DiscordWebhookManager.sendReportsCleared(actor, targetName, removedCount, false);
+            sendAuditEvent("reports_cleared", null, Map.of("actor", actor, "target", targetName, "count", removedCount, "scope", "player"));
+        }
     }
 
     public static void clearAllReports() {
+        clearAllReports(null);
+    }
+
+    public static void clearAllReports(String actor) {
+        int removedCount;
         LOCK.writeLock().lock();
         try {
+            removedCount = reports.values().stream().mapToInt(List::size).sum();
             reports.clear();
             reportsById.clear();
         } finally {
             LOCK.writeLock().unlock();
         }
         saveReports();
+        if (actor != null && removedCount > 0) {
+            DiscordWebhookManager.sendReportsCleared(actor, "все игроки", removedCount, true);
+            sendAuditEvent("reports_cleared", null, Map.of("actor", actor, "target", "all", "count", removedCount, "scope", "all"));
+        }
     }
 
     public static List<Report> getPlayerReports(String targetName) {
@@ -485,37 +535,93 @@ public class ReportManager {
     }
 
     public static boolean resolveReport(long id, String resolver) {
-        Report r = findById(id);
-        if (r == null) return false;
+        return updateStatus(id, resolver, Status.RESOLVED);
+    }
 
-        // Fire events
+    public static boolean updateStatus(long id, String resolver, Status status) {
+        Report r;
+        LOCK.writeLock().lock();
+        try {
+            r = reportsById.get(id);
+            if (r == null || r.isClosed()) return false;
+            r.status = status.value();
+            r.resolvedBy = resolver;
+            r.resolvedAt = System.currentTimeMillis();
+        } finally {
+            LOCK.writeLock().unlock();
+        }
+
         Bukkit.getPluginManager().callEvent(
             new ReportResolveEvent(r, resolver)
         );
         ReportAPI.notifyResolved(r);
-
-        // Оптимизированный webhook
-        NotificationUtils.sendEventWebhook(
-            "report_resolved",
-            NotificationUtils.createEventPayload(
-                "report_resolved",
-                id,
-                resolver
-            )
-        );
-
-        // Помечаем как решённый, сохраняем кто и когда решил
-        r.status = "resolved";
-        r.resolvedBy = resolver;
-        r.resolvedAt = System.currentTimeMillis();
         try {
-            DatabaseManager.resolveReport(id, resolver);
+            DatabaseManager.updateReportStatus(id, status.value(), resolver, r.resolvedAt);
         } catch (Exception e) {
-            ErrorManager.logError("DB_RESOLVE", e);
+            ErrorManager.logError("DB_UPDATE_STATUS", e);
         }
         saveReports();
         CacheManager.invalidate(r.target);
+        notifyReporterOutcome(r, resolver, status);
+        TelegramManager.sendStatusUpdate(r, resolver, status);
+        if (status == Status.RESOLVED) {
+            DiscordWebhookManager.sendResolvedReport(r, resolver);
+        } else if (status == Status.NOT_A_BUG || status == Status.NOT_A_VIOLATION || status == Status.FALSE_REPORT) {
+            DiscordWebhookManager.sendNotABugReport(r, resolver);
+        }
+        sendAuditEvent("report_status_changed", r, Map.of("actor", resolver, "status", status.value()));
         return true;
+    }
+
+    public static Report findRecentOpenReport(
+        String reporterName,
+        String targetName,
+        long windowMillis
+    ) {
+        long earliestTimestamp = System.currentTimeMillis() - windowMillis;
+        LOCK.readLock().lock();
+        try {
+            return reports
+                .getOrDefault(targetName, Collections.emptyList())
+                .stream()
+                .filter(report -> !report.isClosed())
+                .filter(report -> reporterName.equalsIgnoreCase(report.reporter))
+                .filter(report -> report.timestamp >= earliestTimestamp)
+                .max(Comparator.comparingLong(report -> report.timestamp))
+                .orElse(null);
+        } finally {
+            LOCK.readLock().unlock();
+        }
+    }
+
+    private static void notifyReporterOutcome(Report report, String resolver, Status status) {
+        String key = switch (status) {
+            case RESOLVED -> "BUG_REPORT".equals(report.target) ? "report-resolved-bug" : "report-resolved-player";
+            case NOT_A_BUG -> "report-not-bug-message";
+            case NOT_A_VIOLATION -> "report-not-violation-message";
+            case FALSE_REPORT -> "report-false-message";
+            case CLOSED -> "report-closed-message";
+            default -> null;
+        };
+        if (key == null) return;
+        notifyReporter(report.id, LanguageManager.getMessage(key)
+            .replace("[ID]", String.valueOf(report.id))
+            .replace("[MODERATOR]", resolver));
+    }
+
+    private static void sendAuditEvent(String type, Report report, Map<String, Object> extra) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("event", type);
+        if (report != null) {
+            payload.put("report_id", report.id);
+            payload.put("reporter", report.reporter);
+            payload.put("target", report.target);
+            payload.put("reason", report.reason);
+            payload.put("status", report.status);
+            payload.put("report_type", "BUG_REPORT".equals(report.target) ? "bug" : "player");
+        }
+        if (extra != null) payload.putAll(extra);
+        NotificationUtils.sendEventWebhook(type, payload);
     }
 
     public static boolean addReply(long id, String author, String message) {
@@ -610,7 +716,11 @@ public class ReportManager {
         public final List<Reply> replies = new ArrayList<>();
 
         public boolean isResolved() {
-            return "resolved".equals(status) || "closed".equals(status);
+            return isClosed();
+        }
+
+        public boolean isClosed() {
+            return !"open".equals(status) && !"in_progress".equals(status);
         }
 
         public String getResolvedBy() {

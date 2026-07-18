@@ -26,6 +26,7 @@ public class Main extends JavaPlugin {
             
             // Save default config
             saveDefaultConfig();
+            ConfigMigration.apply();
             getLogger().info("Config saved");
             
             // Initialize debug manager early
@@ -70,6 +71,8 @@ public class Main extends JavaPlugin {
             getLogger().info("Initializing DiscordWebhookManager...");
             DiscordWebhookManager.initialize();
             getLogger().info("DiscordWebhookManager initialized");
+
+            DiscordBotBridge.initialize();
 
             getLogger().info("Initializing AntiAbuseManager...");
             AntiAbuseManager.initialize();
@@ -153,6 +156,7 @@ public class Main extends JavaPlugin {
         ShutdownManager.performGracefulShutdown();
         getLogger().info("Shutting down optimized Telegram Manager...");
         TelegramManager.shutdown();
+        DiscordBotBridge.shutdown();
         getLogger().info("Shutting down REST Server...");
         RESTServer.shutdown();
         getLogger().info("SQRILIZZREPORTS has been disabled gracefully.");
@@ -409,4 +413,4 @@ public class Main extends JavaPlugin {
     public static boolean isVersionBetween(int minVersion, int maxVersion) {
         return majorVersion >= minVersion && majorVersion <= maxVersion;
     }
-} 
+}

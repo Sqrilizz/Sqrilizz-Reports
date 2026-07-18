@@ -80,12 +80,13 @@ class SQLiteDriver implements DatabaseManager.Driver {
     }
 
     @Override
-    public boolean resolveReport(long id, String resolver) {
-        String sql = "UPDATE reports SET status='resolved', resolver=?, resolved_at=? WHERE id=?";
+    public boolean updateReportStatus(long id, String status, String resolver, long resolvedAt) {
+        String sql = "UPDATE reports SET status=?, resolver=?, resolved_at=? WHERE id=?";
         try (Connection c = ds.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, resolver);
-            ps.setLong(2, System.currentTimeMillis());
-            ps.setLong(3, id);
+            ps.setString(1, status);
+            ps.setString(2, resolver);
+            ps.setLong(3, resolvedAt);
+            ps.setLong(4, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             Main.getInstance().getLogger().warning("SQLite resolveReport failed: " + e.getMessage());
@@ -124,7 +125,9 @@ class SQLiteDriver implements DatabaseManager.Driver {
                             rs.getString("reporter_loc"),
                             rs.getString("target_loc"),
                             rs.getInt("is_anon") == 1,
-                            rs.getString("status")
+                            rs.getString("status"),
+                            rs.getString("resolver"),
+                            rs.getLong("resolved_at")
                     );
                     map.computeIfAbsent(r.target, k -> new ArrayList<>()).add(r);
                 }
@@ -162,7 +165,9 @@ class SQLiteDriver implements DatabaseManager.Driver {
                                 rs.getString("reporter_loc"),
                                 rs.getString("target_loc"),
                                 rs.getInt("is_anon") == 1,
-                                rs.getString("status")
+                                rs.getString("status"),
+                                rs.getString("resolver"),
+                                rs.getLong("resolved_at")
                         ));
                     }
                 }
@@ -201,7 +206,7 @@ class SQLiteDriver implements DatabaseManager.Driver {
                 st.executeUpdate("DELETE FROM reports");
             }
             // Insert reports
-            String insReport = "INSERT INTO reports(id,reporter,target,reason,ts,status,reporter_loc,target_loc,is_anon) VALUES(?,?,?,?,?,?,?,?,?)";
+            String insReport = "INSERT INTO reports(id,reporter,target,reason,ts,status,reporter_loc,target_loc,is_anon,resolver,resolved_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement ps = c.prepareStatement(insReport)) {
                 for (var entry : reports.entrySet()) {
                     for (var r : entry.getValue()) {
@@ -214,6 +219,8 @@ class SQLiteDriver implements DatabaseManager.Driver {
                         ps.setString(7, r.reporterLocation);
                         ps.setString(8, r.targetLocation);
                         ps.setInt(9, r.isAnonymous ? 1 : 0);
+                        ps.setString(10, r.resolvedBy);
+                        ps.setLong(11, r.resolvedAt);
                         ps.addBatch();
                     }
                 }

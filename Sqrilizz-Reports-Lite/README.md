@@ -1,4 +1,4 @@
-# 🚀 Sqrilizz-Reports Lite v1.0
+# 🚀 Sqrilizz-Reports Lite v9.4.0
 
 **Simple. Fast. Reliable.**
 
@@ -41,7 +41,7 @@ webhook:
 
 ## 🚀 Installation
 
-1. Download `Sqrilizz-Reports-Lite-1.0.jar`
+1. Download `Sqrilizz-Reports-Lite-9.4.0.jar`
 2. Place in your `plugins/` folder
 3. Restart server
 4. Configure `config.yml` if needed
@@ -49,7 +49,7 @@ webhook:
 
 ## 📊 Comparison with Full Version
 
-| Feature | Lite v1.0 | Full v7.5 |
+| Feature | Lite v9.4.0 | Full v9.4.0 |
 |---------|-----------|-----------|
 | **JAR Size** | ~2MB | ~47MB |
 | **Classes** | 8 | 50+ |

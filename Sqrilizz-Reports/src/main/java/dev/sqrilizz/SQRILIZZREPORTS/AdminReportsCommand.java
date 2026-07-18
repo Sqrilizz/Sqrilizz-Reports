@@ -92,7 +92,7 @@ public class AdminReportsCommand implements CommandExecutor {
             return;
         }
 
-        ReportManager.clearReports(cleanTargetName);
+        ReportManager.clearReports(cleanTargetName, player.getName());
         VersionUtils.sendMessage(player, LanguageManager.getMessage("reports-cleared")
             .replace("[PLAYER]", cleanTargetName));
     }
@@ -165,7 +165,7 @@ public class AdminReportsCommand implements CommandExecutor {
     }
 
     private void clearAllReports(Player player) {
-        ReportManager.clearAllReports();
+        ReportManager.clearAllReports(player.getName());
         VersionUtils.sendMessage(player, LanguageManager.getMessage("all-reports-cleared"));
     }
-} 
+}

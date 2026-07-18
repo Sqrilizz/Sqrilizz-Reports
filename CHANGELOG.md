@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.4.0] - 2026-07-18
+
+### Added
+- Discord bot report cards show a Minecraft-head thumbnail and status field
+- Localized status labels and reports-menu statistics
+- Duplicate protection for recent open complaints from the same reporter to the same target
+- Telegram moderation notifications for report status changes
+
+### Fixed
+- Reports menu now previews the newest report for each player
+- Discord bot buttons acknowledge interactions before the server-side status change
+- Discord report cards now show the moderator's final decision and disable the action controls
+
+### Changed
+- The `gui.player-heads` setting now works for all report GUI cards
+- The main build now targets Paper 26.2 and Java 25; support for Java 21 and Minecraft 1.21.x has been dropped
+
 ## [9.2.1] - 2026-06-22
 
 ### Fixed

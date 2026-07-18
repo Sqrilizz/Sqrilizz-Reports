@@ -29,8 +29,8 @@ public class DatabaseManager {
         return driver.saveReport(r);
     }
 
-    public static boolean resolveReport(long id, String resolver) {
-        return driver.resolveReport(id, resolver);
+    public static boolean updateReportStatus(long id, String status, String resolver, long resolvedAt) {
+        return driver.updateReportStatus(id, status, resolver, resolvedAt);
     }
 
     public static boolean addReply(long reportId, String author, String message, long ts) {
@@ -56,7 +56,7 @@ public class DatabaseManager {
     interface Driver {
         void init();
         long saveReport(ReportManager.Report r);
-        boolean resolveReport(long id, String resolver);
+        boolean updateReportStatus(long id, String status, String resolver, long resolvedAt);
         boolean addReply(long reportId, String author, String message, long ts);
         Map<String, List<ReportManager.Report>> loadReports();
         List<ReportManager.Report> getReportsByPlayer(String player);

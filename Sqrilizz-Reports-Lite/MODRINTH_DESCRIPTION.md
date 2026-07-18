@@ -6,7 +6,7 @@ A lightweight report system for Minecraft servers with only the essential featur
 
 ## ✨ Why Choose Lite?
 
-- **🎯 Zero Bloat** - Only 8 classes, ~2MB JAR (vs 47MB full version)
+- **🎯 Zero Bloat** - Only 8 classes, ~2MB JAR (full version: 4.6MB standard or 21MB with Discord bot)
 - **⚡ Lightning Fast** - No complex systems slowing you down
 - **🔧 Zero Setup** - Works out of the box, no configuration needed
 - **💾 Simple Database** - SQLite only, no MySQL complexity

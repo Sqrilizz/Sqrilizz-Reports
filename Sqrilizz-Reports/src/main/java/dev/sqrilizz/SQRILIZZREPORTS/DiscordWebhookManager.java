@@ -528,4 +528,69 @@ public class DiscordWebhookManager {
             }
         });
     }
+
+    public static void sendReportsCleared(
+        String administrator,
+        String target,
+        int count,
+        boolean allReports
+    ) {
+        if (!isEnabled()) return;
+
+        Main.runTaskAsync(() -> {
+            try {
+                JsonObject embed = new JsonObject();
+                embed.addProperty(
+                    "title",
+                    allReports ? "Все репорты очищены" : "Репорты игрока очищены"
+                );
+                embed.addProperty("color", 0xE67E22);
+                embed.addProperty("timestamp", Instant.now().toString());
+
+                JsonObject administratorField = new JsonObject();
+                administratorField.addProperty("name", "Администратор");
+                administratorField.addProperty("value", administrator);
+                administratorField.addProperty("inline", true);
+
+                JsonObject targetField = new JsonObject();
+                targetField.addProperty("name", allReports ? "Область" : "Игрок");
+                targetField.addProperty("value", target);
+                targetField.addProperty("inline", true);
+
+                JsonObject countField = new JsonObject();
+                countField.addProperty("name", "Удалено репортов");
+                countField.addProperty("value", String.valueOf(count));
+                countField.addProperty("inline", true);
+
+                embed.add(
+                    "fields",
+                    gson.toJsonTree(
+                        new JsonObject[] { administratorField, targetField, countField }
+                    )
+                );
+
+                JsonObject webhook = new JsonObject();
+                webhook.add("embeds", gson.toJsonTree(new JsonObject[] { embed }));
+                HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(webhookUrl))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(webhook.toString()))
+                    .build();
+                HttpResponse<String> response = HTTP_CLIENT.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+                );
+                if (response.statusCode() != 204) {
+                    Main.getInstance().getLogger().warning(
+                        "Discord clear webhook failed with status: " + response.statusCode()
+                    );
+                }
+            } catch (IOException | InterruptedException exception) {
+                Main.getInstance().getLogger().warning(
+                    "Failed to send Discord clear webhook: " + exception.getMessage()
+                );
+                if (exception instanceof InterruptedException) Thread.currentThread().interrupt();
+            }
+        });
+    }
 }
