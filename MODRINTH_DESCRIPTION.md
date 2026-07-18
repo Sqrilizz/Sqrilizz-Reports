@@ -1,33 +1,58 @@
-# Sqrilizz-Reports
-[![Documentation](https://img.shields.io/badge/Docs-GitHub-black.svg?logo=github)](https://github.com/Sqrilizz/Sqrilizz-Reports) 
+# Sqrilizz-Reports 9.4.0
 
-Modern report management system for Minecraft servers with GUI interface and multi-language support.
+[![Documentation](https://img.shields.io/badge/Docs-GitHub-black.svg?logo=github)](https://github.com/Sqrilizz/Sqrilizz-Reports)
+
+Modern report management for Paper servers: GUI moderation, report history, Discord and Telegram notifications, anti-abuse protection, and multilingual messages.
+
+## Which File Should I Download?
+
+### `Sqrilizz-Reports-9.4.0.jar` — Standard Build
+
+Choose this if you need the report system, GUI actions, Discord webhooks, Telegram notifications, REST API, and databases. It is the recommended build for most servers.
+
+- Smaller file: about 4.6 MB
+- No Discord bot account or token required
+- Use Discord webhooks if you only need report notifications in Discord
+
+### `Sqrilizz-Reports-Bot-9.4.0.jar` — Discord Bot Build
+
+Choose this only if moderators must manage reports from Discord with buttons.
+
+- Includes everything in the Standard Build
+- New report cards have `Resolved` and `Not a Bug` / `False Report` buttons
+- Shows Minecraft head thumbnails and updates the card with the final status and moderator
+- Requires a Discord bot token, channel ID, and moderator role IDs in `config.yml`
+- Larger file: about 21 MB
+
+> Install **only one** of these files. Do not put both JARs in the `plugins/` folder.
 
 ## Requirements
 
-- **Minecraft:** 1.8.9 - 26.1.2
-- **Server:** Paper, Purpur, Pufferfish, Folia, or Spigot
+- **Minecraft:** 26.2+
+- **Server:** Paper, Purpur, Pufferfish, or Folia
 - **Java:** 25+
 
 ## Features
 
-- Interactive GUI for managing reports
-- Multi-language support (English, Russian, Arabic)
-- Bug report system with categories
-- Anti-abuse protection with rate limiting
-- Optional MySQL/SQLite support
-- Discord and Telegram integration
-- REST API for external tools
-- Punishment presets (warn, kick, mute, ban)
-- Full pagination support
-
+- Interactive reports GUI with player heads, pagination, statuses, and moderation actions
+- Offline-player reports and persistent report history
+- Reporter notifications for every final moderation outcome
+- Discord webhooks, optional Discord bot controls, and Telegram notifications
+- Discord bot cards with Minecraft avatars and disabled final controls
+- Duplicate report protection, cooldowns, and rate limits
+- Bug reports with categories
+- JSON, MySQL, and SQLite storage options
+- REST API and audit webhook events
+- English, Russian, and Arabic messages
+- Punishment presets: warn, kick, mute, and ban
 
 ## Quick Start
 
-1. Download and place JAR in `plugins/` folder
-2. Restart server
-3. Use `/report <player> <reason>` to create reports
-4. Use `/reports` to open GUI (requires `reports.admin` permission)
+1. Download one JAR from the section above and place it in `plugins/`.
+2. Start the server once to generate `config.yml`.
+3. Configure a Discord webhook, Telegram, or the Discord bot only if needed.
+4. Use `/report <player> <reason>` to create a report.
+5. Use `/reports` to open the moderation GUI with `reports.admin`.
 
 ## Commands
 
@@ -44,7 +69,8 @@ Modern report management system for Minecraft servers with GUI interface and mul
 
 ```yaml
 language: en
-cooldown: 60
+reports:
+  cooldown: 60
 database:
   type: json
 ```
