@@ -1,6 +1,6 @@
 # 🔧 Installation Guide - Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-9.4.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Version](https://img.shields.io/badge/version-9.5.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
 [![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 
 > **Complete installation guide for all platforms**
@@ -30,7 +30,7 @@
 https://modrinth.com/plugin/sqrilizz-report
 
 # Download latest version
-wget https://github.com/Sqrilizz/Sqrilizz-Reports/releases/latest/download/Sqrilizz-Reports-Standard-Edition-9.4.0.jar
+wget https://github.com/Sqrilizz/Sqrilizz-Reports/releases/latest/download/Sqrilizz-Reports-Standard-Edition-9.5.0.jar
 ```
 
 ### Option 2: GitHub Releases

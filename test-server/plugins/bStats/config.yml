@@ -4,5 +4,7 @@
 # Check out https://bStats.org/ to learn more :)
 
 enabled: true
+globalSwitch: true
 serverUuid: 93b0cb94-d947-4e17-9d24-e135db644ead
-logFailedRequests: false
+logFailedRequests: true
+customChartBorders: false

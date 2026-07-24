@@ -1,4 +1,4 @@
-# Sqrilizz-Reports 9.4.0
+# Sqrilizz-Reports 9.5.0
 
 [![Documentation](https://img.shields.io/badge/Docs-GitHub-black.svg?logo=github)](https://github.com/Sqrilizz/Sqrilizz-Reports)
 
@@ -6,7 +6,7 @@ Modern report management for Paper servers: GUI moderation, report history, Disc
 
 ## Which File Should I Download?
 
-### `Sqrilizz-Reports-Standard-Edition-9.4.0.jar` — Standard Edition
+### `Sqrilizz-Reports-Standard-Edition-9.5.0.jar` — Standard Edition
 
 Choose this if you need the report system, GUI actions, Discord webhooks, Telegram notifications, REST API, and databases. It is the recommended build for most servers.
 
@@ -14,7 +14,7 @@ Choose this if you need the report system, GUI actions, Discord webhooks, Telegr
 - No Discord bot account or token required
 - Use Discord webhooks if you only need report notifications in Discord
 
-### `Sqrilizz-Reports-Bot-Edition-9.4.0.jar` — Bot Edition
+### `Sqrilizz-Reports-Bot-Edition-9.5.0.jar` — Bot Edition
 
 Choose this only if moderators must manage reports from Discord with buttons.
 

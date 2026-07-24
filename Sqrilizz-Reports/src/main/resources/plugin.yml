@@ -6,6 +6,7 @@ authors: [Sqrilizz]
 description: A modern reports plugin for Minecraft 26.2
 website: https://www.sqrilizz.tech
 load: POSTWORLD
+metrics: true
 folia-supported: true
 
 # Supported platforms

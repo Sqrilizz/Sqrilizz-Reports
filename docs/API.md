@@ -1,6 +1,6 @@
 # 🛠️ Developer API - Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-9.4.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Version](https://img.shields.io/badge/version-9.5.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
 [![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
 
 > **Complete API documentation for developers**
@@ -14,7 +14,7 @@
 <dependency>
     <groupId>dev.sqrilizz</groupId>
     <artifactId>sqrilizz-reports</artifactId>
-    <version>9.4.0</version>
+    <version>9.5.0</version>
     <scope>provided</scope>
 </dependency>
 ```
