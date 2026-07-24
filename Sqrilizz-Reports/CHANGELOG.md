@@ -1,5 +1,11 @@
 # Changelog - Sqrilizz-Reports
 
+## [9.5.0] - 2026-07-24
+
+### Fixed
+- bStats metrics not displaying: added `metrics: true` to plugin.yml (main cause)
+- bStats config missing `globalSwitch: true`; enabled `logFailedRequests` for error visibility
+
 ## [9.4.0] - 2026-07-18
 
 ### Added

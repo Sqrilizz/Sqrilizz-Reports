@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.5.0] - 2026-07-24
+
+### Fixed
+- bStats metrics not displaying: added `metrics: true` to plugin.yml (main cause)
+- bStats config missing `globalSwitch: true`; enabled `logFailedRequests` for error visibility
+- Fixed bstats badge typo in README
+
+### Changed
+- Bump version to 9.5.0
+
 ## [9.4.0] - 2026-07-18
 
 ### Added
