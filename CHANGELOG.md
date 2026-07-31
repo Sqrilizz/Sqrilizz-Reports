@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.5.1] - 2026-08-01
+
+### Fixed
+- Fixed invalid YAML quoting in the Arabic language file, allowing `/report-reload` to load `messages_ar.yml` successfully.
+
+### Changed
+- Standard Edition and Bot Edition artifacts are published as version 9.5.1.
+
 ## [9.5.0] - 2026-07-24
 
 ### Fixed

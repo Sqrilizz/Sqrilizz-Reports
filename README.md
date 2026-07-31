@@ -1,6 +1,6 @@
 # Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-9.5.0-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Version](https://img.shields.io/badge/version-9.5.1-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 [![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-Custom-red.svg)](LICENSE)
@@ -87,8 +87,8 @@ Modern report management system for Minecraft servers with interactive GUI inter
 
 ### Build variants
 
-- `Sqrilizz-Reports-Standard-Edition-9.5.0.jar` — Standard Edition with GUI actions, webhooks, and Telegram notifications.
-- `Sqrilizz-Reports-Bot-Edition-9.5.0.jar` — Bot Edition with the Discord bot. New reports receive `Решён` and `Не баг`/`Ложный репорт` buttons and a Minecraft-head thumbnail in the configured Discord channel. Only Discord administrators and role IDs listed in `discord.bot.mod-roles` can use them.
+- `Sqrilizz-Reports-Standard-Edition-9.5.1.jar` — Standard Edition with GUI actions, webhooks, and Telegram notifications.
+- `Sqrilizz-Reports-Bot-Edition-9.5.1.jar` — Bot Edition with the Discord bot. New reports receive `Решён` and `Не баг`/`Ложный репорт` buttons and a Minecraft-head thumbnail in the configured Discord channel. Only Discord administrators and role IDs listed in `discord.bot.mod-roles` can use them.
 
 Use only one variant at a time. For the Bot version, set `discord.bot.enabled`, `token`, `channel-id`, and moderator role IDs in `config.yml`.
 
@@ -284,11 +284,14 @@ cd Sqrilizz-Reports/Sqrilizz-Reports
 ./gradlew build
 ```
 
-JAR will be in `build/libs/Sqrilizz-Reports-Standard-Edition-9.5.0.jar`
+JAR will be in `build/libs/Sqrilizz-Reports-Standard-Edition-9.5.1.jar`
 
 ---
 
 ## Changelog
+
+### Version 9.5.1
+- Fixed invalid YAML quoting in the Arabic language file.
 
 ### Version 9.5.0
 - Added Discord bot report controls with final status cards and Minecraft head thumbnails

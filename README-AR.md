@@ -1,6 +1,6 @@
 # 🚨 Sqrilizz-Reports - النسخة العربية
 
-[![Version](https://img.shields.io/badge/version-9.5.0-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
+[![Version](https://img.shields.io/badge/version-9.5.1-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 [![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-Custom-red.svg)](LICENSE)

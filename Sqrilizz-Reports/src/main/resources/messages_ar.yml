@@ -139,9 +139,9 @@ gui-resolved-bug: "{success}تم الحل"
 gui-resolved-description: "&7حل البلاغ وإخطار"
 gui-resolved-description2: "&7المبلغ بالحل"
 gui-not-bug: "{error}ليس خطأ"
-gui-not-bug-description: "{info}تحديد كـ "ليس خطأ""
+gui-not-bug-description: "{info}تحديد كـ \"ليس خطأ\""
 gui-not-violation: "{error}ليس انتهاكاً"
-gui-not-violation-description: "{info}تحديد كـ "ليس انتهاكاً""
+gui-not-violation-description: "{info}تحديد كـ \"ليس انتهاكاً\""
 gui-not-bug-description2: "&7وإخطار المبلغ"
 
 # Player Notifications

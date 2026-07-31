@@ -1,6 +1,6 @@
 # 🚨 Sqrilizz-Reports - Русская версия
 
-[![Version](https://img.shields.io/badge/version-9.5.0-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
+[![Version](https://img.shields.io/badge/version-9.5.1-brightgreen.svg)](https://modrinth.com/plugin/sqrilizz-report)
 [![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 
