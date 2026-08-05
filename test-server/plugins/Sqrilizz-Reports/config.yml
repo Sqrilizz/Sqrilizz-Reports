@@ -162,7 +162,7 @@ discord:
   # Simple webhook
   webhook:
     enabled: true
-    url: https://discord.com/api/webhooks/1494795750473863220/x5SWAl_WYxqjYL5p6HZFmSL2skGxEgzstAEvbIRmC4fyqpZ4jAaS1jFEe8ICv7DJnIp1
+    url: 
 
   # Discord bot (advanced)
   bot:
@@ -181,7 +181,7 @@ discord:
         kick: true
         mute: true
         warn: true
-  webhook_url: https://discord.com/api/webhooks/1494795750473863220/x5SWAl_WYxqjYL5p6HZFmSL2skGxEgzstAEvbIRmC4fyqpZ4jAaS1jFEe8ICv7DJnIp1
+  webhook_url: 
 
 # ================================================================
 # DESIGN & COLORS
