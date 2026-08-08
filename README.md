@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-9.5.1-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
 [![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
-[![License](https://img.shields.io/badge/license-SCL-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-SCL-purple.svg)](LICENSE)
 [![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1a1d82daee3f49ed9677fcbb5fa594df)](https://app.codacy.com/gh/Sqrilizz/Sqrilizz-Reports/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
