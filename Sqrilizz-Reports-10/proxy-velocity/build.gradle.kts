@@ -11,11 +11,11 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:$velocityVersion")
 }
 
-val projectVersion = project.version.toString()
 tasks.processResources {
-    inputs.property("version", projectVersion)
+    val ver = project.version.toString()
+    inputs.property("version", ver)
     filesMatching("velocity-plugin.json") {
-        expand("version" to projectVersion)
+        expand("version" to ver)
     }
 }
 

@@ -8,11 +8,11 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:26.1-R0.1-SNAPSHOT")
 }
 
-val projectVersion = project.version.toString()
 tasks.processResources {
-    inputs.property("version", projectVersion)
+    val ver = project.version.toString()
+    inputs.property("version", ver)
     filesMatching("bungee.yml") {
-        expand("version" to projectVersion)
+        expand("version" to ver)
     }
 }
 
