@@ -1,0 +1,8 @@
+{
+  "id": "sqrilizzreports",
+  "name": "Sqrilizz-Reports",
+  "version": "${version}",
+  "description": "Network-ready player reports",
+  "authors": ["Sqrilizz"],
+  "main": "dev.sqrilizz.reports.velocity.VelocityReportsPlugin"
+}

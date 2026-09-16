@@ -1,0 +1,4 @@
+name: Sqrilizz-Reports
+version: "${version}"
+main: dev.sqrilizz.reports.bungee.BungeeReportsPlugin
+author: Sqrilizz

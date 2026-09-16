@@ -1,0 +1,88 @@
+# Sqrilizz-Reports 10 Configuration
+server-id: local
+language: en
+
+design:
+  use-hex-colors: true
+  colors:
+    primary: "#FF6B6B"
+    secondary: "#4ECDC4"
+    success: "#45B7D1"
+    warning: "#FFA726"
+    error: "#EF5350"
+    info: "#66BB6A"
+    accent: "#AB47BC"
+
+sounds:
+  enabled: true
+  report-created: "ENTITY_EXPERIENCE_ORB_PICKUP"
+
+storage:
+  type: sqlite # sqlite, mysql, mariadb
+  sqlite-file: reports.db
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    database: sqrilizz_reports
+    username: root
+    password: change-me
+    parameters: useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+  hikari:
+    maximum-pool-size: 10
+    minimum-idle: 2
+    connection-timeout-ms: 30000
+    idle-timeout-ms: 600000
+    max-lifetime-ms: 1800000
+
+reports:
+  cooldown-seconds: 45
+  duplicate-window-seconds: 900
+  max-per-hour: 8
+  max-per-target: 2
+  max-open-in-gui: 45
+
+bugreports:
+  enabled: true
+  categories:
+    - duplication
+    - crash
+    - exploit
+    - performance
+    - gameplay
+    - world
+    - inventory
+    - commands
+    - permissions
+    - economy
+    - other
+
+network:
+  enabled: false
+
+notifications:
+  discord-webhook:
+    enabled: false
+    url: ""
+    username: "Sqrilizz-Reports"
+    avatar-url: ""
+    embed: true
+    color: "#FF6B6B"
+  telegram:
+    enabled: false
+    token: ""
+    chat-id: ""
+
+rest:
+  enabled: false
+  port: 8971
+  token: "change-this-token-before-enabling-rest-api"
+
+punishments:
+  commands:
+    warn: "warn {player} {reason}"
+    kick: "kick {player} {reason}"
+    mute: "mute {player} 1h {reason}"
+    ban: "ban {player} 1d {reason}"
+
+migration:
+  v9-json-file: ""

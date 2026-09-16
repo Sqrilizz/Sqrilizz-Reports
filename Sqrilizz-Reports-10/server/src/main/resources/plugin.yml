@@ -1,0 +1,31 @@
+name: Sqrilizz-Reports
+version: "${version}"
+main: dev.sqrilizz.reports.server.ReportsPlugin
+api-version: "26.3"
+author: Sqrilizz
+description: Network-ready player reports for Paper and Bukkit-compatible servers
+folia-supported: true
+commands:
+  report:
+    description: Report a player
+    usage: /report <player> <reason>
+    permission: sqrilizzreports.report
+  reports:
+    description: Open and manage the moderation queue
+    usage: /reports [open|resolve|dismiss|punish|reload|stats|tp|help]
+    permission: sqrilizzreports.admin
+  bugreport:
+    description: Report a server bug
+    usage: /bugreport <category> <description>
+    permission: sqrilizzreports.bugreport
+permissions:
+  sqrilizzreports.report:
+    default: true
+  sqrilizzreports.bugreport:
+    default: true
+  sqrilizzreports.admin:
+    default: op
+  sqrilizzreports.transfer:
+    default: op
+  sqrilizzreports.punish:
+    default: op
