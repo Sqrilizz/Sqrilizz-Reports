@@ -25,11 +25,11 @@ jobs:
         with:
           token: ${{ steps.app_token.outputs.token }}
 
-      - name: Set up Java 21
+      - name: Set up Java 25
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
 
       - name: Run Paper Bumper
         uses: Sqrilizz/paper-bumper@main
