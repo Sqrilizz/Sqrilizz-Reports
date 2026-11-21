@@ -1,7 +1,7 @@
 name: Sqrilizz-Reports
 version: "${version}"
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
-api-version: "26.2"
+api-version: "26.3"
 authors: [Sqrilizz]
 description: A modern reports plugin for Minecraft 26.2
 website: https://www.sqrilizz.tech

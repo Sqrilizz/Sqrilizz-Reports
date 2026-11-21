@@ -11,7 +11,7 @@ group = "dev.sqrilizz"
 version = "9.5.1"
 
 // Версии зависимостей
-val paperApiVersion = "26.2.build.+"
+val paperApiVersion = "26.3.build.+"
 val gsonVersion = "2.14.0"
 val sqliteVersion = "3.49.1.0"
 val hikariVersion = "6.3.0"
