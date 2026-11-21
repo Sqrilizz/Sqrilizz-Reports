@@ -1,17 +1,17 @@
 name: Sqrilizz-Reports
-version: "9.2"
+version: "9.5.1"
 main: dev.sqrilizz.SQRILIZZREPORTS.Main
-api-version: "1.13"
+api-version: "26.3"
 authors: [Sqrilizz]
-description: A simple reports plugin with multi-version support
+description: A modern reports plugin for Minecraft 26.2
 website: https://www.sqrilizz.tech
 load: POSTWORLD
+metrics: true
 folia-supported: true
 
 # Supported platforms
 platforms:
   - paper
-  - spigot
   - folia
 
 commands:
