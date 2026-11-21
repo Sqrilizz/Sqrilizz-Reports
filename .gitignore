@@ -32,3 +32,4 @@ Thumbs.db
 *.zip
 *.bak
 build.gradle.backup
+!**/gradle/wrapper/gradle-wrapper.jar
