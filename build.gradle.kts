@@ -17,6 +17,11 @@ allprojects {
     }
 }
 
+val copyLibsToRoot by tasks.registering(Copy::class) {
+    from(project(":server").tasks.named("shadowJar"))
+    into(layout.buildDirectory.dir("libs"))
+}
+
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
@@ -29,5 +34,11 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
         compilerOptions.freeCompilerArgs.add("-Xjsr305=strict")
+    }
+
+    if (name == "server") {
+        tasks.matching { it.name == "shadowJar" }.configureEach {
+            finalizedBy(rootProject.tasks.named("copyLibsToRoot"))
+        }
     }
 }

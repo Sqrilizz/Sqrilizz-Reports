@@ -68,4 +68,3 @@ val botShadowJar = tasks.register<ShadowJar>("botShadowJar") {
 tasks.build {
     dependsOn(tasks.shadowJar, botShadowJar)
 }
-
