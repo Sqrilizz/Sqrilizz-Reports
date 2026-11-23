@@ -18,27 +18,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
+          java-version: "25"
           distribution: "temurin"
           cache: "gradle"
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "9.5.0"
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Build with Gradle
-        working-directory: ./Sqrilizz-Reports
-        run: gradle build --no-daemon
+        run: ./gradlew build --no-daemon
 
-      - name: Upload JAR artifact
+      - name: Upload JAR artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Sqrilizz-Reports
-          path: Sqrilizz-Reports/build/libs/Sqrilizz-Reports-*.jar
+          path: |
+            server/build/libs/Sqrilizz-Reports-*.jar
+            proxy-velocity/build/libs/Sqrilizz-Reports-Velocity-*.jar
+            proxy-bungee/build/libs/Sqrilizz-Reports-Bungee-*.jar
           if-no-files-found: error
 
       - name: Extract changelog for release
@@ -57,7 +57,6 @@ jobs:
               text = match.group(1).strip()
           else:
               text = 'Changelog section not found for version $VER'
-          # Escape for GitHub Actions output
           text = text.replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
           print(f'changelog={text}')
           PYEOF
@@ -70,9 +69,10 @@ jobs:
           body: |
             ## Sqrilizz-Reports ${{ github.ref_name }}
 
-            **Поддерживаемые версии:** 1.8.9 — 9.2 (Paper, Purpur, Pufferfish, Folia, Spigot)
-
-            ### Изменения
+            ### Changes
             ${{ steps.changelog.outputs.changelog }}
-          files: Sqrilizz-Reports/build/libs/Sqrilizz-Reports-*.jar
+          files: |
+            server/build/libs/Sqrilizz-Reports-*.jar
+            proxy-velocity/build/libs/Sqrilizz-Reports-Velocity-*.jar
+            proxy-bungee/build/libs/Sqrilizz-Reports-Bungee-*.jar
           generate_release_notes: true

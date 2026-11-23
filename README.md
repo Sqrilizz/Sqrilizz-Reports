@@ -1,343 +1,101 @@
 # Sqrilizz-Reports
 
-[![Version](https://img.shields.io/badge/version-9.5.1-brightgreen.svg)](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
-[![Minecraft](https://img.shields.io/badge/minecraft-26.2-blue.svg)](https://www.minecraft.net/)
+Network-ready player and bug reporting system for modern Paper, Purpur, and Folia servers.
+
+[![Minecraft](https://img.shields.io/badge/minecraft-26.3-blue.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/java-25-orange.svg)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-SCL-purple.svg)](LICENSE)
-[![Modrinth](https://img.shields.io/modrinth/dt/sqrilizz-report?color=00AF5C&logo=modrinth)](https://modrinth.com/plugin/sqrilizz-report)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1a1d82daee3f49ed9677fcbb5fa594df)](https://app.codacy.com/gh/Sqrilizz/Sqrilizz-Reports/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-Modern report management system for Minecraft servers with interactive GUI interface.
+> [!IMPORTANT]
+> **Project Status — Maintenance Only:**
+> This project is no longer actively maintained or developed. Do not expect new features, pull request reviews, or major updates. The repository only runs automated monthly dependency bumps to newer PaperMC releases. If you need modifications or additional functionality, feel free to fork the repository.
 
----
+## Features
 
-## Language Versions
-
-| Language | File | Description |
-|----------|------|-------------|
-| English | [README.md](#) | Default version |
-| Russian | [README-RU.md](README-RU.md) | Russian version |
-| Arabic | [README-AR.md](README-AR.md) | Arabic version |
-
----
-
-## Key Features
-
-### Interactive GUI Menu
-- Visual report management with player heads
-- One-click actions: teleport, punish, resolve
-- Punishment presets: warn, kick, mute, ban
-- Smart pagination and navigation
-- Multi-language support (EN/RU/AR)
-
-### Modern Design
-- Hex colors for Minecraft 1.16+ with legacy fallback
-- Customizable color themes
-- Clean and intuitive interface
-
-### Multi-Language Support
-- 3 languages: English, Russian, Arabic
-- RTL support for Arabic
-- Separate language files for easy customization
-- Hot reload with `/report-reload`
-
-### Lightweight Storage
-- JSON by default - only 3.5MB plugin size
-- No native dependencies - pure Java
-- Auto-save and backup system
-- Optional SQLite/MySQL support
-
-### Anti-Abuse System
-- Rate limiting per player and hourly
-- False report detection
-- Auto-punishment for abuse
-- Smart cooldown system
-
-### Bug Report System
-- 11 predefined categories
-- Category validation and suggestions
-- Multi-language category names
-- Integration with notifications
-
-### Integration Support
-- Discord webhooks
-- Telegram bot
-- REST API for external tools
-- Custom webhook system
-
----
+- Fully asynchronous with native Folia region scheduler support
+- Paginated moderation GUI with player heads and one-click actions (resolve, dismiss, teleport, punish)
+- Integrated bug report system (`/bugreport`) with customizable categories
+- SQLite (default) and MySQL storage backends powered by HikariCP connection pooling
+- Discord Webhook and Telegram notification dispatch
+- Cross-server moderation transfers with Velocity and BungeeCord proxy bridges
+- Multilingual localization (English, Russian, Arabic)
+- Optional lightweight REST API for external dashboards
 
 ## Requirements
 
-- **Minecraft**: 26.2+
-- **Server**: Paper, Purpur, Pufferfish, Folia, or Spigot
-- **Java**: 21 or higher
+- Minecraft: 26.3+
+- Server software: Paper, Purpur, or Folia
+- Java: 25 or higher
 
-**Recommended:** Paper or Purpur for best performance and features
+## Modules & Downloads
 
----
+| Artifact | Platform | Description |
+|---|---|---|
+| `Sqrilizz-Reports-Standard-Edition-11.0.0.jar` | Paper / Folia | Lightweight build (~2 MB) using server-provided or runtime JDBC drivers |
+| `Sqrilizz-Reports-Bot-Edition-11.0.0.jar` | Paper / Folia | Self-contained build bundling SQLite and MySQL JDBC drivers |
+| `Sqrilizz-Reports-Velocity-11.0.0.jar` | Velocity | Proxy bridge forwarding staff cross-server actions |
+| `Sqrilizz-Reports-Bungee-11.0.0.jar` | BungeeCord | Proxy bridge forwarding staff cross-server actions |
 
-## Installation
+## Commands
 
-1. Download the latest JAR from [Releases](https://github.com/Sqrilizz/Sqrilizz-Reports/releases)
-2. Place in `plugins/` folder
-3. Restart server
-4. Configure `config.yml` if needed
-5. Done! Plugin works out of the box
+### Players
+- `/report <player> <reason>` — File a report against an online player
+- `/bugreport <category> <description>` — Submit a bug report
 
-### Build variants
+### Staff
+- `/reports` — Open the visual moderation queue
+- `/reports open <id>` — Open details for a specific report
+- `/reports resolve <id>` — Mark a report as resolved
+- `/reports dismiss <id>` — Mark a report as invalid
+- `/reports tp <player>` — Teleport to reported player
+- `/reports punish <player> <warn|kick|mute|ban>` — Execute configured punishment preset
+- `/reports stats` — Display queue statistics
+- `/reports reload` — Reload configuration and language files
 
-- `Sqrilizz-Reports-Standard-Edition-9.5.1.jar` — Standard Edition with GUI actions, webhooks, and Telegram notifications.
-- `Sqrilizz-Reports-Bot-Edition-9.5.1.jar` — Bot Edition with the Discord bot. New reports receive `Решён` and `Не баг`/`Ложный репорт` buttons and a Minecraft-head thumbnail in the configured Discord channel. Only Discord administrators and role IDs listed in `discord.bot.mod-roles` can use them.
+## Permissions
 
-Use only one variant at a time. For the Bot version, set `discord.bot.enabled`, `token`, `channel-id`, and moderator role IDs in `config.yml`.
-
----
-
-## Quick Start
-
-### Basic Commands
-
-**For Players:**
-```
-/report <player> <reason>              - Report a player
-/bugreport <category> <description>    - Report a bug
-```
-
-**For Admins:**
-```
-/reports                               - Open reports GUI
-/report-reload                         - Reload configuration
-/report-language <en|ru|ar>            - Change language
-```
-
-### Permissions
-
-```yaml
-reports.admin      # Access to reports management
-reports.bypass     # Bypass cooldowns
-reports.reload     # Reload configuration
-reports.language   # Change language
-```
-
----
+| Permission | Default | Description |
+|---|---|---|
+| `sqrilizzreports.report` | true | Allows players to use `/report` |
+| `sqrilizzreports.bugreport` | true | Allows players to use `/bugreport` |
+| `sqrilizzreports.admin` | op | Access to `/reports` and moderation notifications |
+| `sqrilizzreports.punish` | op | Allows executing punishment actions from GUI |
+| `sqrilizzreports.transfer` | op | Allows cross-server staff transfers via proxy |
 
 ## Configuration
 
-### Basic Setup
+See [`server/src/main/resources/config.yml`](server/src/main/resources/config.yml) for full configuration options.
 
 ```yaml
-# Language (en, ru, ar)
-language: en
-
-# Cooldown between reports (seconds)
-cooldown: 60
-
-# Storage type
-database:
-  type: json
-```
-
-### Storage Options
-
-**JSON (default)** - Recommended for most servers
-- Lightweight (3.5MB plugin size)
-- No dependencies required
-- Auto-save and backup
-- Easy to read and edit
-
-**MySQL** - For large servers
-```yaml
-database:
-  type: mysql
-  mysql:
-    host: "localhost"
-    port: 3306
-    database: "sqrilizz_reports"
-    user: "root"
-    password: "password"
-```
-
-**SQLite** - Optional (requires dependency)
-```yaml
-database:
+storage:
   type: sqlite
+  sqlite-file: reports.db
+
+reports:
+  cooldown-seconds: 45
+  duplicate-window-seconds: 900
+  max-per-hour: 8
+  max-per-target: 2
+
+notifications:
+  discord-webhook:
+    enabled: false
+    url: ""
+  telegram:
+    enabled: false
+    token: ""
+    chat-id: ""
 ```
-Note: Requires adding `sqlite-jdbc` dependency (+8MB)
-
-### Color Customization
-
-```yaml
-design:
-  use-hex-colors: true
-  colors:
-    primary: "#FF6B6B"
-    secondary: "#4ECDC4"
-    success: "#45B7D1"
-    warning: "#FFA726"
-    error: "#EF5350"
-    info: "#66BB6A"
-    accent: "#AB47BC"
-```
-
----
-
-## Bug Report Categories
-
-Available categories for `/bugreport`:
-
-- `duplication` / `dupe` - Item duplication
-- `crash` / `server-crash` - Server crashes
-- `exploit` / `glitch` - Exploits and glitches
-- `performance` / `lag` - Performance issues
-- `gameplay` / `mechanic` - Gameplay mechanics
-- `world` / `generation` - World generation
-- `inventory` / `items` - Inventory issues
-- `commands` / `cmd` - Command problems
-- `permissions` / `perms` - Permission issues
-- `economy` / `money` - Economy problems
-- `other` / `misc` - Other issues
-
-Example:
-```
-/bugreport dupe Players can duplicate diamonds using chest
-```
-
----
-
-## Integration
-
-### Discord Webhook
-
-```yaml
-discord:
-  enabled: true
-  webhook_url: "https://discord.com/api/webhooks/..."
-```
-
-### Telegram Bot
-
-```yaml
-telegram:
-  enabled: true
-  token: "YOUR_BOT_TOKEN"
-  chat_id: "YOUR_CHAT_ID"
-```
-
-### REST API
-
-```yaml
-rest-api:
-  enabled: true
-  port: 8971
-  token: "your_secret_token"
-```
-
-Endpoints:
-- `GET /api/reports` - List all reports
-- `GET /api/stats` - Get statistics
-- `POST /api/webhook` - Webhook for external systems
-
----
-
-## Anti-Abuse Configuration
-
-```yaml
-anti-abuse:
-  enabled: true
-  warning-threshold: 5
-  temp-mute-threshold: 8
-  temp-mute-duration: 300
-
-report-limits:
-  per-player: 3
-  per-hour: 10
-```
-
----
-
-## Documentation
-
-Detailed documentation available in `/docs` folder:
-
-- [Installation Guide](docs/INSTALLATION.md)
-- [Configuration](docs/CONFIGURATION.md)
-- [Database Setup](docs/DATABASE.md)
-- [Anti-Abuse System](docs/ANTI_ABUSE.md)
-- [REST API](docs/REST_API.md)
-- [Discord Bot](docs/DISCORD_BOT.md)
-- [Telegram Integration](docs/TELEGRAM.md)
-- [Design Customization](docs/DESIGN.md)
-- [API for Developers](docs/API.md)
-
----
 
 ## Building from Source
 
-Requirements:
-- Java 25+
-- Gradle 9.5.0+
-
 ```bash
 git clone https://github.com/Sqrilizz/Sqrilizz-Reports.git
-cd Sqrilizz-Reports/Sqrilizz-Reports
+cd Sqrilizz-Reports
 ./gradlew build
 ```
 
-JAR will be in `build/libs/Sqrilizz-Reports-Standard-Edition-9.5.1.jar`
-
----
-
-## Changelog
-
-### Version 9.5.1
-- Fixed invalid YAML quoting in the Arabic language file.
-
-### Version 9.5.0
-- Added Discord bot report controls with final status cards and Minecraft head thumbnails
-- Added offline reports, report status history, audit webhooks, Telegram status notifications and duplicate protection
-- Build targets Minecraft 26.2 and Java 25
-- Added Kotlin 2.3.0 utilities
-- Replaced SQLite with lightweight JSON storage (18MB → 3.5MB)
-- Implemented full GUI pagination
-- Added bug report system with categories
-- Updated all dependencies
-- Added bStats integration
-- Improved performance and stability
-
-See [CHANGELOG.md](CHANGELOG.md) for full history.
-
----
-![bstats](https://bstats.org/signatures/bukkit/Sqrilizz%20Reports.svg)
-
-## Support
-
-- **GitHub Issues**: [Report bugs or request features](https://github.com/Sqrilizz/Sqrilizz-Reports/issues)
-- **Modrinth**: [Plugin page](https://modrinth.com/plugin/sqrilizz-report)
-- **Discord**: [Support server](#)
-
----
-
-## License
-
-This project is licensed under the Sqrilizz Custom License (SCL) - see [LICENSE](LICENSE) file for details.
-
-### Key Points:
-- Free to use on personal and public servers (including monetized)
-- Free to modify for private use
-- Cannot sell or redistribute without permission
-- Attribution required
-
-For commercial use or redistribution, contact: https://sqrilizz.xyz
-
----
-
-## Credits
-
-Developed by Sqrilizz
-
-Sqrilizz Entertainment / AuryxStudio
-
-Website: https://sqrilizz.xyz
-
-Special thanks to all contributors and users who provided feedback and suggestions.
+Compiled artifacts will be located in:
+- `server/build/libs/`
+- `proxy-velocity/build/libs/`
+- `proxy-bungee/build/libs/`

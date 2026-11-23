@@ -1,6 +1,11 @@
 # Gradle
 .gradle/
 build/
+**/build/
+
+# Kotlin
+.kotlin/
+**/.kotlin/
 
 # IDEs
 .idea/
@@ -10,11 +15,14 @@ build/
 .classpath
 .project
 .settings/
-vscode/
+.vscode/
 
-# Build output
+# Build output & caches
 bin/
 out/
+target/
+**/target/
+*.class
 
 # Dependency cache
 /libs/
@@ -31,5 +39,6 @@ Thumbs.db
 *.jar
 *.zip
 *.bak
+*.bin
 build.gradle.backup
 !**/gradle/wrapper/gradle-wrapper.jar
